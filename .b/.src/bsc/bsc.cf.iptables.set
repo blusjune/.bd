@@ -1,0 +1,145 @@
+#!/bin/sh
+
+
+
+
+#75.2.93.68	# JP's computer IP address
+_trusted_hosts=" \
+127.0.0.1 \
+75.2.93.87 \
+75.2.93.88 \
+75.2.93.89 \
+75.2.93.68 \
+"
+
+
+
+
+exec_r001()
+{ # execution of rule 001: to allow all traffics from/to the trusted hosts
+
+if [ "X${_opr}" = "X" ]; then
+	echo ">>> _opr should be set: this program will be terminated"
+	exit 1;
+fi
+if [ "X${_dir}" = "X" ]; then
+	echo ">>> _dir should be set: this program will be terminated"
+	exit 1;
+fi
+
+_opt="";
+_chain="";
+_adr_t="";
+
+case $_opr in
+"add")
+	_opt="-A";
+	;;
+"del")
+	_opt="-D";
+	;;
+*)
+	echo ">>> unknown value of _opr: this program will be terminated"
+	exit 2;
+	;;
+esac
+
+case $_dir in
+"inbound")
+	_chain="INPUT";
+	_adr_t="-s";
+	;;
+"outbound")
+	_chain="OUTPUT";
+	_adr_t="-d";
+	;;
+*)
+	echo ">>> unknown value of _dir: this program will be terminated"
+	exit 3;
+	;;
+esac
+
+# enforcement of rules for trusted hosts
+for _addr in $_trusted_hosts; do
+	iptables ${_opt} ${_chain} -p all ${_adr_t} ${_addr} -j ACCEPT;
+	# allows all traffics between this host and host _addr
+done
+
+}
+
+
+
+
+exec_r002()
+{ # execution of rule 002: to allow selected traffics from/to the unknown hosts
+
+if [ "X${_opr}" = "X" ]; then
+	echo ">>> _opr should be set: this program will be terminated"
+	exit 1;
+fi
+
+_opt="";
+
+case $_opr in
+"add")
+	_opt="-A";
+	;;
+"del")
+	_opt="-D";
+	;;
+*)
+	echo ">>> unknown value of _opr: this program will be terminated"
+	exit 2;
+esac
+
+
+# enforcement of rules for untrusted hosts
+
+###
+#{ACCEPT the packets
+###
+
+# ssh
+iptables ${_opt} INPUT -p tcp --dport 22 -j ACCEPT;
+iptables ${_opt} OUTPUT -p tcp --dport 22 -j ACCEPT;
+
+# synergy
+iptables ${_opt} INPUT -p tcp --dport 24800 -j ACCEPT;
+iptables ${_opt} OUTPUT -p tcp --dport 24800 -j ACCEPT;
+
+# samba
+iptables ${_opt} INPUT -p tcp --dport 445 -s 75.2.93.88 -j ACCEPT;
+
+# http outbound
+iptables ${_opt} OUTPUT -p tcp --dport 80 -j ACCEPT;
+
+# https outbound
+iptables ${_opt} OUTPUT -p tcp --dport 443 -j ACCEPT;
+
+#}ACCEPT the packets
+
+
+###
+#{DROP the packets
+###
+
+# blocks all incoming packets from untrusted hosts
+iptables ${_opt} INPUT -p all -s 75.0.0.0/8 -j DROP;
+iptables ${_opt} INPUT -p all -s 75.0.0.0/8 -j DROP;
+
+#}DROP the packets
+
+
+}
+
+
+
+
+_opr="add" _dir="inbound" exec_r001;
+_opr="add" _dir="outbound" exec_r001;
+_opr="add" exec_r002;
+
+
+
+
+iptables -S

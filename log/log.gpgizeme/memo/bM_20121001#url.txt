@@ -1,0 +1,32 @@
+
+url_20130104()
+{
+http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en//university/relations/facultysummit2010/storage_architecture_and_challenges.pdf
+	storage architecture and challenges
+}
+
+
+
+
+url_20121001_002408 ()
+{
+http://javplus.us/asian-girls/korean-couples-sex-in-the-car/
+
+mkdir ko_couples_car6.v2
+pavuk -mode mirror -fnrules F '*.jpg' '/%e/%n' http://javplus.us/asian-girls/korean-couples-sex-in-the-car/
+
+mkdir ko_couples_car6.v3
+pavuk -mode mirror -fnrules F '*' '/%e/%n' http://javplus.us/asian-girls/korean-couples-sex-in-the-car/
+
+}
+
+
+
+url_20121031_014842 ()
+{
+	                                     
+[] The Linux Page Cache and pdflush:
+	Theory of Operation and Tuning for Write-heavy Loads
+	(http://www.westnet.com/~gsmith/content/linux-pdflush.htm)
+
+}

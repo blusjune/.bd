@@ -1,0 +1,28 @@
+##{-----------------------
+##tstamp: 20121116_100712
+
+## blusjune@ubuntu-1204 $
+sudo aptitude install bluez python-gobject python-dbus
+hcitool scan
+sudo bluez-simple-agent hci0 7C:1E:52:0B:BE:A5
+sudo bluez-test-device trusted 7C:1E:52:0B:BE:A5
+sudo /etc/init.d/bluetooth restart
+dmesg | tail
+sudo bluez-test-input connect 7C:1E:52:0B:BE:A5
+
+## NOW MY KEYBOARD WORKS WELL!!!
+##}-----------------------
+
+
+
+
+##{-----------------------
+##tstamp: 20121120_001924
+
+## 'bluetooth-wizard' program should work properly, but not.
+
+##}-----------------------
+
+
+
+

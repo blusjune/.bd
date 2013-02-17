@@ -1,0 +1,17 @@
+##_ver=20130112_040949
+
+eth0 # NAT Adapter
+addr: 10.0.2.15
+bcast: 10.0.2.255
+gateway: 0.0.0.0
+
+eth1 # Bridged Adapter
+addr: 192.168.1.112
+bcast: 192.168.1.255
+gateway: 0.0.0.0
+
+destination: 0.0.0.0
+gateway: 10.0.2.2 
+
+ns1: 168.126.63.1
+ns2: 168.126.63.2

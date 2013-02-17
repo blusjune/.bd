@@ -1,0 +1,64 @@
+
+src/os/linux.c: static uint64_t *get_geometry_linux (UflipDevice *device) {
+  int                fd;
+  int                ret;
+  struct hd_geometry geom;
+  uint64_t          *dg;
+
+  dg = (uint64_t *) calloc (4, sizeof (uint64_t));
+
+  if (dg == NULL)
+    return NULL;
+
+  fd = open (device->data->str, O_NONBLOCK | O_LARGEFILE);
+  if (fd == -1)
+    {
+      free (dg);
+      return NULL;
+    }
+
+  ret = ioctl (fd, HDIO_GETGEO, &geom);
+  close (fd);
+  if (ret == -1)
+    {
+      free (dg);
+      return NULL;
+    }
+
+  dg [0] = geom.cylinders;
+  dg [1] = geom.heads;
+  dg [2] = geom.sectors;
+  dg [3] = 512;
+
+  return (dg);
+}
+
+src/os/linux.c: int uflip_device_populate (UflipDevice *device, const char *desired_value) {
+	// ...
+
+	device->get_geometry = get_geometry_linux;
+
+	// ...
+}
+
+src/uflip_device.c: uint64_t * uflip_device_get_geometry(UflipDevice *device) {
+	return device->get_geometry(device); /* get_geometry_linux() */
+}
+
+src/main.c: int main (int argc, char ** argv) {
+	// ...
+
+	if (PB->deviceSize == 0)
+	{
+		uint64_t *dg = NULL;
+		dg = uflip_device_get_geometry(PB->device);
+		if (dg)
+		{
+			// ...
+			PB->deviceSize = dg[0] * dg[1] * dg[2] * dg[3] / SECTOR;
+
+		}
+	}
+
+	// ...
+}

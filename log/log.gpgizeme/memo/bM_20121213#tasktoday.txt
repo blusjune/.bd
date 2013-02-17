@@ -1,0 +1,28 @@
+##.bd/log/log.gpgizeme/memo/bM_20121213#task_today.txt 
+##_ver=20121213_102337
+
+
+
+
+[o]ADD // .b/.bdx.d/.snapshot.src/.vimrc imap for tstamp // 20121213_103742
+[o]EDIT // .b/.src/x/hadoop/bsc... // 20121213_102510
+[o]bpk.pack // 20121213_111632
+[o]CHECK // hadoop conf files default setting: e.g., hdfs path directory // 20121213_103051
+[~]CREATE // te.c to test the difference between direct IO (bypassing page cache) and non-direct IO (using page cache) // 20121213_102954 ~
+	$HOME/bsrc/ioi/_/iowa/test/20121213_123108/te.c
+
+[o]CHECK // mysql virtual memory size according to the change of memory_buffer_pool size
+{
+		VIRT	RES
+mysqld:		2544m	197m	| 2G memory_buffer_pool
+mysqld:		1462m	140m	| 1G memory_buffer_pool
+mysqld:		872m	73m	| 500M memory_buffer_pool
+mysqld:		435m	36m	| 100M memory_buffer_pool
+}
+
+
+[ ]STUDY // kernel function flow for: open(), read(), close(); using ftrace // 20121213_135002
+
+
+
+

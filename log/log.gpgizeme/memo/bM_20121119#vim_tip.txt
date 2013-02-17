@@ -1,0 +1,52 @@
+
+
+
+
+##{----------------------
+##tstamp: 20121119_233655
+
+(http://vim.wikia.com/wiki/VimTip530)
+
+Register % contains the name of the current file,
+and register # contains the name of the alternate file.
+These registers allow the name of the current or alternate files
+to be displayed or inserted.
+
+The name, or full path, or directory containing the file can be used.
+For example, in directory /abc
+the command vim def/my.txt would edit file /abc/def/my.txt.
+
+The following commands could be entered to display the information shown.
+
+:echo @% 		def/my.txt		directory/name of file
+:echo expand('%:t') 	my.txt	 		name of file ('tail')
+:echo expand('%:p') 	/abc/def/my.txt		full path
+:echo expand('%:p:h')	/abc/def		directory containing file ('head')
+
+If all that is wanted is to display the name of the current file,
+type Ctrl-G (or press 1 then Ctrl-G for the full path).
+
+When using @%, the name is displayed relative to the current directory.
+
+In insert mode,
+type Ctrl-R then % to insert the name of the current file.
+
+In command mode (after typing a colon),
+type Ctrl-R then % to insert the name of the current file.
+The inserted name can then be edited to create a similar name.
+
+In normal mode,
+type "%p to put the name of the current file after the cursor
+(or "%P to insert the name before the cursor).
+
+The following commands insert lines
+consisting of the full path of the current and alternate files into the buffer:
+
+:put =expand('%:p')
+:put =expand('#:p')
+
+##}----------------------
+
+
+
+

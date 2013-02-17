@@ -1,0 +1,8 @@
+##tstamp: 20121108_220304
+
+## lynx command logging for later use
+$ lynx -cmd_log lynxcmd.txt 'http://dl.acm.org/citation.cfm?id=1367831'
+
+## lynx execution with logged command script
+$ lynx -cmd_script lynxcmd.txt 'http://dl.acm.org/citation.cfm?id=1367831'
+

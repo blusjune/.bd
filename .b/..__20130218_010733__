@@ -1,0 +1,34 @@
+#!/bin/sh
+# 20130218_010733
+
+echo "##### dot b system installation: begin #####";
+
+(
+cd ~
+if [ "X$(grep BSC_CF_SH_ENV_SET ~/.bashrc > /dev/null; echo $?)" != "X0" ]; then
+cat << EOF_INSTALL_BPK_1 >> ~/.bashrc
+
+### BEEE:: BSC_CF_SH_ENV_SET
+### sourcing bsc.cf.sh_env.set file
+if [ -r ~/.b/.src/bsc/bsc.cf.sh_env.set ]; then
+	. ~/.b/.src/bsc/bsc.cf.sh_env.set
+fi
+
+EOF_INSTALL_BPK_1
+	echo ">>> .bashrc was patched successfully";
+else
+	echo ">>> no need to patch .bashrc";
+fi
+)
+
+(
+cd ~;
+if [ ! -d bx_data ]; then
+	~/.b/.src/bsc/bsc.bx_data.create.sh .;
+else
+	echo ">>> no need to create bx_data";
+fi
+)
+
+echo "##### dot b system installation: end #####";
+

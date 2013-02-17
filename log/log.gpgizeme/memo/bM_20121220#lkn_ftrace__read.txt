@@ -1,0 +1,835 @@
+##.bd/log/log.gpgizeme/memo/bM_20121220#lkn_ftrace__read.txt
+##_ver=20121220_162709
+
+
+
+
+
+vfs_read()
+{
+[]	rw_verify_area()
+	{
+[]		security_file_permission()
+		{
+[]			apparmor_file_permission() {}
+		}
+	}
+
+[]	do_sync_read()
+	{
+[]		generic_file_aio_read()
+		{
+[]			generic_segment_checks() {}	// returns zero if no problem
+[]			blk_start_plug() {}	// initializes (struct task_struct *)current->plug
+[]			do_generic_file_read(
+					struct file *filp			= filp,
+					loff_t *ppos				= ppos,
+					read_descriptor_t *desc		= &desc,
+					read_actor_t actor			= file_read_actor
+					)
+			{
+				for (;;)
+				{
+find_page:
+[]					page = find_get_page() {}
+					if (!page) {
+[]						page_cache_sync_readahead() {}
+[]						find_get_page() {}
+??						// may goto no_cached_page;
+					}
+
+readpage: OR
+page_not_up_to_date:
+					// possible paths to reach to lock_page_killable() and then unlock_page()
+						// 'readpage:'
+						// 'page_not_up_to_date:' and then 'page_not_up_to_date_locked:'
+[]					lock_page_killable() {}
+[]					unlock_page() {}
+
+page_ok:
+	// possible paths to 'page_ok:'
+		// 'page_ok:' <-'page_not_up_to_date_locked:'
+		// 'page_ok:' <-'readpage:'
+[]					mark_page_accessed() {}	// when a sequential read
+											// accesses a page several times,
+											// only mark it as accessed the first time
+
+[]					file_read_actor() {}	// (read_actor_t)actor = file_read_actor;
+					// page_cache_release() {	// macro:#define
+					put_page() {}
+					// }
+				} // end-of-for
+out:
+				// file_accessed() {	// macro:inline
+[]				touch_atime() {}	// no direct call from 'do_generic_file_read()'
+				// }
+			}
+
+[]			blk_finish_plug() {}
+		}
+	}
+
+[]	__fsnotify_parent()
+	{
+	}
+
+[]	fsnotify()
+	{
+	}
+}
+
+
+
+
+/*----------------------------------------------------------------------------------*/
+
+//{ :: mm/filemap.c:
+/**
+ * find_get_page - find and get a page reference
+ * @mapping: the address_space to search
+ * @offset: the page index
+ *
+ * Is there a pagecache struct page at the given (mapping, offset) tuple?
+ * If yes, increment its refcount and return it; if no, return NULL.
+ */
+struct page *find_get_page(struct address_space *mapping, pgoff_t offset)
+{
+	void **pagep;
+	struct page *page;
+	// pagep == (struct radix_tree_node **)
+	// *pagep == (struct page *) page
+
+	rcu_read_lock();
+repeat:
+	page = NULL;
+	pagep = radix_tree_lookup_slot(&mapping->page_tree, offset);
+	if (pagep) {
+		page = radix_tree_deref_slot(pagep);
+		if (unlikely(!page))
+			goto out;
+		if (radix_tree_deref_retry(page))
+			goto repeat;
+
+		if (!page_cache_get_speculative(page))
+			goto repeat;
+
+		/*
+		 * Has the page moved?
+		 * This is part of the lockless pagecache protocol. See
+		 * include/linux/pagemap.h for details.
+		 */
+		if (unlikely(page != *pagep)) {
+			page_cache_release(page);
+			goto repeat;
+		}
+	}
+out:
+
+#if 1 /* { BLUSJUNE_CODE_ZONE_OPEN :: causes kernel panic during boot */
+	/* (pgoff_t) == (unsigned long) #include/linux/types.h */
+	printk("/// find_get_page() \
+// mapping->page_tree.height= %u // offset= %lu \
+// page->_count.counter= %d // page->_mapcount.counter= %d // page->index= %lu ///\n",
+			mapping->page_tree.height, offset,
+			page->_count.counter, page->_mapcount.counter, page->index);
+#endif /* } BLUSJUNE_CODE_ZONE_CLOSE */
+
+	rcu_read_unlock();
+
+	return page;
+}
+EXPORT_SYMBOL(find_get_page);
+//} :: mm/filemap.c:
+
+/*
+	struct radix_tree_node *node, **slot;
+	return is_slot ? (void *)slot : indirect_to_ptr(node);
+*/
+
+
+
+
+/*----------------------------------------------------------------------------------*/
+
+
+
+
+//{ :: include/linux/fs.h:
+/*
+ * pagecache_write_begin/pagecache_write_end must be used by general code
+ * to write into the pagecache.
+ */
+int pagecache_write_begin(struct file *, struct address_space *mapping,
+				loff_t pos, unsigned len, unsigned flags,
+				struct page **pagep, void **fsdata);
+
+int pagecache_write_end(struct file *, struct address_space *mapping,
+				loff_t pos, unsigned len, unsigned copied,
+				struct page *page, void *fsdata);
+
+struct backing_dev_info;
+struct address_space {
+	struct inode		*host;		/* owner: inode, block_device */
+	struct radix_tree_root	page_tree;	/* radix tree of all pages */
+	spinlock_t		tree_lock;	/* and lock protecting it */
+	unsigned int		i_mmap_writable;/* count VM_SHARED mappings */
+	struct prio_tree_root	i_mmap;		/* tree of private and shared mappings */
+	struct list_head	i_mmap_nonlinear;/*list VM_NONLINEAR mappings */
+	struct mutex		i_mmap_mutex;	/* protect tree, count, list */
+	/* Protected by tree_lock together with the radix tree */
+	unsigned long		nrpages;	/* number of total pages */
+	pgoff_t			writeback_index;/* writeback starts here */
+	const struct address_space_operations *a_ops;	/* methods */
+	unsigned long		flags;		/* error bits/gfp mask */
+	struct backing_dev_info *backing_dev_info; /* device readahead, etc */
+	spinlock_t		private_lock;	/* for use by the address_space */
+	struct list_head	private_list;	/* ditto */
+	struct address_space	*assoc_mapping;	/* ditto */
+} __attribute__((aligned(sizeof(long))));
+	/*
+	 * On most architectures that alignment is already the case; but
+	 * must be enforced here for CRIS, to let the least significant bit
+	 * of struct page's "mapping" pointer be used for PAGE_MAPPING_ANON.
+	 */
+//} :: include/linux/fs.h:
+
+
+
+
+/*----------------------------------------------------------------------------------*/
+
+
+
+
+//{ :: include/linux/mm_types.h:
+/*
+ * Each physical page in the system has a struct page associated with
+ * it to keep track of whatever it is we are using the page for at the
+ * moment. Note that we have no way to track which tasks are using
+ * a page, though if it is a pagecache page, rmap structures can tell us
+ * who is mapping it.
+ */
+struct page {
+	unsigned long flags;		/* Atomic flags, some possibly updated asynchronously */
+	atomic_t _count;		/* Usage count, see below. */
+	union {
+		atomic_t _mapcount;	/* Count of ptes mapped in mms,
+					 * to show when page is mapped
+					 * & limit reverse map searches.
+					 */
+		struct {		/* SLUB */
+			u16 inuse;
+			u16 objects;
+		};
+	};
+	union {
+	    struct {
+		unsigned long private;		/* Mapping-private opaque data:
+					 	 * usually used for buffer_heads
+						 * if PagePrivate set; used for
+						 * swp_entry_t if PageSwapCache;
+						 * indicates order in the buddy
+						 * system if PG_buddy is set.
+						 */
+		struct address_space *mapping;	/* If low bit clear, points to
+						 * inode address_space, or NULL.
+						 * If page mapped as anonymous
+						 * memory, low bit is set, and
+						 * it points to anon_vma object:
+						 * see PAGE_MAPPING_ANON below.
+						 */
+	    };
+#if USE_SPLIT_PTLOCKS
+	    spinlock_t ptl;
+#endif
+	    struct kmem_cache *slab;	/* SLUB: Pointer to slab */
+	    struct page *first_page;	/* Compound tail pages */
+	};
+	union {
+		pgoff_t index;		/* Our offset within mapping. */
+		void *freelist;		/* SLUB: freelist req. slab lock */
+	};
+	struct list_head lru;		/* Pageout list, eg. active_list
+					 * protected by zone->lru_lock !
+					 */
+	/*
+	 * On machines where all RAM is mapped into kernel address space,
+	 * we can simply calculate the virtual address. On machines with
+	 * highmem some memory is mapped into kernel virtual memory
+	 * dynamically, so we need a place to store that address.
+	 * Note that this field could be 16 bits on x86 ... ;)
+	 *
+	 * Architectures with slow multiplication can define
+	 * WANT_PAGE_VIRTUAL in asm/page.h
+	 */
+#if defined(WANT_PAGE_VIRTUAL)
+	void *virtual;			/* Kernel virtual address (NULL if
+					   not kmapped, ie. highmem) */
+#endif /* WANT_PAGE_VIRTUAL */
+#ifdef CONFIG_WANT_PAGE_DEBUG_FLAGS
+	unsigned long debug_flags;	/* Use atomic bitops on this */
+#endif
+
+#ifdef CONFIG_KMEMCHECK
+	/*
+	 * kmemcheck wants to track the status of each byte in a page; this
+	 * is a pointer to such a status block. NULL if not tracked.
+	 */
+	void *shadow;
+#endif
+};
+//} :: include/linux/mm_types.h:
+
+
+
+
+/*----------------------------------------------------------------------------------*/
+
+
+
+
+//{ :: include/linux/types.h:
+struct list_head {
+	struct list_head *next, *prev;
+};
+
+
+/*
+ * The type of an index into the pagecache.  Use a #define so asm/types.h
+ * can override it.
+ */
+#ifndef pgoff_t
+#define pgoff_t unsigned long
+#endif
+//} :: include/linux/types.h:
+
+
+
+
+/*----------------------------------------------------------------------------------*/
+
+
+
+
+struct task_struct {
+	// relationship with 'current' object
+};
+
+
+
+
+//{ :: include/linux/types.h:
+typedef unsigned __bitwise__ gfp_t;
+//} :: include/linux/types.h:
+
+
+
+
+//{ :: include/linux/radix-tree.h:
+/* root tags are stored in gfp_mask, shifted by __GFP_BITS_SHIFT */
+struct radix_tree_root {
+	unsigned int		height;
+	gfp_t			gfp_mask;	// typedef unsigned __bitwise__ gfp_t;
+	struct radix_tree_node	__rcu *rnode;	// # define __rcu		__attribute__((noderef, address_space(4)))
+};
+
+
+/*
+ * An indirect pointer (root->rnode pointing to a radix_tree_node, rather
+ * than a data item) is signalled by the low bit set in the root->rnode
+ * pointer.
+ *
+ * In this case root->height is > 0, but the indirect pointer tests are
+ * needed for RCU lookups (because root->height is unreliable). The only
+ * time callers need worry about this is when doing a lookup_slot under
+ * RCU.
+ *
+ * Indirect pointer in fact is also used to tag the last pointer of a node
+ * when it is shrunk, before we rcu free the node. See shrink code for
+ * details.
+ */
+#define RADIX_TREE_INDIRECT_PTR	1
+
+
+#define RADIX_TREE_MAX_TAGS 3
+//} :: include/linux/radix-tree.h:
+
+
+
+
+//{ :: lib/radix-tree.c:
+struct radix_tree_node {
+	unsigned int	height;		/* Height from the bottom */
+	unsigned int	count;
+	struct rcu_head	rcu_head;
+	void __rcu	*slots[RADIX_TREE_MAP_SIZE];	// slots[64];
+	unsigned long	tags[RADIX_TREE_MAX_TAGS][RADIX_TREE_TAG_LONGS]; // tags[3][1];
+
+	// RADIX_TREE_MAP_SHIFT: 6
+	// RADIX_TREE_MAP_SIZE: 64 == (1UL << 6) == (1UL << RADIX_TREE_MAP_SHIFT)
+	// RADIX_TREE_MAX_TAGS: 3
+	// RADIX_TREE_TAG_LONGS: 1 == ((64 + 64 - 1) / 64) == ((RADIX_TREE_MAP_SIZE + BITS_PER_LONG - 1) / BITS_PER_LONG)
+		// #ifdef CONFIG_64BIT then #define BITS_PER_LONG 64
+	// RADIX_TREE_MAP_MASK: 63 == 64 -1 == (RADIX_TREE_MAP_SIZE-1)
+};
+
+
+
+
+#ifdef __KERNEL__
+#define RADIX_TREE_MAP_SHIFT	(CONFIG_BASE_SMALL ? 4 : 6)
+#else
+#define RADIX_TREE_MAP_SHIFT	3	/* For more stressful testing */
+#endif
+
+#define RADIX_TREE_MAP_SIZE	(1UL << RADIX_TREE_MAP_SHIFT)
+#define RADIX_TREE_MAP_MASK	(RADIX_TREE_MAP_SIZE-1)
+
+#define RADIX_TREE_TAG_LONGS	\
+	((RADIX_TREE_MAP_SIZE + BITS_PER_LONG - 1) / BITS_PER_LONG)
+
+
+
+
+
+/*
+ * is_slot == 1 : search for the slot.
+ * is_slot == 0 : search for the node.
+ */
+static void *radix_tree_lookup_element(struct radix_tree_root *root,
+				unsigned long index, int is_slot)
+{
+	unsigned int height, shift;
+	struct radix_tree_node *node, **slot;
+
+	node = rcu_dereference_raw(root->rnode);
+	if (node == NULL)
+		return NULL;
+
+	if (!radix_tree_is_indirect_ptr(node)) {
+		if (index > 0)
+			return NULL;
+		return is_slot ? (void *)&root->rnode : node;
+	}
+	node = indirect_to_ptr(node);
+
+	height = node->height;
+	if (index > radix_tree_maxindex(height))
+		return NULL;
+
+	shift = (height-1) * RADIX_TREE_MAP_SHIFT;
+
+	do {
+		slot = (struct radix_tree_node **)
+			(node->slots + ((index>>shift) & RADIX_TREE_MAP_MASK));
+		node = rcu_dereference_raw(*slot);
+		if (node == NULL)
+			return NULL;
+
+		shift -= RADIX_TREE_MAP_SHIFT;
+		height--;
+	} while (height > 0);
+
+	return is_slot ? (void *)slot : indirect_to_ptr(node);
+}
+//} :: lib/radix-tree.c:
+
+
+
+
+//{ :: include/asm-generic/bitsperlong.h:
+#ifdef CONFIG_64BIT
+#define BITS_PER_LONG 64
+#else
+#define BITS_PER_LONG 32
+#endif /* CONFIG_64BIT */
+//} :: include/asm-generic/bitsperlong.h:
+
+
+
+
+//{ :: include/linux/rcupdate.h:
+// RCU: Read-Copy Update mechanism for mutual exclusion
+/**
+ * struct rcu_head - callback structure for use with RCU
+ * @next: next update requests in a list
+ * @func: actual update function to call after the grace period.
+ */
+struct rcu_head {
+	struct rcu_head *next;
+	void (*func)(struct rcu_head *head);
+};
+//} :: include/linux/rcupdate.h:
+
+
+
+
+//{ :: include/linux/rcupdate.h:
+/**
+ * rcu_dereference_check() - rcu_dereference with debug checking
+ * @p: The pointer to read, prior to dereferencing
+ * @c: The conditions under which the dereference will take place
+ *
+ * Do an rcu_dereference(), but check that the conditions under which the
+ * dereference will take place are correct.  Typically the conditions
+ * indicate the various locking conditions that should be held at that
+ * point.  The check should return true if the conditions are satisfied.
+ * An implicit check for being in an RCU read-side critical section
+ * (rcu_read_lock()) is included.
+ *
+ * For example:
+ *
+ *	bar = rcu_dereference_check(foo->bar, lockdep_is_held(&foo->lock));
+ *
+ * could be used to indicate to lockdep that foo->bar may only be dereferenced
+ * if either rcu_read_lock() is held, or that the lock required to replace
+ * the bar struct at foo->bar is held.
+ *
+ * Note that the list of conditions may also include indications of when a lock
+ * need not be held, for example during initialisation or destruction of the
+ * target struct:
+ *
+ *	bar = rcu_dereference_check(foo->bar, lockdep_is_held(&foo->lock) ||
+ *					      atomic_read(&foo->usage) == 0);
+ *
+ * Inserts memory barriers on architectures that require them
+ * (currently only the Alpha), prevents the compiler from refetching
+ * (and from merging fetches), and, more importantly, documents exactly
+ * which pointers are protected by RCU and checks that the pointer is
+ * annotated as __rcu.
+ */
+#define rcu_dereference_check(p, c) \
+	__rcu_dereference_check((p), rcu_read_lock_held() || (c), __rcu)
+
+#define rcu_dereference_raw(p) rcu_dereference_check(p, 1) /*@@@ needed? @@@*/
+//} :: include/linux/rcupdate.h:
+
+
+
+
+//{ ftrace note: annotated
+ftrace{	logfile: ftlog.20121218_195819.pid_3718.log
+	foo@bar$ dd if=/x/bigfile/f3 of=/dev/null skip=0 bs=512 count=1;
+	#------------------------------------------------------------------------#
+
+
+	sys_read <-system_call_fastpath;	// 6590.428417 // line:20876
+	...;
+	vfs_read <-sys_read;	// 6590.428417 // line:20878
+		rw_verify_area <-vfs_read;
+			security_file_permission <-rw_verify_area;
+				apparmor_file_permission <-security_file_permission;
+					common_file_perm <-apparmor_file_permission;
+				__fsnotify_parent <-security_file_permission;
+				fsnotify <-security_file_permission;
+		do_sync_read <-vfs_read;	// 6590.428419 // line:20885
+			generic_file_aio_read <-do_sync_read; // 6590.428419 // line:20886
+				generic_segment_checks <-generic_file_aio_read;
+				blk_start_plug <-generic_file_aio_read;
+				printk <-generic_file_aio_read;
+					vprintk <-printk;
+						_raw_spin_lock <-vprintk;
+						// __LOOP__ { xN
+						emit_log_char <-vprintk;
+						// }
+						...;
+				find_get_page <-generic_file_aio_read;	// 6590.428472 // line:21213
+				page_cache_sync_readahead <-generic_file_aio_read;	// line:21214
+					ondemand_readahead <-page_cache_sync_readahead;	// line:21215
+						max_sane_readahead <-ondemand_readahead;
+						get_init_ra_size <-ondemand_readahead;
+						ra_submit <-ondemand_readahead;
+							__do_page_cache_readahead <-ra_submit;	// line:21219
+								// __LOOP__ { x4
+								__page_cache_alloc <-__do_page_cache_readahead;	// line:21220
+									alloc_pages_current <-__page_cache_alloc;
+										policy_nodemask <-alloc_pages_current;
+										policy_zonelist <-alloc_pages_current;
+										__alloc_pages_nodemask <-alloc_pages_current;
+											_cond_resched <-__alloc_pages_nodemask;
+											next_zones_zonelist <-__alloc_pages_nodemask;
+											get_page_from_freelist <-__alloc_pages_nodemask;
+												next_zones_zonelist <-get_page_from_freelist;
+												zone_watermark_ok <-get_page_from_freelist;
+												zone_statistics <-get_page_from_freelist;
+													__inc_zone_state <-zone_statistics;
+													__inc_zone_state <-zone_statistics;	// line:21232
+								// } // lines:21220~21271
+								blk_start_plug <-__do_page_cache_readahead;	// line:21272
+								ext4_readpages <-__do_page_cache_readahead;	// line:21273
+									mpage_readpages <-ext4_readpages;	// line:21274
+										blk_start_plug <-mpage_readpages;
+										add_to_page_cache_lru <-mpage_readpages;	// line:21276
+											add_to_page_cache_locked <-add_to_page_cache_lru;
+												mem_cgroup_cache_charge <-add_to_page_cache_locked;
+											...;
+										do_mpage_readpage <-mpage_readpages;	// 6590.428487 // line:21292
+											ext4_get_block <-do_mpage_readpage; // 6590.428487 // line:21293
+												_ext4_get_block <-ext4_get_block;
+													ext4_map_blocks <-_ext4_get_block;
+														down_read <-ext4_map_blocks;
+														ext4_ext_map_blocks <-ext4_map_blocks;
+															ext4_ext_check_cache <-ext4_ext_map_blocks;
+															ext4_ext_find_extent <-ext4_ext_map_blocks;
+																__kmalloc <-ext4_ext_find_extent;
+																	get_slab <-__kmalloc;
+																__getblk <-ext4_ext_find_extent;
+																	// __LOOP__ {
+																	__find_get_block <-__getblk;
+																		find_get_page <-__find_get_block_slow.isra.17 <-__find_get_block;
+																	// }
+																	__find_or_create_page <-__getblk;
+																		find_lock_page <-__find_or_create_page;
+																			find_get_page <-find_lock_page;
+																		__page_cache_alloc <-__find_or_create_page;
+																			alloc_pages_current <-__page_cache_alloc;
+																				policy_nodemask <-alloc_pages_current;
+																				policy_zonelist <-alloc_pages_current;
+																				__alloc_pages_nodemask <-alloc_pages_current;
+																					next_zones_zonelist <-__alloc_pages_nodemask;
+																					get_page_from_freelist <-__alloc_pages_nodemask;
+																						next_zones_zonelist <-get_page_from_freelist;
+																						zone_watermark_ok <-get_page_from_freelist;
+																						zone_statistics <-get_page_from_freelist;
+																							// __LOOP__ { // #?? is this loop? or just two-time run?
+																							__inc_zone_state <-zone_statistics;
+																							// }
+																		add_to_page_cache_lru <-__find_or_create_page;
+																			add_to_page_cache_locked <-add_to_page_cache_lru;
+																				mem_cgroup_cache_charge <-add_to_page_cache_locked;
+																					__mem_cgroup_try_charge <-mem_cgroup_cache_charge;
+																					__mem_cgroup_commit_charge_lrucare <-mem_cgroup_cache_charge;
+																						// __LOOP__ { // #?? is this loop? or just two-time run?
+																						lookup_page_cgroup <-__mem_cgroup_commit_charge_lrucare;
+																						// }
+																						__mem_cgroup_commit_charge <-__mem_cgroup_commit_charge_lrucare;
+																							mem_cgroup_charge_statistics.isra.27 <-__mem_cgroup_commit_charge;
+																							memcg_check_events <-__mem_cgroup_commit_charge;
+																						lookup_page_cgroup <-__mem_cgroup_commit_charge_lrucare;
+																				__inc_zone_page_state <-add_to_page_cache_locked;
+																					__inc_zone_state <-__inc_zone_page_state;
+																			__lru_cache_add <-add_to_page_cache_lru;
+																	alloc_page_buffers <-__getblk;
+																		alloc_buffer_head <-alloc_page_buffers;
+																			kmem_cache_alloc <-alloc_buffer_head;
+																				should_failslab <-kmem_cache_alloc;
+																			recalc_bh_state <-alloc_buffer_head;
+																		set_bh_page <-alloc_page_buffers;
+																	init_page_buffers.isra.10 <-__getblk;
+																	unlock_page <-__getblk; // then, lock_page called before this call?
+																		page_waitqueue <-unlock_page;
+																	put_page <-__getblk;
+																	__find_get_block <-__getblk;
+																		__find_get_block_slow.isra.17 <-__find_get_block;
+																			find_get_page <-__find_get_block_slow.isra.17;
+																			put_page <-__find_get_block_slow.isra.17;
+																		__brelse <-__find_get_block;
+																		mark_page_accessed <-__find_get_block;
+																bh_uptodate_or_lock <-ext4_ext_find_extent;
+																bh_submit_read <-ext4_ext_find_extent;
+																	submit_bh <-bh_submit_read;
+																		bio_alloc <-submit_bh;
+																			bio_alloc_bioset <-bio_alloc;
+																				mempool_alloc <-bio_alloc_bioset;
+																					mempool_alloc_slab <-mempool_alloc;
+																						kmem_cache_alloc <-mempool_alloc_slab;
+																							should_failslab <-kmem_cache_alloc;
+																				bio_init <-bio_alloc_bioset;
+																		submit_bio <-submit_bh;
+																			generic_make_request <-submit_bio;
+																				bio_integrity_enabled <-generic_make_request;
+																				blk_throtl_bio <-generic_make_request;
+																					task_blkio_cgroup <-blk_throtl_bio;
+																					throtl_find_tg <-blk_throtl_bio;
+																						__throtl_tg_fill_dev_details.isra.23 <-throtl_find_tg;
+																					blkiocg_uupdate_dispatch_stats <-blk_throtl_bio;
+																				__make_request <-generic_make_request;
+																					blk_queue_bounce <-__make_request;
+																					elv_merge <-__make_request;
+																						elv_rqhash_find.isra.14 <-elv_merge;
+																						cfq_merge <-elv_merge;
+																							cfq_cic_lookup <-cfq_merge;
+																					get_request_wait <-__make_request;
+																						get_request <-get_request_wait;
+																							elv_may_queue <-get_request;
+																								cfq_may_queue <-elv_may_queue;
+																									cfq_cic_lookup <-cfq_may_queue;
+																							mempool_alloc <-get_request;
+																								mempool_alloc_slab <-mempool_alloc;
+																									kmem_cache_alloc <-mempool_alloc_slab;
+																										should_failslab <-kmem_cache_alloc;
+																							blk_rq_init <-get_request;
+																							elv_set_request <-get_request;
+																								cfq_set_request <-elv_set_request;
+																									get_io_context <-cfq_set_request;
+																										current_io_context <-get_io_context;
+																											alloc_io_context <-current_io_context;
+																												kmem_cache_alloc_node <-alloc_io_context;
+																													should_failslab <-kmem_cache_alloc_node;
+																									cfq_cic_lookup <-cfq_set_request;
+																									kmem_cache_alloc_node <-cfq_set_request;
+																										should_failslab <-kmem_cache_alloc_node;
+																										// __LOOP__ { x3
+																										kmem_cache_alloc <-radix_tree_preload;
+																											_cond_resched <-kmem_cache_alloc;
+																											should_failslab <-kmem_cache_alloc;
+																										// }
+																									// __LOOP__ { x2
+																									_raw_spin_lock_irqsave <-cfq_set_request;
+																									_raw_spin_unlock_irqrestore <-cfq_set_request;
+																									// }
+																									_raw_spin_lock_irqsave <-cfq_set_request;
+																									cfq_get_queue <-cfq_set_request;
+																										task_blkio_cgroup <-cfq_get_queue;
+																										cfq_find_cfqg <-cfq_get_queue;
+																										cfq_cic_lookup <-cfq_get_queue;
+																											_raw_spin_lock_irqsave <-cfq_cic_lookup;
+																											_raw_spin_unlock_irqrestore <-cfq_cic_lookup;
+																										kmem_cache_alloc_node <-cfq_get_queue;
+																											_cond_resched <-kmem_cache_alloc_node;
+																											should_failslab <-kmem_cache_alloc_node;
+																										_raw_spin_lock_irq <-cfq_get_queue;
+																										task_blkio_cgroup <-cfq_get_queue;
+																										cfq_find_cfqg <-cfq_get_queue;
+																										cfq_cic_lookup <-cfq_get_queue;
+																										cfq_init_prio_data <-cfq_get_queue;
+																											task_nice <-cfq_init_prio_data;
+																									_raw_spin_unlock_irqrestore <-cfq_set_request;
+																					init_request_from_bio <-__make_request;
+																						blk_rq_bio_prep <-init_request_from_bio;
+																							bio_phys_segments <-blk_rq_bio_prep;
+																								blk_recount_segments <-bio_phys_segments;
+																									__blk_recalc_rq_segments <-blk_recount_segments;
+																					cpu_coregroup_mask <-__make_request;
+																					drive_stat_acct <-__make_request;
+																						disk_map_sector_rcu <-drive_stat_acct;
+																						part_round_stats <-drive_stat_acct;
+																		bio_put <-submit_bh;
+																	_cond_resched <-bh_submit_read;
+																	__wait_on_buffer <-bh_submit_read;	// 6590.428529 // line:21460
+																	...;
+
+																	scsi_request_fn <-__blk_run_queue;	// line:21508
+
+																	...;
+											bio_get_nr_vecs <-do_mpage_readpage;	// line:21871
+											mpage_alloc <-do_mpage_readpage;	// line:21872
+												bio_alloc <-mpage_alloc;
+													bio_alloc_bioset <-bio_alloc;
+														mempool_alloc <-bio_alloc_bioset;
+															_cond_resched <-mempool_alloc;
+															...;
+														bio_init <-bio_alloc_bioset;
+											bio_add_page <-do_mpage_readpage;	// line:21872
+												__bio_add_page.part.15 <-bio_add_page;
+										put_page <-mpage_readpages;
+										add_to_page_cache_lru <-mpage_readpages;	// line:21884
+											add_to_page_cache_locked <-add_to_page_cache_lru;
+												...;
+										do_mpage_readpage <-mpage_readpages;	// line:21903
+											bio_add_page <-do_mpage_readpage;	// line:21904
+												...;
+										put_page <-mpage_readpages;	// line:21906
+										add_to_page_cache_lru <-mpage_readpages;	// line:21907
+											add_to_page_cache_locked <-add_to_page_cache_lru;
+												...;
+										do_mpage_readpage <-mpage_readpages;	// line:21926
+											bio_add_page <-do_mpage_readpage;	// line:21927
+												...;
+										put_page <-mpage_readpages;	// line:21949
+										submit_bio <-mpage_readpages;	// line:21950
+											generic_make_request <-submit_bio;
+												...;
+										blk_finish_plug <-mpage_readpages;	// line:21997
+											blk_flush_plug_list <-blk_finish_plug;
+								put_pages_list <-__do_page_cache_readahead;	// line:21999
+								blk_finish_plug <-__do_page_cache_readahead;	// line:22000
+									blk_flush_plug_list <-blk_finish_plug;
+				find_get_page <-generic_file_aio_read;	// line:22002
+				lock_page_killable <-generic_file_aio_read;	// line:22003
+					...;
+				unlock_page <-generic_file_aio_read;	// line:22180
+					page_waitqueue <-unlock_page;
+					__wake_up_bit <-unlock_page;
+				mark_page_accessed <-generic_file_aio_read;	// line:22183
+				file_read_actor <-generic_file_aio_read;	// line:22184
+				do_page_fault <-page_fault;	// line:22185
+					down_read_trylock <-do_page_fault;
+					_cond_resched <-do_page_fault;
+					find_vma <-do_page_fault;
+					handle_mm_fault <-do_page_fault;	// line:22189
+						mem_cgroup_count_vm_event <-handle_mm_fault;
+							mem_cgroup_pgfault <-mem_cgroup_count_vm_event;
+						handle_pte_fault <-handle_mm_fault;
+							anon_vma_prepare <-handle_pte_fault;
+								_cond_resched <-anon_vma_prepare;
+							alloc_pages_vma <-handle_pte_fault;	// line:22195
+								get_vma_policy <-alloc_pages_vma;
+								policy_zonelist <-alloc_pages_vma;
+								policy_nodemask <-alloc_pages_vma;
+								...;
+							mem_cgroup_newpage_charge <-handle_pte_fault;	// line:22208
+								mem_cgroup_charge_common <-mem_cgroup_newpage_charge;
+									lookup_page_cgroup <-mem_cgroup_charge_common;
+									__mem_cgroup_try_charge <-mem_cgroup_charge_common;
+									__mem_cgroup_commit_charge <-mem_cgroup_charge_common;
+										mem_cgroup_charge_statistics.isra.27 <-__mem_cgroup_commit_charge;
+										...;
+										memcg_check_events <-__mem_cgroup_commit_charge;
+							add_mm_counter_fast <-handle_pte_fault;
+							page_add_new_anon_rmap <-handle_pte_fault;
+								__inc_zone_page_state <-page_add_new_anon_rmap;
+									__inc_zone_state <-__inc_zone_page_state;
+								__page_set_anon_rmap <-page_add_new_anon_rmap;
+								page_evictable <-page_add_new_anon_rmap;
+								lru_cache_add_lru <-page_add_new_anon_rmap;
+									__lru_cache_add <-lru_cache_add_lru;
+							native_set_pte_at <-handle_pte_fault;
+					up_read <-do_page_fault;	// line:22226
+				put_page <-generic_file_aio_read;	// line:22227
+				touch_atime <-generic_file_aio_read;	// line:22228
+					current_fs_time <-touch_atime;
+						...;
+					mnt_want_write <-touch_atime;
+						__mnt_is_readonly <-mnt_want_write;
+					__mark_inode_dirty <-touch_atime;
+						ext4_dirty_inode <-__mark_inode_dirty;
+							ext4_journal_start_sb <-ext4_dirty_inode;
+								jbd2_journal_start <-ext4_journal_start_sb;
+									jbd2__journal_start <-jbd2_journal_start;
+										kmem_cache_alloc <-jbd2__journal_start;
+											...;
+										start_this_handle.isra.9 <-jbd2__journal_start;
+											kmem_cache_alloc_trace <-start_this_handle.isra.9;	// line:22242
+											...;
+											__jbd2_log_space_left <-start_this_handle.isra.9;	// line:22257
+											kfree <-start_this_handle.isra.9;	// line:22258
+							ext4_mark_inode_dirty <-ext4_dirty_inode;	// line:22259
+								_cond_resched <-ext4_mark_inode_dirty;
+								ext4_reserve_inode_write <-ext4_mark_inode_dirty;
+									ext4_get_inode_loc <-ext4_reserve_inode_write;
+										__ext4_get_inode_loc <-ext4_get_inode_loc;
+											ext4_get_group_desc <-__ext4_get_inode_loc;
+											ext4_inode_table <-__ext4_get_inode_loc;
+											__getblk <-__ext4_get_inode_loc;
+												__find_get_block <-__getblk;
+													__find_get_block_slow.isra.17 <-__find_get_block;
+														find_get_page <-__find_get_block_slow.isra.17;	// line:22269
+														...;
+				blk_finish_plug <-generic_file_aio_read;	// line:22562
+					blk_flush_plug_list <-blk_finish_plug;
+		__fsnotify_parent <-vfs_read;
+		fsnotify <-vfs_read;	// line:22565
+	sys_write <-system_call_fastpath;	// line:22566
+		fget_light <-sys_write;
+		vfs_write <-sys_write;	// line:22568
+			rw_verify_area <-vfs_write;
+				security_file_permission <-rw_verify_area;
+
+};
+//} annotated
+
+
+
+
+

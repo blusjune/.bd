@@ -1,0 +1,6 @@
+### Hadoop cluster node ###
+
+ip.v4.addr..1 hd-master-01
+ip.v4.addr.2 hd-slave-0001
+ip.v4.addr.3 hd-slave-0002
+

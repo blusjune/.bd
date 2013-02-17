@@ -1,0 +1,35 @@
+
+
+## your md (raid) configuration
+
+if [ "X${HOSTNAME}" = "X" ]; then
+	HOSTNAME="$(hostname)";
+	if [ "X${HOSTNAME}" = "X" ]; then
+		read -p "type hostname: " HOSTNAME;
+	fi
+fi
+
+#_md_dev_id="md0";	# Linux kernel 2.6.x
+#_md_dev_id="md_d0";	# Linux kernel 2.6.x
+_md_dev_id="md/${HOSTNAME}:0";	# Linux kernel 3.x
+_md_dev="/dev/${_md_dev_id}";
+_raid_level="raid0";
+_rdev_list="/dev/loop0 /dev/loop1 /dev/loop2 /dev/loop3";
+#_nrdev="3"; # number of raid devices
+_nrdev="$(echo $_rdev_list | wc -w)"; # number of raid devices
+_fstype="ext3";
+_mount_pt="/mnt/${_md_dev_id}_${_raid_level}";
+_mdadm_conf="mdadm.conf";
+
+
+if [ ! -f $_mdadm_conf ]; then
+	cat > $_mdadm_conf << EOF_1
+#DEVICE /dev/loop[0123]
+DEVICE partitions
+#ARRAY /dev/md0 devices=/dev/loop0,/dev/loop1,/dev/loop2,/dev/loop3
+ARRAY $_md_dev devices="$(echo $_rdev_list | sed -e 's/ /,/g')"
+EOF_1
+	echo "$_mdadm_conf was just created, you may think it is helpful";
+fi
+
+

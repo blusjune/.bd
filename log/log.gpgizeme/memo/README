@@ -1,0 +1,36 @@
+20121108_222802
+Linux woodstock 3.2.0-23-generic x86_64
+--
+
+$ pwd
+/home/blusjune/bd/log/_/memo
+
+$ ls -alF
+total 116
+drwxr-xr-x 2 blusjune blusjune  4096 Nov  8 22:27 ./
+drwxrwxr-x 4 blusjune blusjune  4096 Oct  7 00:48 ../
+lrwxrwxrwx 1 blusjune blusjune    33 Oct  2 22:13 .bdx.0100.y.dir_info_update.sh -> ../.bdx.0100.y.dir_info_update.sh
+-rw-rw-r-- 1 blusjune blusjune   106 Nov  8 22:28 README
+-rw-r--r-- 1 blusjune blusjune   658 Sep 30  2011 bM_20110930#hadoop_start.txt
+-rw-r--r-- 1 blusjune blusjune    15 Feb 16  2012 bM_20120216#bpk_note.txt
+-rw-r--r-- 1 blusjune blusjune  2987 Feb 16  2012 bM_20120216#directory_hierarchy.txt
+-rw-rw-r-- 1 blusjune blusjune   105 Mar 29  2012 bM_20120329#id_pw.txt
+-rw-rw-r-- 1 blusjune blusjune  1012 Mar 30  2012 bM_20120330#nandsim.txt
+-rw-rw-r-- 1 blusjune blusjune   619 Jul 10 22:14 bM_20120331#linux_kernel_compile.txt
+-rw-rw-r-- 1 blusjune blusjune  3088 Oct  7 00:57 bM_20120403#github.txt
+-rw-rw-r-- 1 blusjune blusjune  1187 Jul  2 18:55 bM_20120702#uflip_src_edit.txt
+-rw-rw-r-- 1 blusjune blusjune   299 Jul 10 18:18 bM_20120710#fstab.txt
+-rw-rw-r-- 1 blusjune blusjune    39 Aug 20 23:47 bM_20120820#linux_ubuntu_tip.txt
+-rw-rw-r-- 1 blusjune blusjune   150 Aug 21 00:06 bM_20120821#freenote.txt
+-rw-rw-r-- 1 blusjune blusjune   150 Aug 24 00:59 bM_20120824#guitar.txt
+-rw-rw-r-- 1 blusjune blusjune   575 Oct 31 01:49 bM_20121001#url.txt
+-rw-rw-r-- 1 blusjune blusjune  1730 Oct  8 01:47 bM_20121008#envsetup_for_easy_blktrace.txt
+-rw-rw-r-- 1 blusjune blusjune   353 Oct 31 01:47 bM_20121031#iptables.txt
+-rw-rw-r-- 1 blusjune blusjune  2629 Nov  7 01:34 bM_20121031#mysql.txt
+-rw-rw-r-- 1 blusjune blusjune   121 Oct 31 01:53 bM_20121031#nfs_exports.txt
+-rw-rw-r-- 1 blusjune blusjune   128 Oct 31 01:54 bM_20121031#samba_smb.txt
+-rw-rw-r-- 1 blusjune blusjune 13658 Nov  8 22:15 bM_20121108#debugfs.txt
+-rw-rw-r-- 1 blusjune blusjune  6566 Nov  8 22:27 bM_20121108#ftrace.txt
+-rw-rw-r-- 1 blusjune blusjune   259 Nov  8 22:04 bM_20121108#lynx.txt
+-rw-rw-r-- 1 blusjune blusjune   322 Nov  8 22:06 bM_20121108#ramdisk.txt
+

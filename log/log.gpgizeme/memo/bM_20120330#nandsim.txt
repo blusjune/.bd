@@ -1,0 +1,63 @@
+nandsim.c
+
+drivers/mtd/nand/nandsim.c:
+
+
+ns_init_module()
+{
+	init_nandsim();
+
+	mtd_device_register(); // register NAND partitions
+
+}
+module_init(ns_init_module);
+
+ns_cleanup_module()
+{
+	free_nandsim();
+}
+module_exit(ns_cleanup_module);
+
+get_state_name()
+
+update_wear()
+
+init_nandsim()
+
+
+
+
+drivers/mtd/nand/nand_ids.c:
+
+struct nand_flash_dev nand_flash_ids[] = {
+	...
+
+
+
+	...
+}
+
+
+
+550 /*
+551  * NAND Flash Manufacturer ID Codes
+552  */
+553 #define NAND_MFR_TOSHIBA        0x98
+554 #define NAND_MFR_SAMSUNG        0xec
+555 #define NAND_MFR_FUJITSU        0x04
+556 #define NAND_MFR_NATIONAL       0x8f
+557 #define NAND_MFR_RENESAS        0x07
+558 #define NAND_MFR_STMICRO        0x20
+559 #define NAND_MFR_HYNIX          0xad
+560 #define NAND_MFR_MICRON         0x2c
+561 #define NAND_MFR_AMD            0x01
+
+
+
+
+
+modprobe nandsim
+
+modprobe nandsim first_id_byte=0xec second_id_byte=0xd3 third_id_byte=0x51 fourth_id_byte=0x95 access_delay=1 programm_delay=1 erase_delay=1 output_cycle=1 input_cycle=1 bus_width=16
+
+

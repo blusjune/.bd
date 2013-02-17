@@ -1,0 +1,11 @@
+## iptables
+##tstamp: 20121027_161731
+
+iptables -S ## show current iptables
+
+iptables -F ## flush all the rules
+
+iptables -t nat -A POSTROUTING -s 10.0.0.0/8 -o eth0 -j MASQUERADE ## \
+## enable this node to work as an NAT gateway \
+## which forward 10.0.0.0/8 inner network traffic \
+## to the outer network/Internet (via eth0, facing outside network)

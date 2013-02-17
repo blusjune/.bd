@@ -1,0 +1,45 @@
+# to configure, execute getmail
+$ vi .getmail/getmail.gmail
+$ cat .getmail/getmail.gmail
+[retriever]
+type= SimplePOP3SSLRetriever
+server=pop.gmail.com
+username=brian.m.roses@gmail.com
+password=rollingstones
+
+[destination]
+type=Mboxrd
+path=~/.getmail/mbox/gmail.mbox
+
+[options]
+verbose=2
+message_log=~/.getmail/log/gmail.log
+
+$ mkdir ~/.getmail/log
+$ touch ~/.getmail/log/gmail.log
+$ mkdir ~/.getmail/mbox
+$ touch ~/.getmail/mbox/gmail.mbox
+$ getmail -r getmail.gmail
+$ cd .getmail; ln -s getmail.gmail getmailrc
+$ getmail -v
+
+# to access the mail downloaded by getmail
+$ mail -f ~/.getmail/mbox/gmail.mbox
+
+# to access the mail downloaded by getmail, using nmh (MH)
+$ inc -file ~/.getmail/mbox/gmail.mbox
+$ scan
+$ show 1
+
+# to enjoy the solarized theme in Vim in normal xterm-like terminal
+# the following files or directories should exist and modified properly
+~/.vimrc
+~/.vim/autoload/pathogen.vim            # please refer to https://github.com/tpope/vim-pathogen
+~/.vim/bundle/vim-colors-solarized      # please refer to https://github.com/altercation/vim-colors-solarized
+~/.vim/bundle/vim-fugitive              # please refer to https://github.com/tpope/vim-fugitive
+~/.bashrc                               # please set and export TERM=xterm-256color
+
+# setup solarized vim theme easily
+cd ~/.vim; _BDX;
+
+

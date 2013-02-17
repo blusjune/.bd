@@ -1,0 +1,149 @@
+## Linux ftrace quick guide
+##
+##tstamp: 20121108_220715
+
+
+
+
+## @ preparing ftrace
+root@localhost $ mkdir /debug
+root@localhost $ mount -t debugfs nodev /debug
+
+
+
+
+## @ Linux kernel source/header file download
+root@localhost $ aptitude -y install linux-source linux-kernel-headers kernelshark kerneltop sysstat
+
+
+
+
+[] Kernel Tracing
+
+
+
+
+http://elinux.org/Kernel_Trace_Systems
+Kernel Trace Systems -- Overview
+
+
+
+
+http://elinux.org/Kernel_Function_Trace
+Kernel Function Trace
+    Entry      Duration   Local       Pid    Trace
+        4      20428        209      33 do_fork
+        7          6          6      33 |  alloc_pidmap
+       18       2643         84      33 |  copy_process
+       21        114         19      33 |  |  dup_task_struct
+       24          8          6      33 |  |  |  prepare_to_copy
+       27          2          2      33 |  |  |  |  sub_preempt_count
+       35         22          9      33 |  |  |  kmem_cache_alloc
+       38          2          2      33 |  |  |  |  __might_sleep
+       43         11          9      33 |  |  |  |  cache_alloc_refill
+       49          2          2      33 |  |  |  |  |  sub_preempt_count
+       60         65          6      33 |  |  |  __get_free_pages
+       63         59         14      33 |  |  |  |  __alloc_pages
+       65          3          3      33 |  |  |  |  |  __might_sleep
+       71          3          3      33 |  |  |  |  |  zone_watermark_ok
+       77         37         17      33 |  |  |  |  |  buffered_rmqueue
+       80          4          4      33 |  |  |  |  |  |  __rmqueue
+       86          3          3      33 |  |  |  |  |  |  sub_preempt_count
+       92          3          3      33 |  |  |  |  |  |  bad_range
+       98          2          2      33 |  |  |  |  |  |  __mod_page_state
+      103          8          5      33 |  |  |  |  |  |  prep_new_page
+      106          3          3      33 |  |  |  |  |  |  |  set_page_refs
+      117          2          2      33 |  |  |  |  |  zone_statistics
+      141         25          4      33 |  |  do_posix_clock_monotonic_gettime
+      143         21          6      33 |  |  |  do_posix_clock_monotonic_get
+      146         15          6      33 |  |  |  |  do_posix_clock_monotonic_gettime_parts
+      149          9          6      33 |  |  |  |  |  getnstimeofday
+      152          3          3      33 |  |  |  |  |  |  do_gettimeofday
+      169          3          3      33 |  |  copy_semundo
+      174         41         17      33 |  |  copy_files
+      177         19          9      33 |  |  |  kmem_cache_alloc
+      180          2          2      33 |  |  |  |  __might_sleep
+      185          8          5      33 |  |  |  |  cache_alloc_refill
+      188          3          3      33 |  |  |  |  |  sub_preempt_count
+      200          3          3      33 |  |  |  count_open_files
+      209          2          2      33 |  |  |  sub_preempt_count
+      218         19          8      33 |  |  kmem_cache_alloc
+      220          2          2      33 |  |  |  __might_sleep
+      225          9          6      33 |  |  |  cache_alloc_refill
+      229          3          3      33 |  |  |  |  sub_preempt_count
+      241          2          2      33 |  |  sub_preempt_count
+      246        216          9      33 |  |  kmem_cache_alloc
+      249        199        199      33 |  |  |  __might_sleep
+            !!!! start 
+      253        151         63      33 timer_interrupt
+      256          8          6      -1 !  profile_tick
+      259          2          2      -1 !  !  profile_hit
+      267         61         15      -1 !  update_process_times
+      270          8          5      -1 !  !  account_system_time
+      273          3          3      -1 !  !  !  update_mem_hiwater
+      281          8          5      -1 !  !  run_local_timers
+      284          3          3      -1 !  !  !  raise_softirq
+      293         27         16      -1 !  !  scheduler_tick
+
+
+
+
+https://events.linuxfoundation.org/slides/lfcs2010_hiramatsu.pdf
+Dynamic Event Tracing in Linux Kernel // Hitachi [VERYGOOD]
+
+- There are many tracing facilities in kernel today
+- Ftrace
+- Tracepoints
+- perf_events
+- These provide fixed tracing points or hardware events
+- Dynamic event tracing has been introduced in 2.6.33
+- A few people knows how to use it.
+- This slide will explain it
+
+Fixed Events
+- Tracepoints - Static event tracing
+- Mcount - Function entry(exit) tracing
+
+Hardware Events
+- Performance counters - HW event tracing
+- HW Breakpoint - HW memory access tracing
+
+Dynamic Events
+- Kprobes - Dynamic event tracing in kernel
+- What's dynamic? - trace events in the function body
+- Uprobes - Dynamic event tracing in user space
+- Under developmen
+
+
+
+
+
+
+
+
+
+## @ References
+http://blog.markloiseau.com/2012/04/hello-world-loadable-kernel-module-tutorial/ ## kernel module programming
+http://blog.naver.com/PostView.nhn?blogId=lastnite&logNo=150034392643
+http://elinux.org/Ftrace
+http://events.linuxfoundation.org/slides/2010/linuxcon_japan/linuxcon_jp2010_rostedt.pdf ## Ftrace - Linux Kernel Tracing
+http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary ## Kernel.org
+http://lkml.indiana.edu/hypermail/linux/kernel/1102.1/00389.html ## [PATCH 10/10] tracing: Deprecate tracing_enabled for tracing_on
+http://lwn.net/Articles/322666/ ## A look at ftrace // By Jake Edge, March 13, 2009
+http://lwn.net/Articles/365835/ ## Debugging the kernel using Ftrace - part 1
+http://lwn.net/Articles/366796/ ## Debugging the kernel using Ftrace - part 2
+http://lwn.net/Articles/370423/ ## Secrets of the Ftrace function tracer
+http://lwn.net/images/conf/rtlws11/papers/proc/p02.pdf ## Finding Origins of Latencies Using Ftrace
+http://omappedia.org/wiki/Installing_and_Using_Ftrace ## Installing and Using Ftrace
+http://omappedia.org/wiki/Installing_and_Using_Ftrace#Using_Ftrace
+http://www.kernel.org/ ## kernel source download
+http://www.kernel.org/pub/linux/kernel/v3.0/linux-3.4.9.tar.bz2 ## 
+https://events.linuxfoundation.org/slides/2010/linuxcon_japan/linuxcon_jp2010_rostedt.pdf ## Linux Ftrace -- Linux Kernel Tracing // Steven Rostedt
+https://github.com/torvalds/linux ## Linus Torvalds - Linux Kernel
+https://www.osadl.org/fileadmin/dam/presentations/RTLWS11/rostedt-ftrace.pdf ## Ftrace - Latency Tracing
+http://www.eecg.toronto.edu/~livio/papers/europar07.pdf ## Experiences Understanding Performance in a Commercial Scale-Out Environment [EuroPar 07]
+http://lttng.org/files/papers/bligh-Reprint.pdf ## Linux Kernel Debugging on Google-sized Clusters [OLS 2007]
+
+
+
+

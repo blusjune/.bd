@@ -1,0 +1,271 @@
+
+
+##-----------------------------------------------------------------------------
+##_ver=20130129_000552
+## how to allow for remote user to connect to my X server in Ubuntu?
+
+me@matrix$ vi /etc/lightdm/lightdm.conf # to add the line 'xserver-allow-tcp=true'
+
+## problem
+I just installed ubuntu 11.10. I want to run an x-app from another system.
+I updated ./xinit/xserverrc and removed the -nolisten option. I rebooted.
+I can see that X is started with the nolisten option.
+I don't have /etc/gdm subdir.
+
+## solution
+You need to edit /etc/lightdm/lightdm.conf and add xserver-allow-tcp=true to it. Here's what mine looks like:
+
+[SeatDefaults]
+greeter-session=unity-greeter
+user-session=ubuntu
+xserver-allow-tcp=true
+
+## After that, run this:
+me@matrix$ sudo restart lightdm
+
+## If you have problems restarting,
+## just 'ps ax | grep lightdm' and kill all the associated processes, then:
+me@matrix$ sudo start lightdm
+
+
+
+
+##-----------------------------------------------------------------------------
+
+apitutde -y install util-linux-locale
+
+
+
+
+##tstamp: 20121208_142950
+##-----------------------------------------------------------------------------
+foo@bar$ apparmor
+apparmor module is loaded.
+22 profiles are loaded.
+22 profiles are in enforce mode.
+   /sbin/dhclient
+   /usr/bin/evince
+   /usr/bin/evince-previewer
+   /usr/bin/evince-previewer//launchpad_integration
+   /usr/bin/evince-previewer//sanitized_helper
+   /usr/bin/evince-thumbnailer
+   /usr/bin/evince-thumbnailer//sanitized_helper
+   /usr/bin/evince//launchpad_integration
+   /usr/bin/evince//sanitized_helper
+   /usr/lib/NetworkManager/nm-dhcp-client.action
+   /usr/lib/connman/scripts/dhclient-script
+   /usr/lib/cups/backend/cups-pdf
+   /usr/lib/libvirt/virt-aa-helper
+   /usr/lib/lightdm/lightdm/lightdm-guest-session-wrapper
+   /usr/lib/telepathy/mission-control-5
+   /usr/lib/telepathy/telepathy-*
+   /usr/sbin/cupsd
+   /usr/sbin/libvirtd
+   /usr/sbin/mysqld
+   /usr/sbin/mysqld-akonadi
+   /usr/sbin/mysqld-akonadi///usr/sbin/mysqld
+   /usr/sbin/tcpdump
+0 profiles are in complain mode.
+5 processes have profiles defined.
+5 processes are in enforce mode.
+   /usr/lib/telepathy/mission-control-5 (19240) 
+   /usr/sbin/cupsd (9892) 
+   /usr/sbin/cupsd (23467) 
+   /usr/sbin/libvirtd (1448) 
+   /usr/sbin/mysqld (1352) 
+0 processes are in complain mode.
+0 processes are unconfined but have a profile defined.
+
+
+
+
+##-----------------------------------------------------------------------------
+foo@bar$ man apparmor | w3m -dump
+APPARMOR(7)                        AppArmor                        APPARMOR(7)
+
+
+
+NAME
+       AppArmor - kernel enhancement to confine programs to a limited set of
+       resources.
+
+DESCRIPTION
+       AppArmor is a kernel enhancement to confine programs to a limited set
+       of resources. AppArmor's unique security model is to bind access
+       control attributes to programs rather than to users.
+
+       AppArmor confinement is provided via profiles loaded into the kernel
+       via apparmor_parser(8), typically through the /etc/init.d/apparmor SysV
+       initscript (on Ubuntu, also see UBUNTU POLICY LOAD, below), which is
+       used like this:
+
+               # /etc/init.d/apparmor start
+               # /etc/init.d/apparmor stop
+               # /etc/init.d/apparmor restart
+
+       AppArmor can operate in two modes: enforcement, and complain or
+       learning:
+
+       o   enforcement -  Profiles loaded in enforcement mode will result in
+           enforcement of the policy defined in the profile as well as
+           reporting policy violation attempts to syslogd.
+
+       o   complain - Profiles loaded in  "complain" mode will not enforce
+           policy.  Instead, it will report policy violation attempts. This
+           mode is convenient for developing profiles. To manage complain mode
+           for individual profiles the utilities aa-complain(8) and
+           aa-enforce(8) can be used.  These utilities take a program name as
+           an argument.
+
+       Profiles are traditionally stored in files in /etc/apparmor.d/ under
+       filenames with the convention of replacing the / in pathnames with .
+       (except for the root /) so profiles are easier to manage (e.g. the
+       /usr/sbin/nscd profile would be named usr.sbin.nscd).
+
+       Profiles are applied to a process at exec(3) time (as seen through the
+       execve(2) system call); an already running process cannot be confined.
+       However, once a profile is loaded for a program, that program will be
+       confined on the next exec(3).
+
+       AppArmor supports the Linux kernel's securityfs filesystem, and makes
+       available the list of the profiles currently loaded; to mount the
+       filesystem:
+
+               # mount -tsecurityfs securityfs /sys/kernel/security
+               $ cat /sys/kernel/security/apparmor/profiles
+               /usr/bin/mutt
+               /usr/bin/gpg
+                  ...
+
+       Normally, the initscript will mount securityfs if it has not already
+       been done.
+
+       AppArmor also restricts what privileged operations a confined process
+       may execute, even if the process is running as root. A confined process
+       cannot call the following system calls:
+
+               create_module(2) delete_module(2) init_module(2) ioperm(2)
+               iopl(2) mount(2) umount(2) ptrace(2) reboot(2) setdomainname(2)
+               sethostname(2) swapoff(2) swapon(2) sysctl(2)
+
+       A confined process can not call mknod(2) to create character or block
+       devices.
+
+UBUNTU POLICY LOAD
+       Ubuntu systems use Upstart instead of a traditional SysV init system.
+       Because Upstart is an event-driven init system and understanding that
+       policy must be loaded before execution, Ubuntu loads policy in two
+       stages: first via upstart jobs for binaries that are started in early
+       boot, and then via a SysV initscript that starts in S37 for all
+       remaining policy. When developing policy it is important to know how
+       your application is started and if policy load should be handled
+       specially.
+
+       In general, nothing extra has to be done for applications without an
+       initscript or with an initscript that starts after AppArmor's second
+       stage initscript.
+
+       If the confined application has an Upstart job, adjust the job to call
+       /lib/init/apparmor-profile-load with the filename of the policy file
+       (relative to /etc/apparmor.d/). For example:
+
+               pre-start script
+                       /lib/init/apparmor-profile-load usr.bin.foo
+               end script
+
+       If the confined application does not have an Upstart job but it starts
+       before AppArmor's second stage initscript, then add a symlink from the
+       policy file in /etc/apparmor.d to
+       /etc/apparmor/init/network-interface-security/. For example:
+
+               # cd /etc/apparmor/init/network-interface-security/
+               # ln -s /etc/apparmor.d/usr.bin.foo .
+
+       The network-interface-security Upstart job will load all the symlinked
+       policy files in /etc/apparmor/init/network-interface-security/ before
+       any network interfaces come up. Because network interfaces come up very
+       early in the boot process, this will help ensure that AppArmor policy
+       is loaded before the confined application starts.
+
+ERRORS
+       When a confined process tries to access a file it does not have
+       permission to access, the kernel will report a message through audit,
+       similar to:
+
+               audit(1148420912.879:96): REJECTING x access to /bin/uname
+                 (sh(6646) profile /tmp/sh active /tmp/sh)
+
+               audit(1148420912.879:97): REJECTING r access to /bin/uname
+                 (sh(6646) profile /tmp/sh active /tmp/sh)
+
+               audit(1148420944.837:98): REJECTING access to capability
+                 'dac_override' (sh(6641) profile /tmp/sh active /tmp/sh)
+
+       The permissions requested by the process are immediately after
+       REJECTING. The "name" and process id of the running program are
+       reported, as well as the profile name and any "hat" that may be active.
+       ("Name" is in quotes, because the process name is limited to 15 bytes;
+       it is the same as reported through the Berkeley process accounting.) If
+       no hat is active (see aa_change_hat(2)) then the profile name is
+       printed for "active".
+
+       For confined processes running under a profile that has been loaded in
+       complain mode, enforcement will not take place and the log messages
+       reported to audit will be of the form:
+
+               audit(1146868287.904:237): PERMITTING r access to
+                 /etc/apparmor.d/tunables (du(3811) profile /usr/bin/du active
+                 /usr/bin/du)
+
+               audit(1146868287.904:238): PERMITTING r access to /etc/apparmor.d
+                 (du(3811) profile /usr/bin/du active /usr/bin/du)
+
+       If the userland auditd is not running, the kernel will send audit
+       events to klogd; klogd will send the messages to syslog, which will log
+       the messages with the KERN facility. Thus, REJECTING and PERMITTING
+       messages may go to either /var/log/audit/audit.log or
+       /var/log/messages, depending upon local configuration.
+
+FILES
+       /etc/init.d/apparmor
+       /etc/apparmor/init/network-interface-security/
+       /etc/apparmor.d/
+       /var/lib/apparmor/
+       /var/log/audit/audit.log
+       /var/log/messages
+
+SEE ALSO
+       apparmor_parser(8), aa_change_hat(2), apparmor.d(5), subdomain.conf(5),
+       aa-autodep(1), clean(1), auditd(8), aa-unconfined(8), aa-enforce(1),
+       aa-complain(1), and <http://wiki.apparmor.net>.
+
+
+
+AppArmor 2.7.102                  2012-11-30                       APPARMOR(7)
+
+
+
+
+##-----------------------------------------------------------------------------
+foo@bar$ aptitude search apparmor
+i   apparmor                        - User-space parser utility for AppArmor    
+p   apparmor:i386                   - User-space parser utility for AppArmor    
+p   apparmor-docs                   - Documentation for AppArmor                
+p   apparmor-notify                 - AppArmor notification system              
+p   apparmor-profiles               - Profiles for AppArmor Security policies   
+i   apparmor-utils                  - Utilities for controlling AppArmor        
+p   apparmor-utils:i386             - Utilities for controlling AppArmor        
+i   dh-apparmor                     - AppArmor debhelper routines               
+v   dh-apparmor:i386                -                                           
+p   libapache2-mod-apparmor         - changehat AppArmor library as an Apache mo
+p   libapache2-mod-apparmor:i386    - changehat AppArmor library as an Apache mo
+p   libapparmor-dev                 - AppArmor development libraries and header 
+p   libapparmor-dev:i386            - AppArmor development libraries and header 
+i   libapparmor-perl                - AppArmor library Perl bindings            
+p   libapparmor-perl:i386           - AppArmor library Perl bindings            
+i   libapparmor1                    - changehat AppArmor library                
+p   libapparmor1:i386               - changehat AppArmor library                
+p   libpam-apparmor                 - changehat AppArmor library as a PAM module
+p   libpam-apparmor:i386            - changehat AppArmor library as a PAM module
+p   python-libapparmor              - AppArmor library Python bindings          
+p   python-libapparmor:i386         - AppArmor library Python bindings          

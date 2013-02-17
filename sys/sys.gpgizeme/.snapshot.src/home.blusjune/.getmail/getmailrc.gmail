@@ -1,0 +1,17 @@
+# ~/.getmail/getmailrc
+# ~/.getmail/getmail.gmail
+
+[retriever]
+type=SimplePOP3SSLRetriever
+server=pop.gmail.com
+username=brian.m.roses@gmail.com
+password=
+
+[destination]
+type=Mboxrd
+path=~/.getmail/mbox/gmail.mbox
+
+[options]
+verbose=2
+message_log=~/.getmail/log/gmail.log
+

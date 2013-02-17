@@ -1,0 +1,17 @@
+
+# t32 configuration
+if [ "X$T32SYS" = "X/opt/t32" -a "X$DOIT" = "X" ]; then
+	echo ">>> t32 configuration: already done"
+	:
+else
+	echo ">>> t32 configuration: starting"
+	export T32SYS=/opt/t32
+	export T32TMP=/tmp
+	export T32ID=T32
+	export ACROBAT_PATH=/opt/Adobe/Reader8/
+	export PATH=$PATH:/opt/t32/bin/pc_linux
+	xset +fp /opt/t32/fonts
+	xset fp rehash
+	# chkfontpath -a /opt/t32/fonts
+fi
+

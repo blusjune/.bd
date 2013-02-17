@@ -1,0 +1,11 @@
+##tstamp: 20121108_220512
+
+
+## @ fastest way to create ramdisk in Ubuntu/Linux // 2010-03-24
+(http://www.linuxscrew.com/2010/03/24/fastest-way-to-create-ramdisk-in-ubuntulinux/)
+
+root@localhost $ mkdir /tmp/ramdisk;
+root@localhost $ chmod 777 /tmp/ramdisk
+root@localhost $ mount -t tmpfs -o size=256M tmpfs /tmp/randisk
+
+

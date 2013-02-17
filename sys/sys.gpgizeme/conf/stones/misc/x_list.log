@@ -1,0 +1,29 @@
+total 16
+drwxrwxrwx  3 blusjune blusjune 4096 Oct 26 00:43 ./
+drwxrwxr-x 11 blusjune blusjune 4096 Oct  2 23:34 ../
+lrwxrwxrwx  1 blusjune blusjune    7 Oct 26 00:42 .bdx -> bd/.bdx/
+lrwxrwxrwx  1 blusjune blusjune   35 Oct  6 20:45 .bdx.0100.y.dir_info_update.sh -> .bdx/.bdx.0100.y.dir_info_update.sh*
+-rw-rw-r--  1 blusjune blusjune 2256 Oct  6 20:46 README
+lrwxrwxrwx  1 blusjune blusjune   18 Oct 26 00:42 bd -> /home/blusjune/.bd/
+lrwxrwxrwx  1 blusjune blusjune    6 Aug 15 13:04 bin -> ../bin/
+lrwxrwxrwx  1 blusjune blusjune   27 Aug 16 22:56 bpk_work -> tsk/2012/08/16/t02.bpk_work/
+lrwxrwxrwx  1 blusjune blusjune   22 Oct  2 22:52 bsc -> /home/blusjune/.b/.src/
+lrwxrwxrwx  1 blusjune blusjune   19 Aug 24 01:22 bsrc -> /home/blusjune/bsrc/
+lrwxrwxrwx  1 blusjune blusjune   16 Oct 26 00:43 cmdhist -> bd/log/_/cmdhist/
+lrwxrwxrwx  1 blusjune blusjune    6 Aug 15 13:04 etc -> ../etc/
+lrwxrwxrwx  1 blusjune blusjune   29 Aug 22 23:46 flashcache -> tsk/2012/08/22/t01.flashcache/
+lrwxrwxrwx  1 blusjune blusjune    6 Aug 15 13:04 lib -> ../lib/
+lrwxrwxrwx  1 blusjune blusjune   38 Aug 18 00:51 linux_kernel_source -> tsk/2012/08/18/t01.linux_kernel_source/
+lrwxrwxrwx  1 blusjune blusjune    6 Aug 15 13:04 mnt -> ../mnt/
+lrwxrwxrwx  1 blusjune blusjune   28 Oct  4 00:43 mysql_adm -> tsk/2012/10/04/t01.mysql_adm/
+lrwxrwxrwx  1 blusjune blusjune    6 Aug 15 13:04 prj -> ../prj/
+lrwxrwxrwx  1 blusjune blusjune   24 Aug 24 01:23 swpkg -> tsk/2012/08/16/t01.swpkg/
+lrwxrwxrwx  1 blusjune blusjune   23 Oct  3 01:58 sys -> /home/blusjune/.b/x/sys/
+lrwxrwxrwx  1 blusjune blusjune    4 Aug 15 13:04 t -> ../t/
+drwxr-xr-x  3 root     root     4096 Oct 27 02:12 tmp/
+lrwxrwxrwx  1 blusjune blusjune   27 Oct  2 22:23 tpcc_bmt -> tsk/2012/10/02/t01.tpcc_bmt/
+lrwxrwxrwx  1 blusjune blusjune    6 Aug 15 13:04 tsk -> ../tsk/
+lrwxrwxrwx  1 blusjune blusjune   31 Oct 24 02:10 tt -> /home/blusjune/x/tsk/2012/10/24/
+lrwxrwxrwx  1 blusjune blusjune   44 Oct 24 02:10 ttl -> /home/blusjune/x/tsk/2012/10/24/t01.dm_cache/
+lrwxrwxrwx  1 blusjune blusjune    6 Aug 15 13:04 var -> ../var/
+lrwxrwxrwx  1 blusjune blusjune   35 Aug 16 23:48 velobit_analysis -> tsk/2012/08/16/t03.velobit_analysis/

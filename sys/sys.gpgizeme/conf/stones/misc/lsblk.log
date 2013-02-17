@@ -1,0 +1,11 @@
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0     8G  0 disk 
+`-sda1   8:1    0     8G  0 part /
+sdb      8:16   0   512G  0 disk 
+`-sdb1   8:17   0   512G  0 part /home
+sdc      8:32   0   512G  0 disk 
+`-sdc1   8:33   0   512G  0 part /usr
+sr0     11:0    1  1024M  0 rom  
+sdd      8:48   0   512G  0 disk 
+|-sdd1   8:49   0   3.8G  0 part [SWAP]
+`-sdd2   8:50   0 508.2G  0 part /var

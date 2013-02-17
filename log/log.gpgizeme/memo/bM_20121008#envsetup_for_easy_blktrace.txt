@@ -1,0 +1,74 @@
+##tstamp: 20121008_014547
+##
+## environment setup to demonstrate the block trace properly
+##
+
+
+
+
+## 
+sysctl -w kernel.io_delay_type=3
+sysctl kernel.io_delay_type
+
+echo noop > /sys/block/sdb/queue/scheduler 
+cat /sys/block/sdb/queue/scheduler 
+
+## http://www.kernel.org/doc/Documentation/sysctl/vm.txt
+sysctl -w vm.dirty_writeback_centisecs='1' 
+sysctl vm.dirty_writeback_centisecs
+
+## http://www.kernel.org/doc/Documentation/sysctl/vm.txt
+sysctl -w vm.dirty_expire_centisecs='1'
+sysctl vm.dirty_expire_centisecs
+
+## http://linux-mm.org/Drop_Caches
+sysctl -w vm.drop_caches=2
+sysctl vm.drop_caches
+
+
+
+
+cd tracing
+cat tracing_on 
+echo 1 > tracing_on 
+cat set_ftrace_pid 
+echo 6590 > set_ftrace_pid 
+
+cat tracelog.1 | awk '{ print $4, $5 }'
+cat tracelog.1 | awk '{ print $4, $5 }' > tracelog.1.a
+cat tracelog.2 | awk '{ print $4, $5 }' > tracelog.2.a
+diff tracelog.1.a tracelog.2.a 
+view -d tracelog.1.a tracelog.2.a 
+
+cat current_tracer 
+cat available_tracers 
+echo blk >  current_tracer 
+cat set_ftrace_pid 
+echo > set_ftrace_pid 
+cat set_ftrace_pid 
+
+cat available_filter_functions | grep dm_| more
+cat available_filter_functions | grep '\<dm_' | more
+cat set_ftrace_filter 
+cat enabled_functions 
+
+cat available_filter_functions | grep '\<dm_'
+cat available_filter_functions | grep '\<dm_' > set_ftrace_filter 
+cat set_ftrace_filter 
+cat tracing_on 
+echo 0 > tracing_on 
+echo function > current_tracer 
+echo 1 > tracing_on 
+
+
+
+
+##
+## installing pytimechart to visualize the ftrace (function) result
+##
+aptitude -y install python-chaco python-setuptools python-lzma lzma
+aptitude -y install pytimechart
+easy_install pytimechart
+easy_install etsproxy
+pytimechart  ## to load and visualize the ftrace log
+file $(which easy_install)

@@ -1,0 +1,28 @@
+
+$ cd hadoop_root # e.g., "/usr/local/hadoop"
+
+
+
+
+## to check the real place of JAVA_HOME
+$ java -version
+$ which java
+#> /usr/bin/java
+$ ls -alF /usr/bin/java
+#> /usr/bin/java -> /etc/alternatives/java
+$ ls -alF /etc/alternatives/java
+#> /etc/alternatives/java -> /usr/lib/jvm/java-6-openjdk/jre/bin/java
+# so, I could grasp the "/usr/lib/jvm/java-6-openjdk" can be a good candidate for JAVA_HOME
+$ ls -alF /usr/lib/jvm
+#> default-java -> java-6-openjdk
+# so, I choose to use "/usr/lib/jvm/default-java" as a JAVA_HOME
+
+
+
+
+## modify the file <hadoop_root>/conf/hadoop-env.sh to setup the JAVA_HOME variable with the value "/usr/lib/jvm/default-java"
+
+
+
+
+##

@@ -1,0 +1,166 @@
+==== 20130208_143358 ====
+
+===== 4.4 Git on the Server - Setting Up the Server =====
+
+* [http://git-scm.com/book/en/Git-on-the-Server-Setting-Up-the-Server Setting up the server]
+
+Let's walk through setting up SSH access on the server side. In this example, you'll use the authorized_keys method for authenticating your users. We also assume you're running a standard Linux distribution like Ubuntu. First, you create a 'git' user and a .ssh directory for that user.
+
+ <pre>
+$ sudo adduser git
+$ su git
+$ cd
+$ mkdir .ssh
+</pre>
+Next, you need to add some developer SSH public keys to the authorized_keys file for that user. Let's assume you've received a few keys by e-mail and saved them to temporary files. Again, the public keys look something like this:
+
+ <pre>
+$ cat /tmp/id_rsa.john.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCB007n/ww+ouN4gSLKssMxXnBOvf9LGt4L
+ojG6rs6hPB09j9R/T17/x4lhJA0F3FR1rP6kYBRsWj2aThGw6HXLm9/5zytK6Ztg3RPKK+4k
+Yjh6541NYsnEAZuXz0jTTyAUfrtU3Z5E003C4oxOj6H0rfIF1kKI9MAQLMdpGW1GYEIgS9Ez
+Sdfd8AcCIicTDWbqLAcU4UpkaX8KyGlLwsNuuGztobF8m72ALC/nLF6JLtPofwFBlgc+myiv
+O7TCUSBdLQlgMVOFq1I2uPWQOkOWQAHukEOmfjy2jctxSDBQ220ymjaNsHT4kgtZg2AYYgPq
+dAv8JggJICUvax2T9va5 gsg-keypair
+</pre>
+
+You just append them to your authorized_keys file:
+
+ <pre>
+$ cat /tmp/id_rsa.john.pub >> ~/.ssh/authorized_keys
+$ cat /tmp/id_rsa.josie.pub >> ~/.ssh/authorized_keys
+$ cat /tmp/id_rsa.jessica.pub >> ~/.ssh/authorized_keys
+</pre>
+
+Now, you can set up an empty repository for them by running git init with the --bare option, which initializes the repository without a working directory:
+
+ <pre>
+$ cd /opt/git
+$ mkdir project.git
+$ cd project.git
+$ git --bare init
+</pre>
+
+Then, John, Josie, or Jessica can push the first version of their project into that repository by adding it as a remote and pushing up a branch. Note that someone must shell onto the machine and create a bare repository every time you want to add a project. Let's use gitserver as the hostname of the server on which you've set up your 'git' user and repository. If you're running it internally, and you set up DNS for gitserver to point to that server, then you can use the commands pretty much as is:
+
+ <pre>
+# on Johns computer
+$ cd myproject
+$ git init
+$ git add .
+$ git commit -m 'initial commit'
+$ git remote add origin git@gitserver:/opt/git/project.git
+$ git push origin master
+</pre>
+At this point, the others can clone it down and push changes back up just as easily:
+
+ <pre>
+$ git clone git@gitserver:/opt/git/project.git
+$ cd project
+$ vim README
+$ git commit -am 'fix for the README file'
+$ git push origin master
+</pre>
+With this method, you can quickly get a read/write Git server up and running for a handful of developers.
+
+
+===== Install GitWeb =====
+
+* [http://blog.countableset.ch/2012/04/29/ubuntu-12-dot-04-installing-gitolite-and-gitweb/ Installing gitolite and gitweb on Ubuntu 12.04]
+
+Note this is only tested on Ubuntu 12.04 Server with apache2, I'm sure it would work on the desktop version also.
+
+====== Installing Git ======
+ <pre>
+sudo apt-get install git-core
+</pre>
+Optional, setup git global settings:
+
+ <pre>
+git config --global user.name "Your Name"
+git config --global user.email your@email.com
+</pre>
+
+====== SSH Key ======
+Generate ssh public/private key on the machine you would like to access git repo from and copy it to the server into the /tmp/ directory, for reference here is the command:
+
+ <pre>
+ssh-keygen -t rsa -C "name@computer"
+</pre>
+
+====== Installing Gitolite ======
+
+ <pre>
+sudo apt-get install gitolite
+</pre>
+
+Create a user to access gitolite with, in this case I chose git since I don't like to type:
+
+ <pre>
+sudo adduser \
+    --system \
+    --shell /bin/bash \
+    --gecos 'git version control' \
+    --group \
+    --disabled-password \
+    --home /home/git \
+    git
+</pre>
+
+Now login to the newly created user, and set the path, and move to its home directory:
+
+ <pre>
+sudo su git
+echo "PATH=$HOME/bin:$PATH" > ~/.bashrc
+cd
+</pre>
+
+Run the gitolite setup command with the public key you copied to the tmp directory to initialized the location for gitolite use. Then change the $REPO_UMASK to 0027 when it opens the .gitolite.rc for editing during the installation process. If it didn't open the file for any reason just open it up in vim (Note this is only if you'd like to use gitweb):
+
+ <pre>
+gl-setup /tmp/rachel.pub
+# change $REPO_UMASK = 0077; to $REPO_UMASK = 0027; # gets you 'rwxr-x---'
+</pre>
+
+Afterward, it has made the gitolite-admin.git, testing.git repo and all other necessary files. Check to see that everything works by cloning the repo on the machine with the public/private key.
+
+ <pre>
+git clone git@<server>:gitolite-admin.git
+</pre>
+
+Here is a resource about the syntax for the config file and adding users.
+
+====== Install Gitweb ======
+This is the tricky bit... Install gitweb and the highlight app. Gitweb is located at '/usr/share/gitweb'
+
+ <pre>
+sudo apt-get install highlight gitweb
+</pre>
+
+Edit the gitweb config to the locations of the project list and repos, and add the highlighting bit at the end of the file:
+
+ <pre>
+sudo vim /etc/gitweb.conf
+# change $projectroot to /home/git/repositories
+# change $projects_list to /home/git/projects.list
+# Add Highlighting at the end
+$feature{'highlight'}{'default'} = [1];
+</pre>
+
+Change gitolite instance to allow access for gitweb. First append www-data to git group so gitweb can access the repos, then change the permissions for git repos and the projects list, finally restart apache:
+
+ <pre>
+sudo usermod -a -G git www-data
+sudo chmod g+r /home/git/projects.list
+sudo chmod -R g+rx /home/git/repositories
+sudo service apache2 restart
+</pre>
+
+Finally you need to tell gitolite which repo you want to show up in gitweb. To do this edit the gitolite.conf file from the gitolite-admin.git repo:
+
+ <pre>
+repo testing
+  RW+ = @all
+  R = gitweb
+</pre>
+

@@ -1,0 +1,25 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+	address 10.123.1.1
+	netmask 255.255.255.0
+	gateway 10.123.1.2
+
+
+# The secondary network interface
+auto eth1
+iface eth1 inet dhcp
+#	address 75.2.93.160
+#	netmask 255.255.255.0
+#	broadcast 75.2.93.255
+#	gateway 75.2.93.1
+#
+

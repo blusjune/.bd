@@ -1,0 +1,207 @@
+##bM_20121213#lkn_ctrflow_read.txt
+##_ver=20121213_193037
+
+
+
+
+//{ kernel function flow (ftrace)
+
+
+
+
+open();
+{
+	open_exec <-do_execve_common.isra.26;	// line:2333 // te-8829  [003] 182836.401930: open_exec <-do_execve_common.isra.26
+
+	...;
+
+	vfs_open <-nameidata_to_filp;
+	__dentry_open <-vfs_open;
+	path_get <-__dentry_open;
+	mntget <-path_get;
+	// _raw_spin_lock <-path_get;
+	file_sb_list_add <-__dentry_open;
+	// files_lglock_local_lock/unlock <-file_sb_list_add
+	// security_dentry_open <-__dentry_open
+	// apparmor_dentry_open <-security_dentry_open
+	// ...
+	ext4_file_open <-__dentry_open; // line:2390 // te-8829  [003] 182836.401943: ext4_file_open <-__dentry_open
+	dquot_file_open <-ext4_file_open;
+	generic_file_open <-dquot_file_open;
+	file_ra_state_init <-__dentry_open;
+	path_put <-do_last;
+	dput <-path_put;
+	mntput <-path_put;
+	mntput_no_expire <-mntput;
+	release_open_intent <-path_openat;
+	// __fsnotify_parent <-open_exec;
+	// fsnotify <-open_exec; // line:2403 // te-8829  [003] 182836.401946: fsnotify <-open_exec
+	// ...
+	// stop_one_cpu <-sched_exec // line:2410 // te-8829  [003] 182836.401950: stop_one_cpu <-sched_exec
+	// cpu_stop_init_done <-stop_one_cpu
+	// ...
+	// cpu_stop_queue_work <-stop_one_cpu
+	// ...
+	// finish_task_switch <-__schedule // line:2454 // te-8829  [001] 182836.401975: finish_task_switch <-__schedule // working CPU is changed at this moment
+	// ...
+	// count.isra.21.constprop.27 <-do_execve_common.isra.26 // line:2503, time:182836.401994
+	// iteration { // line:2504 ~ line:2506
+		get_user_arg_ptr.isra.20 // line:2504 // te-8829  [001] 182836.401994: get_user_arg_ptr.isra.20 <-count.isra.21.constprop.27
+		_cond_resched // line:2505 // te-8829  [001] 182836.401994: _cond_resched <-get_user_arg_ptr.isra.20
+		_cond_resched // line:2506 // te-8829  [001] 182836.401995: _cond_resched <-count.isra.21.constprop.27
+	// }
+	// ...
+	//
+	prepare_binprm <-do_execve_common.isra.26 // line:2635 // te-8829  [001] 182836.402021: prepare_binprm <-do_execve_common.isra.26
+	// ...
+
+
+
+} // open()
+
+
+
+
+read();
+{
+
+	// ####################################################################################################
+	// 					this is what I WANT!
+	// ####################################################################################################
+	fs/exec.c:		kernel_read <-prepare_binprm // line:2679 // te-8829  [001] 182836.402039: kernel_read <-prepare_binprm
+	fs/read_write.c:	vfs_read <-kernel_read // line:2680 // te-8829  [001] 182836.402040: vfs_read <-kernel_read
+	fs/read_write.c:	rw_verify_area <-vfs_read // line:2681 // te-8829  [001] 182836.402040: rw_verify_area <-vfs_read
+	security/security.c:	security_file_permission <-rw_verify_area // line: 2682 // te-8829  [001] 182836.402040: security_file_permission <-rw_verify_area
+				apparmor_file_permission <-security_file_permission // line:2683 // te-8829  [001] 182836.402040: apparmor_file_permission <-security_file_permission
+				common_file_perm <-apparmor_file_permission // line:2684 // te-8829  [001] 182836.402041: common_file_perm <-apparmor_file_permission
+	// fs/notify/fsnotify.c: __fsnotify_parent <-security_file_permission
+	// fs/notify/fsnotify.c: fsnotify <-security_file_permission
+	fs/read_write.c:	do_sync_read <-vfs_read; // line:2687 // te-8829  [001] 182836.402041: do_sync_read <-vfs_read
+	mm/filemap.c:		generic_file_aio_read <-do_sync_read;
+	mm/filemap.c:		generic_segment_checks <-generic_file_aio_read;
+	mm/filemap.c:		do_generic_file_read.constprop.33 <-generic_file_aio_read;
+	// _cond_resched <-do_generic_file_read.constprop.33
+	mm/filemap.c:		find_get_page <-do_generic_file_read.constprop.33;
+	mm/swap.c:		mark_page_accessed <-do_generic_file_read.constprop.33;
+	file_read_actor <-do_generic_file_read.constprop.33;
+	put_page <-do_generic_file_read.constprop.33;
+	touch_atime <-do_generic_file_read.constprop.33;
+	current_fs_time <-touch_atime;
+	current_kernel_time <-current_fs_time;
+	__fsnotify_parent <-vfs_read;
+	fsnotify <-vfs_read; // line:2700 // te-8829  [001] 182836.402045: fsnotify <-vfs_read
+	copy_strings_kernel <-do_execve_common.isra.26; // line:2701 // te-8829  [001] 182836.402046: copy_strings_kernel <-do_execve_common.isra.26
+	copy_strings.isra.23 <-copy_strings_kernel; // line:2702 // te-8829  [001] 182836.402046: copy_strings.isra.23 <-copy_strings_kernel
+	// ...;
+	kernel_read <-load_elf_binary; // line:3164 // te-8829  [001] 182836.402160: kernel_read <-load_elf_binary
+	vfs_read <-kernel_read; // line:3165 // te-8829  [001] 182836.402160: vfs_read <-kernel_read
+	rw_verify_area <-vfs_read; // line:3166 // te-8829  [001] 182836.402160: rw_verify_area <-vfs_read
+
+} // read()
+
+
+
+
+close();
+
+
+
+
+
+//} kernel function flow (ftrace)
+
+
+
+
+//{ :: include/linux/page-flags.h:
+
+// actual definition of PageReadahead() macro
+PAGEFLAG(Readahead, reclaim)            /* Reminder to do async read-ahead */
+
+
+
+
+#define PAGEFLAG(uname, lname) TESTPAGEFLAG(uname, lname)               \
+	SETPAGEFLAG(uname, lname) CLEARPAGEFLAG(uname, lname)
+
+/*
+ * Macros to create function definitions for page flags
+ */
+#define TESTPAGEFLAG(uname, lname)                                      \
+static inline int Page##uname(struct page *page)                        \
+                        { return test_bit(PG_##lname, &page->flags); }
+
+#define SETPAGEFLAG(uname, lname)                                       \
+static inline void SetPage##uname(struct page *page)                    \
+                        { set_bit(PG_##lname, &page->flags); }
+
+#define CLEARPAGEFLAG(uname, lname)                                     \
+static inline void ClearPage##uname(struct page *page)                  \
+                        { clear_bit(PG_##lname, &page->flags); }
+
+
+
+
+static inline int PageUptodate(struct page *page)
+{
+	...
+}
+
+//} :: include/linux/page-flags.h:
+
+
+
+
+:: arch/x86/boot/bitops.h:
+//{
+
+#define test_bit(nr,addr) \
+	(__builtin_constant_p(nr) ? \
+	  constant_test_bit((nr),(addr)) : \
+	  variable_test_bit((nr),(addr)))
+
+//}
+
+
+
+
+//{ :: mm/swap.c:
+
+void mark_page_accessed(struct page *page)
+{
+/*
+ * [Case-1: NANR -> NAYR] inactive,unreferenced		-> inactive,referenced
+ * [Case-2: NAYR -> YANR] inactive,referenced		-> active,unreferenced
+ * [Case-3: YANR -> YAYR] active,unreferenced		-> active,referenced
+ *
+ * Q.1:
+ * 	how did kernel grasp that this page is the very page matched with the requested file?
+ *
+ */
+	if (!PageActive(page) && !PageUnevictable(page) &&
+			PageReferenced(page) && PageLRU(page)) {
+		/* inactive,referenced,evictable,LRU case */
+		/*
+		 * [Case-2: NAYR -> YANR] inactive,referenced	-> active,unreferenced
+		 */
+		activate_page(page);		/* NAYR -> YAYR */
+		ClearPageReferenced(page);	/* YAYR -> YANR */
+	}
+	else if (!PageReferenced(page)) {
+		/* any non-referenced cases */
+		/*
+		 * [Case-1: NANR -> NAYR] inactive,unreferenced	-> inactive,referenced
+		 * [Case-3: YANR -> YAYR] active,unreferenced	-> active,referenced
+		 */
+		SetPageReferenced(page);
+	}
+}
+
+//} :: mm/swap.c:
+
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+linux-source-3.0.0
+
+make mrproper
+make menuconfig
+make all	# vmlinux modules bzImage
+make cscope gtags	# but does not work well in some points
+make tar-pkg
+make rpm-pkg deb-pkg
+make htmldocs pdfdocs mandocs # needs xmlto, passivetex
+make installmandocs
+make modules_install headers_install
+
+
+
+
+
+cat /etc/default/grub | grep "GRUB_TIMEOUT";
+ls -alF /etc/grub.d/;
+cat /etc/grub.d/10_linux | grep "list=`for i in /boot/vmlinux-* ...";
+ls -alF /boot/;
+rm "unwanted kernel files such as /boot/vmlinuz-*sucks /boot/vmlinux-*sucks /vmlinuz-*sucks /vmlinux-*sucks";
+grub-mkconfig > /tmp/grub.cfg;
+cp /tmp/grub.cfg /boot/grub/;

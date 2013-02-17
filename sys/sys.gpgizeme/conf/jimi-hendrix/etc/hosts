@@ -1,0 +1,104 @@
+### Beee's /etc/hosts
+### 2012-02-21 09:43 24h
+
+127.0.0.1	localhost
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+
+
+
+### Beee Research Cluster
+### 
+
+# beee network 'A'
+75.2.93.160     a160 kandinsky		# jimi-hendrix
+75.2.93.158     a158 klimt		# rolling-stones
+75.2.93.142     a142                    ## not assigned yet
+75.2.93.89      a89                     ## not assigned yet
+75.2.93.88      a88 bt beatles klee	##
+75.2.93.87      a87 gogh		## not assigned yet
+
+# beee network 'B'
+10.123.1.1      b01 jh jimi-hendrix hd_master_01    # a160
+10.123.1.2      b02 rs rolling-stones hd_slave_0001  # a158
+10.123.1.3      b03 md miles-davis hd_slave_0002
+10.123.1.4      b04 bg buddy-guy hd_slave_0003
+10.123.1.5      b05 jq jamiroquai hd_slave_0004
+10.123.1.6      b06 jm john-mayer
+10.123.1.7      b07 px prince
+10.123.1.8      b08 wm wes-montgomery
+10.123.1.9      b09 as aerosmith
+10.123.1.10     b10 nv nirvana
+10.123.1.11     b11 lz led-zeppelin
+10.123.1.12     b12 sr stoneroses
+10.123.1.13     b13 gr guns-n-roses
+10.123.1.14     b14 ma massive-attack
+10.123.1.15     b15 mj michael-jackson
+10.123.1.16     b16 kb kenny-burrell
+10.123.1.17     b17 gm george-michael
+10.123.1.21     b21 dd duran-duran 
+10.123.1.99     b99 rh radiohead
+
+# beee network 'C'
+75.2.252.39	c39 rj ronny-jordan glastonbury gb monet
+
+# beee network 'D'
+75.2.99.89	d89 be bill-evans
+75.2.99.90	d90 tt toots-thielemans
+
+# beee network 'E'
+10.0.1.1	e01 iu01
+10.0.1.2	e02 iu02
+10.0.1.3	e03 iu03
+10.0.1.4	e04 iu04
+10.0.1.5	e05 iu05
+10.0.1.6	e06 iu06
+10.0.1.7	e07 iu07
+10.0.1.8	e08 iu08
+10.0.1.9	e09 iu09
+10.0.1.10	e10 iu10
+10.0.1.11	e11 iu11
+10.0.1.12	e12 iu12
+10.0.1.13	e13 iu13
+10.0.1.14	e14 iu14
+10.0.1.15	e15 iu15
+10.0.1.16	e16 iu16
+
+# SAIT research infra network
+202.20.183.10   secm
+202.20.185.10   secs
+202.20.185.201  eod1
+202.20.185.202  eod2
+202.20.184.11   saiteod1
+202.20.184.12   saiteod2
+202.20.183.100  sait1 superftp
+202.20.185.100  sec1
+202.20.183.12   saitlic1
+202.20.183.14   saitlic2
+202.20.185.12   seclic1
+202.20.185.203  eodssr1
+202.20.185.204  eodssr2
+202.20.185.205  eodssr3
+202.20.185.206  eodssr4
+202.20.185.207  eodssr5
+202.20.185.208  eodssr6
+202.20.185.209  eodssr7
+202.20.185.210  eodssr8
+
+
+# special purpose hosts
+75.2.93.1       gw
+202.20.142.13   ns1
+75.1.142.13     ns2
+10.41.128.98    ns3
+
+
+# temporary hosts
+75.2.253.70	nutanix ntnx
+

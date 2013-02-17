@@ -1,0 +1,19 @@
+
+
+## it works!
+http://ubuntuforums.org/archive/index.php/t-445926.html
+
+
+You can use the command dpkg -S to determine which package provides a file:
+
+$ dpkg -S /usr/bin/top
+procps: /usr/bin/top
+$
+
+This says that top is provded by the package procps. To get the source code, you can get the package source with the command
+
+$ apt-get source procps
+
+This will fetch several files from the Ubuntu repository, with extensions .dsc, .tar.gz and .diff.gz. In dapper, the .dsc file is procps_3.2.6-2ubuntu4.dsc, and then extract the source code into a subdirectory. In this case, the subdirectory is called procps-3.2.6.
+
+Or, now that you know that the package is procps, you can google a bit, or read the short blurb about the procps package in Synaptic, and find the web page http://procps.sourceforge.net/ and download the source code from there.

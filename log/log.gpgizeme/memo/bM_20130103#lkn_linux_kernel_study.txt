@@ -1,0 +1,42 @@
+
+
+##_ver=20130103_093833
+
+
+{// kernel API - schedule_timeout() and wait_event()
+http://forum.falinux.com/zbxe/?document_srl=533502
+}// kernel API - schedule_timeout() and wait_event()
+
+
+
+{// 7.3. delaying execution
+http://www.makelinux.net/ldd3/chp-7-sect-3
+7.3. delaying execution
+7.3.1 long delays
+7.3.2 short delays
+}// 7.3. delaying execution
+
+
+{// page replacement algorithm
+
+http://en.wikipedia.org/wiki/Page_replacement_algorithm
+- the (h,k)-paging problem
+- the theoretically optimal page replacement algorithm (aka OPT, clairvoyant replacement algorithm, or Belady's optimal page replacement policy)
+- NRU (not recently used) or LRU (least recently used)
+
+}// page replacement algorithm
+
+
+
+{// linux kernel swap daemon (kswapd) timeout control
+http://stackoverflow.com/questions/9817737/how-to-change-the-linux-kernel-swap-daemon-kswapd-timeout
+@ how to change the linux kernel swap daemon (kswapd) timeout?
+/proc/sys/vm/kswapd
+schedule_timeout(HZ/10)
+}// linux kernel swap daemon (kswapd) timeout control
+
+
+
+
+{// schedule_timeout()
+	kernel/timer.c: time

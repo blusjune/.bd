@@ -1,0 +1,5 @@
+##tstamp: 20121031_015314
+
+
+## rolling-stones
+/x/tmp		10.123.0.0/16(rw,no_subtree_check) 75.2.99.89(rw,no_subtree_check)

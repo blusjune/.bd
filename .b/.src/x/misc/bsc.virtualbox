@@ -1,0 +1,5 @@
+#!/bin/sh
+_X="/sbin/.x"
+
+$_X modprobe vboxdrv
+$_X virtualbox &

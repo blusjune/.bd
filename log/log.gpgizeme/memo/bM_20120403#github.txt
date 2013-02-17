@@ -1,0 +1,201 @@
+## https://github.com/blusjune/.b_src
+
+## Tue Apr  3 02:06:25 KST 2012
+## Wed Apr 18 23:18:24 KST 2012
+## Fri Apr 20 01:34:18 KST 2012
+## 20120816_234650
+## 20121007_005117
+
+--
+
+https://github.com/blusjune
+        Name		: blusjune (Brian M. JUNG)
+        ID		: blusjune
+        PW		: 08[q11]
+        Email		: blusjune+github00@gmail.com
+        Email		: blusjune+github@gmail.com # 20121007_005642
+        Website/Blog	: https://sites.google.com/site/brianmjung/
+        Member Since	: Sep 29, 2011
+        API Token	: 4a980e009f54986ff80affb9483677e9
+
+
+https://github.com/brian-m-jung
+        Name		: Brian M. JUNG
+        ID		: brian-m-jung
+        PW		: 08[q11]
+        Email		: brian.m.jung+github01@gmail.com
+        Email		: brian.m.jung+github@gmail.com # 20121007_005642
+        Website/Blog	: https://sites.google.com/site/brianmjung/
+        Member Since	: May 6, 2012
+        API Token	: 
+
+
+--
+## .b_src repository
+
+https://github.com/blusjune/.b_src
+
+Global setup:
+  Set up git
+    git config --global user.name Brian Myungjune JUNG
+    git config --global user.email blusjune+github@gmail.com
+    git config --global github.user blusjune
+
+Next steps:
+  mkdir .b_src
+  cd .b_src
+  git init
+  touch README
+  git add README
+  git commit -m 'first commit'
+  git remote add origin git@github.com:blusjune/.b_src.git
+  git push -u origin master
+
+  git clone git@github.com:blusjune/.b_src.git # R+W access via SSH
+  git clone https://blusjune@github.com/blusjune/.b_src.git # R+W access via HTTPS
+  git clone git://github.com/blusjune/.b_src.git # R-only access
+
+  git commit -a -m 'commit all the things'
+  git push -u origin master
+
+Existing Git Repo?
+  cd existing_git_repo
+  git remote add origin git@github.com:blusjune/.b_src.git
+  git push -u origin master
+
+Importing a Subversion Repo?
+  Check out the guide for step by step instructions.
+
+When you're done:
+  Continue
+
+--
+## blusjune's github repositories
+blusjune/.b_storage	# git@github.com:blusjune/.b_storage.git
+blusjune/.b_src		# git@github.com:blusjune/.b_src.git
+blusjune/.b_rc		# git@github.com:blusjune/.b_rc.git
+blusjune/-_-		# git@github.com:blusjune/-_-.git
+blusjune/_		# git@github.com:blusjune/_.git
+
+blusjune/bpk_hadoop	# git@github.com:blusjune/bpk_hadoop.git	# removed at 20121007_005143
+
+--
+## How to remove the GitHub Page?
+blusjune@woodstock:[github] $ git clone https://github.com/blusjune/test.git
+blusjune@woodstock:[github] $ cd test/
+blusjune@woodstock:[test] $ ll
+total 16
+drwxr-xr-x 3 blusjune blusjune 4096 Oct  7 00:41 ./
+drwxrwxr-x 3 blusjune blusjune 4096 Oct  7 00:41 ../
+drwxrwxr-x 8 blusjune blusjune 4096 Oct  7 00:41 .git/
+-rw-rw-r-- 1 blusjune blusjune   26 Oct  7 00:41 README.md
+blusjune@woodstock:[test] $ git push origin --delete gh-pages
+Username for 'https://github.com': blusjune
+Password for 'https://blusjune@github.com': 
+To https://github.com/blusjune/test.git
+ - [deleted]         gh-pages
+blusjune@woodstock:[test] $ echo "GitHub Page (gh-pages) was successfully removed"
+blusjune@woodstock:[test] $ echo "so that I cannot access 'http://blusjune.github.com/test'"
+
+--
+
+
+
+
+git study:
+
+## Question-20121209_001622
+how to download/fetch the latest data in the repository in a economic way?
+(to avoid full-data-cloning which consumes large amount of time and bandwidth)
+
+
+## main porcelain commands
+
+	3 add
+	0 am	#?
+	1 archive
+	1 bisect
+	2 branch
+	1 bundle
+	3 checkout #?
+	0 cherry-pick #?
+	1 citool
+	2 clean
+	3 clone
+	3 commit
+	3 describe
+	3 diff
+	3 fetch #? is this proper one?
+	1 format-patch
+	2 gc
+	2 grep
+	1 gui
+	2 init
+	3 log
+	2 merge
+	3 mv #?
+	2 notes
+	3 pull #?
+	3 push
+	2 rebase
+	1 reset #?
+	1 revert
+	3 rm #?
+	3 shortlog
+	3 show
+	2 stash
+	3 status
+	2 submodule
+	3 tags
+	3 gitk
+
+## ancillary commands
+
+	# manipulators
+	2 config
+	1 prune
+
+	# interrogators
+	3 annotate
+	3 blame
+	3 cherry
+	3 count-objects
+	2 difftool
+	1 fsck
+	1 instaweb
+	1 merge-tree
+	1 rev-parse
+	2 show-branch
+	1 verify-tag
+	3 whatchanged
+	3 gitweb
+
+## references
+
+	1. everyday git
+		file:///usr/share/doc/git/html/everyday.html
+
+	2. git user's manual
+		file:///usr/share/doc/git/html/user-manual.html
+
+	3. git concepts chapter of the user-manual
+		file:///usr/share/doc/git/html/user-manual.html#git-concepts
+
+	4. howto
+		file:///usr/share/doc/git/html/howto-index.html
+
+	5. git api documentation
+		file:///usr/share/doc/git/html/technical/api-index.html
+
+	6. mailto:git@vger.kernel.org
+
+
+## ----------------------------------------------------------------------------
+
+foo@bar$ git push -u origin master
+foo@bar$ git push -u origin current 
+foo@bar$ git push -u origin stable_v20121214.01 
+foo@bar$ git branch -d -r origin/current 		# delete remote branch origin/current
+
+
+

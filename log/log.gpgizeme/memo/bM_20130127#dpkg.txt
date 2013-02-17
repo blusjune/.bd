@@ -1,0 +1,9 @@
+
+#_ver=20130127_230358
+
+wget http://download1.rstudio.org/rstudio-0.97.312-amd64.deb	# download rstudio debian package
+dpkg -i rstudio-0.97.312-amd64.deb	# installing
+dpkg-query -l '*studi*'		# list all the items matched with the expression '*studi*'
+dpkg-query -l rstudio		# list items matched with 'rstudio' exactly
+dpkg-query -i rstudio		# query status of 'rstudio'
+

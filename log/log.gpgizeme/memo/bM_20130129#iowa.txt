@@ -1,0 +1,40 @@
+
+#_ver=20130129_164020
+
+* Amazing!  Only 3 minutes are elapsed, when runs on SSD
+
+ <pre>
+blusjune@jimi-hendrix:[t01] $ l
+total 8
+drwxrwxr-x 2 blusjune blusjune 4096 Jan 18 16:55 ./
+drwxrwxr-x 4 blusjune blusjune 4096 Jan 18 16:55 ../
+lrwxrwxrwx 1 blusjune blusjune   39 Jan 18 13:59 .bdx.0100.y.analexec__range_ptrns.sh -> ../.bdx.0100.y.analexec__range_ptrns.sh*
+lrwxrwxrwx 1 blusjune blusjune   11 Jan 18 16:55 .gnuplot -> ../.gnuplot/
+lrwxrwxrwx 1 blusjune blusjune   19 Jan 18 09:53 infile -> ../.tracelog.A.addr
+
+blusjune@jimi-hendrix:[t01] $ date
+Tue Jan 29 16:34:59 KST 2013
+
+blusjune@jimi-hendrix:[t01] $ _BDX 
+BDX[ /x/.fastdisk/iowa/tracelog_analysis/anal/t01 ]# 0100 : analexec__range_ptrns
+#>> START: 20130129_163501
+#>> END: 20130129_163813
+
+blusjune@jimi-hendrix:[t01] $ l
+total 853828
+drwxrwxr-x 2 blusjune blusjune      4096 Jan 29 16:38 ./
+drwxrwxr-x 4 blusjune blusjune      4096 Jan 18 16:55 ../
+lrwxrwxrwx 1 blusjune blusjune        39 Jan 18 13:59 .bdx.0100.y.analexec__range_ptrns.sh -> ../.bdx.0100.y.analexec__range_ptrns.sh*
+lrwxrwxrwx 1 blusjune blusjune        11 Jan 18 16:55 .gnuplot -> ../.gnuplot/
+lrwxrwxrwx 1 blusjune blusjune        19 Jan 18 09:53 infile -> ../.tracelog.A.addr
+-rw-rw-r-- 1 blusjune blusjune 437153404 Jan 29 16:38 out.range_ptrns-20130129_163501
+-rw-rw-r-- 1 blusjune blusjune   3919577 Jan 29 16:38 out.range_ptrns-20130129_163501.addr_range_countdist.log
+-rw-rw-r-- 1 blusjune blusjune 398263280 Jan 29 16:38 out.range_ptrns-20130129_163501.addr_range_hit_interval.log
+-rw-rw-r-- 1 blusjune blusjune  34967179 Jan 29 16:38 out.range_ptrns-20130129_163501.rehit_interval.log
+-rw-rw-r-- 1 blusjune blusjune      3368 Jan 29 16:38 out.range_ptrns-20130129_163501.runs_range_countdist.log
+
+blusjune@jimi-hendrix:[t01] $ pwd
+/x/.fastdisk/iowa/tracelog_analysis/anal/t01
+</pre>
+
+

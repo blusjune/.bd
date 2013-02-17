@@ -1,0 +1,13 @@
+
+
+
+## 20120710_181740
+##----------------
+
+## /etc/fstab line to mount 2GB ramdisk to /mnt/ram0
+tmpfs           /mnt/ram0       tmpfs   mod=1777,size=2g
+
+## command line to mount 2GB ramdisk to /mnt/ram0
+$ mkdir /tmp/ramdisk; chmod 777 /tmp/ramdisk
+$ mount -t tmpfs -o size=256M tmpfs /tmp/ramdisk/
+

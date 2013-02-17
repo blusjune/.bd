@@ -1,0 +1,289 @@
+== PATENT-BRIAN-2013-001 ==
+
+RAM-SSD Hybrid Page Cache
+:: Page Cache Layer에서 동작하는 Page tiering 기반의 RAM-SSD Hybrid Cache 기술
+
+
+=== # 배경 / 기존 기술의 문제점 ===
+
+* DRAM Cache의 부족한 용량을 극복하기 위한 솔루션으로 SSD Cache가 도입되고 있음. 기본 원리는 자주 액세스되는 디스크 블록을 SSD에 Caching함으로써 HDD의 느린 I/O 속도를 극복하도록 하는 것임.
+* 그러나 블록 레이어에 구현되는 SSD Cache의 경우, Kernel에서 관리하는 Page Cache에 의해 이미 Hot data가 Serve되고 있기 때문에, Hit Ratio를 높이기에 근본적인 한계점을 가지고 있음.
+* 한편, kernel에서 관리되는 기존 Page Cache는 다음과 같은 한계점을 가지고 있음. (1) SSD 혹은 HDD에 비해 비싼 스토리지인 RAM 기반이기 때문에 다른 스토리지에 비해 작은 용량을 가지고 있는 경우가 일반적이므로 cache로 사용할 수 있는 공간의 제약이 큼. (2) 시스템에서 사용되지 않고 있는 idle RAM 영역을 이용하기 때문에, 시스템에서 구동되는 프로세스들이 요구하는 RAM 요구량이 많아지게 되면, 그만큼 page cache가 버려지게 되며 그만큼 시스템 I/O 성능의 저하가 발생하게 됨. 또한 이로 인해 성능의 편차가 불규칙하다는 단점 또한 근본적으로 가지고 있음.
+* 한편, SSD를 이용하는 page cache가 기존에 시도된 적이 있으나 매 page access 시마다 SSD에 page를 저장하는 메커니즘으로서 (synchronous I/O) NAND flash와 RAM I/O 특성 차이로 인해 기인하는 근본적인 성능적 한계점을 가지고 있음.
+
+<br/>
+
+=== # 본 발명의 특징 / 효과 ===
+
+# page cache 레이어에서 동작하는 RAM-SSD hybrid page cache 아키텍쳐*: page cache 레이어에서 동작하는 RAM-SSD cache 아키텍쳐를 통해, SSD가 가져다주는 cache capacity 확대의 장점을 끌어안으면서도, 블록 레이어에서의 SSD cache가 태생적으로 가지게 되는 낮은 cache hit ratio의 한계를 극복할 수 있게 함. 또한 RAM-only page cache에 비해 안정적인 page cache 공간 확보가 가능함**.
+# page tiering 메커니즘 기반의 RAM-SSD 간 cache data 이동: I/O 특성 및 speed에서 큰 차이가 있는 RAM page cache와 SSD page cache를 같은 방식으로 사용할 경우 야기될 수 있는 speed 저하 문제를 극복할 수 있게 하는, page-tiering 방식의 RAM page cache - SSD page cache 간 cache data 이동 메커니즘. (async I/O 효과의 장점을 얻을 수 있음)
+# multi-sieve 방식의 page hit 패턴 분석 및 이를 기반으로 하는 page classification: N개의 sieve를 이용하여 각 page에 대한 recency, periodicity, frequency 특성을 관찰. 이를 기반으로 page의 hotness를 구분하고 re-hit potential을 잡아낼 수 있음. 이렇게 얻어진 정보들은 page tiering을 위한 page classification 시에 사용되어 RAM을 primary page cache buffer 및 currently-hot page cache로 사용하고, SSD를 potentially re-hittable page cache로 사용할 수있게 함. 이를 통해 RAM과 SSD 미디어의 특성에 최적화된 방식으로 page caching이 수행될 수 있음.
+
+* (*) 데이터 hit 패턴 관찰 시, 블록 레이어에서 관찰하는 것에 비해, page cache 레이어에서 관찰하게 되면 블록 레이어에서는 잡아낼 수 없는 정보들이 있으며, 특히 더욱 intensive하게 hit되는 데이터에 대한 정보를 볼 수 있다는 장점이 있음. 이를 기반으로 더욱 intelligent한 cache 메커니즘을 구현할 수 있게 됨.
+
+* (**) SSD page cache 도입으로 인한 안정적인 page cache 공간 확보: idle RAM 공간에 의지하던 기존 RAM-only page cache의 경우에는, cache 공간을 지속적으로 확보하고 있기가 어려웠기 때문에 page cache 크기에 편차가 있을 수 밖에 없었으며, 이로 인해 결과적으로 시스템의 sustainable performance를 달성하기 어려웠음. 그러나 본 발명에서는 idle RAM 공간에 전적으로 의지하는 기존 page cache 아키텍처와는 달리 RAM의 일부 영역을 hybrid page cache의 영역으로 예약하고 SSD를 page cache의 전용 공간으로 활용토록 함으로써 안정적인 cache 공간을 확보하는 효과를 얻을 수 있음. 결과적으로 시스템의 idle RAM 크기가 부족하게 되더라도 기존 방식에 비해 성능 편차를 줄일 수 있게 됨.
+
+<br/>
+
+=== # 대표 청구항 ===
+
+# RAM page cache, tiering buffer, page cache tiering manager, SSD page cache 등을 포함하는 RAM-SSD hybrid page cache 아키텍쳐.
+# N-sieve 방식의 page hit 패턴 분석 및 이를 기반으로 하는 page classification.
+# page tiering 메커니즘 기반의 RAM-SSD간 cache data 이동 방식.
+
+<br/>
+
+=== # 대표 도면 ===
+
+<br/>
+
+=== # 선행 기술 ===
+
+다음 검색식
+ (RAM OR DRAM OR hybrid) AND (NAND OR Flash OR SSD) AND (page cach*)
+으로 77건의 미국 공개/등록 문건을 검색할 수 있었으나,
+본 발명과 유사한 RAM-SSD hybrid page cache에 대한 선행 기술은 발견하지 못하였음.
+
+다음 검색식
+ ()
+으로 __건의 미국 공개/등록 문건을 검색할 수 있었으나,
+본 발명과 유사한 recency 및 periodicity 를 기반으로 page classification을 수행하는 cache algorithm에 대한 선행 기술은 발견하지 못하였음.
+
+
+유사한 주제를 다루는 논문으로
+ __
+이 있었음.
+
+그러나 __ 측면에서 본 발명과 상이함.
+
+<br/>
+
+=== # 침해 적발 ===
+
+data의 특성을 미리 정의해둔 predefined data set에 의해 결정되는 workload에 대해서 각 data가 어느 시점(page cache 레이어 시점 혹은 블록 레이어 시점)에 어느 cache media로 전달되는지를 kernel tracer와 block tracer 등의 툴을 통해 관찰함으로써 침해 적발 가능.
+
+<br/>
+
+=== # 기술 상세 ===
+
+RAM과 SSD 기반의 hybrid page cache의 아키텍쳐는 다음과 같은 구성 요소를 포함한다.
+
+* RAM page cache
+* SSD page cache
+* page cache tiering manager
+** page classification module
+** tiering I/O module
+
+RAM page cache와 SSD page cache는 page cache data 및 관련 meta info가 저장되는 곳이며, page cache tiering manager는 page의 access pattern에 따라 page tiering up/down 작업을 수행하는 역할을 한다. page access 패턴을 분석하는 알고리즘에 따라서 page class가 결정되고 (page classification module), 이를 참고하여 RAM page cache tier와 SSD page cache tier 간에 page tiering up/down이 수행된다 (tiering I/O module). 
+
+본 발명에서는 RAM-SSD hybrid page cache의 구현에 필요한 page access classification 알고리즘 및 RAM-SSD hybrid page cache 아키텍쳐에 대해 다룬다.
+
+page hit pattern을 분석하는 page classification 알고리즘에 의해 page를 몇 가지 class로 분류하는 역할을 수행하며, 이 page class에 따라 RAM page cache와 SSD page cache 중 저장될 곳이 구분됨.
+
+RAM page cache와 SSD page cache는 
+
+
+==== RAM page cache ====
+
+- RAM에 존재하는 page cache로서, 디스크에서 access된 data를 우선적으로 cache하는 역할을 수행함. 가장 자주 access되는 data가 우선적으로 cache될 수 있도록 하는 정책으로 운영됨.
+
+- 기존 kernel에서 page cache 관리 모듈 중, data를 page cache에서 찾고, pool에 추가하고, pool에서 제거하는 등의 page 처리 부분은 변경할 필요 없으며, 수정되는 부분은 hit count에 따라 page의 상태 정보를 update하는 모듈로서, 각 page에 대한 access 패턴에 따라 page class를 결정하고 업데이트하는 부분이 이 page 상태 정보 update 모듈에 추가된다. 이 page class 관리 모듈은 이후 섹션에서 다룬다.
+
+<br/>
+
+==== SSD page cache ====
+
+- page cache media로 사용될 SSD 공간은 meta info 영역과 page data 영역으로 나뉘어 사용될 수 있음. meta info 영역에는 sub-page chunk lookup table per SSD 정보 및 in-page-chunk page table 정보를 포함함. page data 영역은 tiering된 page cache data가 저장되는 공간이며, page data write 시에는 page 크기의 정수 배에 해당되는 page chunk 단위로 log-structured 방식으로 write되고, page data read 시에는 page 단위로 read됨.
+
+- page cache tiering 시의 I/O 성능 최적화를 위해서 다음과 같은 방법이 사용될 수 있음. SSD에 전달되는 단위 I/O의 크기는 tiering buffer의 크기에 따라 결정되는데 host에서는 SSD의 channel 정보 및 erase block 크기를 감안하여 tiering buffer 크기를 결정할 수 있음. 예를 들어 어느 SSD가 N_ch개의 channel을 가지고 있고, erase block의 크기가 N_eb 바이트라면, N_ch * N_eb 값을 tiering buffer의 크기 N_tb 로 잡을 수 있음. 
+
+- page cache tiering I/O에 의해 생성된 N_tb 크기의 page chunk에 대한 write 요청이 SSD에 들어오면, SSD는 page chunk를 N_ch 개의 N_eb 크기의 data로 분할한 후, 분할된 각 N_eb 크기 만큼의 data를 N_ch 개 존재하는 각 channel에 나누어 저장함. 따라서 N_eb * N_ch 크기 만큼의 page chunk 데이터를 SSD에 저장하는 데에 걸리는 시간은 N_eb 만큼의 데이터가 write되는데 걸리는 시간이 되며, N_ch배 만큼의 I/O 성능 향상을 얻게 됨.
+
+- SSD의 hardware 적인 구조 상, page chunk가 N_pc 개 만큼 있을 수 있다고 한다면 (page chunk 0 ~ page chunk N_pc -1) N_pc 번째의 page chunk까지 log-structured 방식으로 write되고 난 다음에는 기존 page chunk 중 하나를 erase한 후에 write해야 함. 이때 고려되어야 하는 것은 erase될 page chunk를 결정하는 방법이며, 또한 erase 연산으로 인한 I/O 속도 저하를 방지할 수 있는 방법임. 
+
+- erase될 page chunk를 선택하는 기준으로서, 가장 오래 전에 SSD에 쓰였던 page chunk부터 순차적으로 erase를 시키는 old-chunk-first 방법, 혹은 page cache의 page find/get 메커니즘에 의해 RAM에 다시 load되어 사용되고 있는 page chunk부터 erase 시키는 loaded-chunk-first 방법을 사용할 수 있음.
+
+- loaded-chunk-first 방법을 사용하는 경우, 혹시 page chunk 내에 RAM page cache에 load된 부분과 load되지 않은 부분이 섞여 있는 경우, host에 RAM page cache로 사용할 수 있는 여유 RAM이 얼마나 존재하느냐와 시스템에서 정한 policy에 따라서, 다음 두 가지 방식 중 적절한 것을 이용할 수 있음. 첫 번째 방식은 RAM page cache로 사용할 수 있는 여유 RAM이 존재하는 경우, 해당 page chunk를 erase하기 전에 unloaded page data를 RAM page cache에 load시킴으로써, 해당 page chunk의 data가 모두 RAM page cache에 존재하게 한 후, 해당 page chunk를 통째로 erase하는 방식임. 두 번째 방식은 별도의 조치를 하지 않고, 그냥 해당 page chunk를 erase하는 방식임. 첫 번째 방식의 특징은 class 2로 분류되었던 page cache data의 이후 re-hit 잠재력을 더 중요하게 봄으로써 이후 re-hit이 일어났을 때 매우 빨리 cache로서 serve될 수 있게 한다는 데 있음. 두 번째 방식의 특징은 SSD page cache를 한 번 다 채울 때까지 해당 page chunk의 page data들이 access된 적이 없다는 것은 recency 측면에서 그만큼 re-hit 될 가능성이 낮다는 것으로 간주하였다는 것임.
+
+- erase 연산으로 인한 I/O 속도 저하를 방지하기 위해서는, page chunk write 시점이 도래하기 전에, SSD 내부적으로는 page chunk 단위의 erase 연산이 미리 수행될 필요가 있다. 미리 수행될 시점을 가장 잘 알고 있는 것은 page tiering이 발생하는 빈도 및 규모의 추세를 파악할 수 있는 hybrid page cache 모듈이므로, host-SSD 간 interface를 통해서 SSD에게 어느 page chunk에 대해서 erase를 미리 해두라고 요청할 수 있다. SATA 기반 SSD의 경우 TRIM 명령을 이용할 수 있음.
+
+- hybrid page cache 모듈에서는 page access 패턴에 따라서 지속적으로 page classification 작업을 수행하게 되며, 그에 따라서 class-2로 분류되는 page들을 관리하는 page tiering pool의 크기가 늘어나고 tiering buffer에 의해 SSD page cache로 tiering 되는 양의 추세를 모니터링할 수 있음. 가용 SSD page cache의 크기를 알고 있기 때문에 앞으로 어느 정도 지나면 SSD page cache가 full이 될 것인지를 최근의 추세를 반영하는 간단한 선형식을 이용하여 파악 가능.
+
+
+
+
+
+
+SSD page cache로부터 bulk page find/get I/O가 발생하는 경우에 필요할 수 있는 추가적인 SSD page cache I/O optimization은 별도의 발명에서 다룬다.
+
+- 따라서 page cache media에서 발생하는 I/O의 패턴은 log-structured 방식으로 sequential하게 write되는 page chunk write I/O 패턴과, chunk 단위로 random하게 read되는 page chunk read I/O 패턴, page chunk location lookup을 ....
+
+- 이렇게 함으로써 SSD 내에 존재하는 병렬성을 극대화 할 수 있게 되며, page cache tiering 시 최적의 I/O 성능을 이끌어낼 수 있음. SSD를 일반적인 block 디바이스 스토리지로 사용하는 것이 아니기 때문에 page data 영역에서는 random block addressing을 할 필요가 없으며, 이것이 page data 영역에서 발생하는 I/O에 대해서 page mapping을 하지 않아도 되는 이유임.
+
+- 물리적인 SSD 하나가 통째로 page cache로 사용되는 경우에는 SSD 전체를 위와 같이 나누어 사용하면 되겠으나, 하나의 SSD를 page cache media와 다른 용도로 같이 사용해야 하는 경우를 위한 구조 및 방법은 별도의 특허에서 기술하는 것으로 함.
+
+<!--
+
+# further study/patents
+
+- 복수 개의 SSD를 second-tier page cache media로 사용하는 경우 page tiering I/O는 어떻게 처리되는 것이 바람직한가? 복수 개의 SSD들의 내부 병렬화 구조가 동일한 경우와 서로 다른 경우에는 page tiering buffer의 크기를 어떻게 잡는 것이 최적인가? SSD array에 대한 I/O coordination을 담당하는 SAVL과 같은 layer가 있다고 했을 때, hybrid page cache에서 이를 어떻게 활용할 수 있을까?
+
+- 연달아서 여러 개의 page chunk에 대한 read 혹은 write가 발생하게 되는 경우에... 어떤 식의 최적화된 page cache tiering I/O 방식을 쓸 수 있을까?
+
+- meta info 영역과 page data 영역에 대한 access가 동시에 발생할 수 있는가? 아니면 항상 meta info 영역을 거쳐서 page chunk lookup table per SSD을 read하거나 write한 후에 page data 영역의 page chunk data를 처리하는가? 혹은 meta info 영역과 page data 영역에 대한 access가 동시에 발생하지 않는다 하더라도, meta info 영역에 대한 update (SLC 경우 1500us, MLC의 경우 3300us 정도의 시간 필요)가 일어난 후에 page chunk data를 write하거나 read 해야 한다면 meta 영역과 page data 영역을 way 차원에서 구분하는 것이 필요할 수 있음.
+
+-->
+
+<br/>
+
+==== tiering I/O module ====
+
+- page classification 알고리즘에 의해 SSD page cache로 tiering될 것으로 선택된 page들이 (class-2) 존재하는 RAM 상의 공간이 tiering I/O module이며, tiering buffer 단위로 처리됨.
+
+- tiering tiering buffer의 크기는 cache media로 사용될 SSD의 사양과 page cache tiering 방식을 고려한 최적의 크기로 결정될 수 있음. 
+
+- tiering buffer의 크기는 관리자에 의해서 명시적으로 지정될 수도 있지만, page cache media로 사용될 SSD에게 관련 정보를 요청하여 전달받은 값을 이용할 수도 있음. 다음은 한 실시예임. SSD 내의 I/O 병렬성을 극대화하여 최고의 성능을 낼 수 있도록 SSD 내 channel의 수와 erase block의 크기를 곱한 값을 OPTIMAL_PAGE_CACHE_TIERING_IO_SIZE 라고 부른다고 했을 때, 이 값의 1배 혹은 그 이상의 정수배가 되는 값을 tiering buffer의 크기로 결정할 수 있음.
+
+- tiering I/O module 내에 tiering buffer로 나누어 떨어지지 않는 크기의 page들이 들어가 있는 경우에는 시스템 policy에 따라서 다음 두 가지 방식 (가, 나) 중 하나를 선택적으로 적용 가능. tiering buffer의 크기가 N_tb, tiering I/O module 내에 들어 있는 data의 크기가 N_tpp, 그리고 N_tpp를 N_tb로 나눈 나머지 값이 N_res (0 <= N_res < N_tb)라고 가정하자. N_tb 크기로 tiering buffer를 꽉 채워서 (N_tpp - N_res) / N_tb 횟수 만큼 tiering I/O 동작이 수행된 후, (가) tiering I/O module 내에 남아 있는 N_res 만큼의 data는 이번에 처리하지 않고, 추가로 data가 N_tb 크기 이상 쌓였을 때 처리, 혹은 (나) N_res 만큼의 data에 필요한 만큼 zero padding을 하여 N_tb 크기로 만든 후에 tiering buffer에 담아 처리.
+
+- tiering buffer가 tiering I/O module 내에 있는 page들을 처리하는 순서는 특별히 제한될 필요는 없으며, 한 실시예로서 먼저 쌓인 page들부터 먼저 처리하는 방식으로 구현될 수 있음.
+
+- tiering I/O module 내에 page 들을 쌓아두다가 본 발명이 명시하는 적절한 시점에 tiering buffer에 의해 RAM과 SSD 간의 tiering I/O가 이루어짐으로써 asynchronous 방식으로 tiering I/O가 이루어지게 됨. 이로 인한 효과는 asynchronous I/O가 synchronous I/O 대비 가지는 장점에 해당됨.
+
+- RAM에 있는 tiering I/O module에서 SSD로 page tiering이 일어나는 시점은 on-shrink-event triggering 방식으로 결정이 되거나, on-buffer-full-event triggering 방식으로 결정될 수 있다.
+
+- 다음은 on-shrink-event triggering에 대한 설명임. 시스템에서 주기적으로, 혹은 상황에 따라 필요에 의해 수행되는 page cache shrink 작업 시, LRU (least recently used) 알고리즘에 근거하여 evict될 page들을 찾게 된다. 이때, tiering I/O module내의 page들은 그냥 discard하는 것이 아니라 SSD로의 page tiering 작업을 수행한다. 중요한 것은 순서로서, page tiering 작업이 먼저 일어나기 전에 page cache shrink 작업이 시작되지 않도록 한다. 이를 위해서 tiering buffer pool에 있는 page들의 상태 flag에 unevictable bit을 설정하는 방식을 사용하거나, page cache shrink에 의해 page들이 evict되는 작업이 시작되기 전에 page tiering 작업이 먼저 완료될 수 있도록 실행 순서를 제어하는 방법을 사용할 수 있다.
+
+- 다음은 on-buffer-full-event triggering에 대한 설명임. 전술한 on-event triggering 방식이 다소 피동적임에 비해, 이 방식은 상대적으로 능동적인 방식이라고 볼 수 있음. tiering I/O module에 tiering buffer의 크기 만큼, 혹은 그의 정수 배에 해당하는 충분한 크기가 되었을 때, SSD로의 page tiering 작업을 수행한다.
+
+- page cache media로 사용되는 SSD의 상태에 따라 page tiering 작업을 잠시 보류할 수 있다. 이때, page cache media로 사용되는 SSD에게는 어느 정도 크기의 page 데이터를 tiering할 것인지에 대한 정보를 전달하고, page-tiering-pended 라는 flag를 설정한다. 그러면 해당 SSD에서는 해당 크기의 데이터 writing에 필요한 공간 확보를 위해 어느 정도 기다려야 하는지에 대한 예상 시간을 응답한다. 만약 복수 개의 SSD들이 page cache media로 사용되고, host 내에 복수 개의 SSD들을 관리하는 SSD array management layer가 있다면, 그 SSD array management layer에서 해당 크기의 page tiering을 위해 어느 SSD에 저장하는 것이 좋을지를 알아서 판단하여 해당 SSD로 I/O가 일어나도록 연계해줄 수도 있다. 
+
+
+
+
+
+
+
+- SSD가 SSD page cache media로 신규 사용될 때에는 tiering buffer 크기가 결정되어야 함. 한 예로서, OS 설치 시 hybrid page cache를 사용하겠다고 선택한 경우에 SSD page cache media로 사용할 하나 혹은 복수 개의 SSD를 선택하는 시점이 될 수 있음. 또 다른 한 예로서, hybrid page cache가 동작하고 있지 않던 시스템에 새로 SSD를 장착한 후 이 SSD를 SSD page cache media로 사용하려는 경우가 될 수 있음. 또 다른 한 예로서, 기존에 이미 RAM과 SSD 기반의 hybrid page cache를 사용하고 있었는데 SSD를 추가로 장착하여 SSD page cache media의 크기를 증가시키려고 하는 경우가 될 수 있음.
+
+- 한 개의 물리적인 SSD가 아니라 NUMBER_OF_SSDS_FOR_HYBRID_PAGE_CACHE 개의 물리적인 SSD가 hybrid page cache media로 사용되는 경우에는 복수 개의 SSD를 직접적으로 이용하는 방법과 복수 개의 SSD가 하나의 가상화된 SSD로 보이게 하는 layer의 도움을 받아 이용하는 방법이 있을 수 있음. 복수 개의 SSD를 직접적으로 이용하기 위해서는 각 SSD마다 OPTIMAL_PAGE_CACHE_TIERING_IO_SIZE를 
+
+
+hardware 및 가상화된 SSD tiering buffer 크기로 사용할 최적의 I/O 크기를 결정하기 위해서 각 
+
+- 우선 SSD array에 대한 I/O를 최적으로 관리해주는 SW가 별도로 존재하지 않는 경우에는 (no-SAIC case) hybrid page cache 모듈이 tiering buffer 크기를 직접 결정하게 됨. 그러나 SSD array에 대한 I/O를 최적으로 관리해주는 모듈 (편의상 SSD Array I/O Coordination (SAIC) 모듈이라 부르겠음)이 시스템에 존재하는 경우에는 (SAIC case) page cache tiering을 위한 최적의 tiering buffer의 크기를 SAIC 모듈에게 문의하여 결정 가능.
+
+- no-SAIC case에서는 상황에 따라 다음과 같이 tiering buffer 크기를 계산할 수 있음. 만약 SSD page cache로 사용될 SSD들의 OPTIMAL_PAGE_CACHE_TIERING_IO_SIZE 가 모두 동일하고, SSD page cache media로 사용할 SSD가 낼 수 있는 bandwidth의 총합이 hybrid page cache SSD들에게 허용된 시스템 bus의 bandwidth를 넘지 않는 수준이라면, tiering buffer의 크기는 NUMBER_OF_SSDS_FOR_HYBRID_PAGE_CACHE * OPTIMAL_PAGE_CACHE_TIERING_IO_SIZE 값으로 결정되거나, 몇 번의 test를 거쳐서 최적의
+
+
+<br/>
+
+==== page cache tiering manager ====
+
+===== access pattern-based page classification =====
+
+- page에 대한 access 패턴을 모니터링하여 page class를 classify하고 update하는 역할을 수행함. page cache에 대한 tiering은 이렇게 분류된 page class 정보를 기반으로 이루어짐.
+
+* 각 class에 대한 설명:
+** class-1: RAM page cache에 저장될 page들이 속하는 class
+** class-2: kernel의 기존 page replacement 메커니즘에 의해서 evict될 때 discard하지 않고 SSD page cache에 저장될 page들이 속하는 class
+** class-3: kernel의 기존 page replacement 메커니즘에 의해서 evict될 때 SSD page cache에 저장되지 않고 discard될 page들이 속하는 class
+
+* page class 분류 조건:
+** 조건1: "currently-hot"
+** 조건 2: "currently-not-hot" AND "once-hot"
+** 조건 3: "currently-not-hot" AND "periodic"
+조건 1에 해당하는 page들은 class-1으로 분류되고, 조건 2 혹은 조건 3에 해당하는 page들은 class-2로 분류됨. 그리고 위의 조건들 중 어느 하나에도 해당하지 못했던 page들은 자동적으로 class-3으로 분류됨. page cache에 첫 추가되는 page들은 기본적으로 class-3에 속하게 되며, access 패턴 모니터링에 따라 class-2 혹은 class-1으로, 혹은 다시 class-3으로 상태 update가 이루어짐.
+
+- recency, frequency, repeatability를 측정하는 multi-window 기반으로 page class 분류를 위한 access 패턴 모니터링 및 분석이 이루어짐.
+
+- multi-window 방식에는 두 최근의 짧은 기간 동안의 access 패턴을 관찰하는 window-1과 긴 기간동안 access 패턴을 관찰하는 window-2을 함께 이용하는 Two-sieve 모델이 있음.
+* 여기서 small-size window와 large-size window의 크기를 어떻게 결정해야 하는가?
+
+- 짧은 기간동안 (즉, 짧은 거리의 과거 시점으로부터 현재까지의 - 이 기간을 Monitoring Period 1이라 칭한다)  access 패턴을 관찰하는 window 1을 통해서 분류해내고자 하는 data는 “currently-hot” data임. 즉 짧은 기간 관측했음에도 불구하고 hit 수가 여러 번 count되고 있는 data가 있다면, 그 data는 “currently-hot”한 것으로 간주해도 큰 무리가 없음. 이러한 data들은 당장 hot하게 access되고 는 data이므로 RAM에 cache해둠으로써 성능 이득을 얻을 수 있다. 이러한 data들은 class-1으로 분류됨.
+
+- 한편, 짧은 최근 기간동안 관찰했던 window 1에서 “currently-hot”한 것으로 보이지는 않았지만 약간만 길게 관찰했다면 의미있는 access 빈도를 보여주었을 수 있었던 data들도 있을 수 있다. 이를 window 1에 비해 긴 기간동안 관찰하는 window 2를 통해 파악할 수 있다. 예를 들어, 한 차례 access될 때 매우 hot한 정도는 아니더라도 일정 간격을 두고 꾸준하게 access되고 있는 data들이 있을 수도 있다. 이런 data들이 여유 RAM 공간이 부족한 상황에서 당장 “currently-hot” 하지 않다고 해서 그냥 버려지게 된다면, 다시 주기적으로 access될 때마다 그 만큼 HDD read로 인한 성능 저하를 겪게 될 수 있다. 따라서 이러한 data들은 evict되어야 하는 상황이 되었을 때 그냥 discard시켜버릴 것이 아니라 SSD에 저장을 해둔다면 성능 향상에 도움이 될 수 있다. 혹은 window 2 내에서 주기적인 access 패턴이 보이지는 않았다 하더라도, window 1가 커버하는 매우 최근 기간동안은 아니었지만 window 2가 커버하는 긴 최근 기간동안 hot한 access 패턴을 보인 data가 있을 수 있다. 한 번 hot한 access 패턴을 보인 data는 이후에 다시 hot한 access 패턴을 보일 가능성이 있으므로 이러한 data들도 potentially re-hit 가능성이 있다고 볼 수 있다. 이러한 data들은 class-2로 분류됨.
+
+- 그리고 긴 기간 동안 관찰하는 window 2에서조차도 hit count가 낮거나, 의미있는 access 패턴을 보여주지 못했던 data들은 potentially re-hit될 가능성이 낮다고 판단하고, 이러한 data들은 class-3으로 분류하며, evict되어야 하는 상황이 되었을 때 SSD에 저장하는 등의 별도의 처리를 하지 않고 그냥 discard시켜버린다.
+
+<br/>
+
+===== hybrid page cache meta information management =====
+
+- page tiering에 의해서 SSD page cache로 page가 이동될 때, page cache 내의 해당 page가 있던 노드 (일반적으로는 radix tree 형태로 관리되고 있으나 그에 종속적으로 구현될 필요는 없음)에는 page-tiered-out flag가 set 되며, 어느 SSD의 어느 위치에 저장되는지에 대한 page location 정보가 기록됨. 기본적으로 page location을 구성하는 정보는 SSD 식별 정보, SSD 내 page chunk 식별 정보, page chunk 내 page offset 정보로 구성됨.
+
+- 응용 혹은 kernel에 의해 disk data access 요청이 왔을 때, page find/get 루틴은 page cache에서 해당되는 page를 찾아서 돌려주는 역할을 수행함. 이를 위해 page find/get 루틴은 page-tiered-out flag를 확인하여 매칭되는 page node가 발견되지 않으면 disk로부터 data를 가져오기 위해 disk I/O 요청을 발생시킨다. 매칭되는 page node가 발견된 경우에는 우선 page-tiered-out flag가 set 되었는지를 확인한다. 만약 page-tiered-out flag가 unset인 경우라면, RAM page cache에 해당 page 데이터가 존재하는 경우로서, 바로 해당 page data를 돌려준다. 만약 page-tiered-out flag가 set인 경우라면, page location map 정보를 활용하여 SSD page cache에 저장되어 있는 page 데이터를 가져올 수 있도록 한다. 이렇게 disk로부터 가져온 page data는 해당되는 page node내에 저장되고, page hit count, access time 등 page access 패턴을 관리하는 필드들의 값도 update된다.
+
+- page tiering에 의해서 RAM page cache로부터 SSD page cache로 tiering-out될 때에는 tiering buffer의 크기에 해당하는 page chunk 단위로 I/O가 SSD write이 이루어지지만, SSD page cache에서 page find/get이 일어나는 경우에는 page 단위로 read됨. 이를 통해서 가급적 기존 방식의 page cache 동작 방식의 수정이 최소화될 수 있음. 기존 page find/get이 일어나는 방식과 달라지는 부분은 일반적인 file system hierarchy에서의 logical block address 정보를 가지고 있는 inode 대신 SSD page cache 내에서의 page location 정보를 가지고 있는 tiered page location table이 참고된다는 점임.
+
+
+<br/>
+
+=== 청구항 ===
+
+1. RAM page cache, tiering buffer, page cache tiering manager, SSD page cache 등을 포함하는 RAM-SSD hybrid cache 아키텍쳐.
+
+  Tiering buffer는 RAM page cache와 SSD page cache 간에 tiering되는 page들을 보관하는 역할을 수행한다. page cache tiering manager는 RAM page cache로부터 SSD page cache로 tiering되기 위한 page를 선택하거나, 거꾸로 SSD page cache로부터 RAM page cache로 tiering되기 위한 page를 선택하는 역할을 수행한다.
+
+  Page cache 중 RAM page cache에 저장되는 page들의 조건은 다음과 같다. (1) 지정된 수준 H_T(N1) 이상으로 액세스가 매우 빈번하게 일어나는 page, 혹은 (2) 지정된 수준 H_T(N2) 이상, H_T(N1) 미만으로 액세스가 빈번하게 일어나는 page이면서 write-intensive 특성을 가지는 page. 여기서 H_T(N1), H_T(N2)의 값은 page cache로 사용할 수 있는 RAM 크기 및 SSD 크기를 감안하여 결정된다.
+
+  RAM에는 소정의 방법으로 분류되는 page cache의 일부 및 page lookup 자료구조 (예: table 혹은 radix tree 등), page class 분류 정보, access pattern을 표현하는 frequency 및 recency 등 hybrid page cache 관리에 필요한 메타 data가 저장되고; SSD에는 소정의 방법으로 분류되는 page cache의 일부가 저장되는; 구조.
+  
+  RAM에는 소정의 방법으로 분류된 page cache의 일부를 위한 전용 영역이 존재할 수 있음.
+
+  SSD에는 소정의 방법으로 분류되는 page cache의 일부 뿐만 아니라, hybrid page cache의 메타 data 백업이 저장될 수 있음. (fault-tolerance를 위한 recovery 혹은 fast cache warming-up을 위한 용도)
+
+  Page tiering 기반의 hybrid cache I/O 방법 ## Tiering Buffer 기반으로 RAM-SSD Hybrid Page Cache를 가져가는 것이 왜 필요한지 설명 (즉, 매 Page Access마다 SSD로 Page Writing (Tiering-down)이 일어난다면 얼만큼의 overhead가 존재할 수 있는지를 식으로 표현 가능? - 만약 이를 설명하는데 너무 많은 시간이 걸릴 것 같다면 직발서에서는 pass)
+
+
+
+2. Page Cache 중 unevictable이 아닌 file과 관련된 page들에 대해서, recency 및 frequency, 그리고 I/O read/write 패턴에 따라 sub-class들로 구분하여 관리하는 방법
+
+  available DRAM size가 모자랄 경우에도 우선적으로 버릴 class-3, reserved 영역에 두고 DRAM에서 cache serving을 하게 할 class-1, available DRAM size 와 SSD size를 계산/고려하여 DRAM에 두거나 SSD에 있게 될 class-2 (T1, T2)
+
+  디스크 상의 어떤 page가 액세스 되면 그 page는 우선 class-3으로 분류되고, 그 page에 대한 access 패턴이 모니터링되기 시작한다. class-3에 속한 page들 중 정해진 T3의 시간 동안 N3번만큼 액세스 되지 않은 page들은 class-3인 채로 유지되며, 이 class의 page들은 시스템의 상황에 따라 가장 우선적으로 page cache에서 evict될 대상임. (즉 system의 idle RAM 용량이 부족하게 되는 경우에 우선적으로 discard되는 page들이며, system shutdown 시에도 별도의 저장 operation 없이 그냥 discard된다.
+
+  class-3의 page들 중, 정해진 T3의 시간 동안 N3번만큼 액세스 된 page들은 class-2로 변경된다. 이 class-2의 page들은 system shutdown 시에 이후에 cache로서 다시 사용될 수 있게 하기 위해서 SSD page cache에 저장될 수 있으며, 설정에 의해 동작 여부가 결정된다.
+
+  class-2의 page들 중, 정해진 T2의 시간 동안...
+
+
+
+=== Notation ===
+
+H_T(N)
+: 지정된 T만큼의 시간 동안 N 만큼의 hit이 되었다는 것을 H_T(N)으로 표현한다. H_T(<N)은 지정된 T만큼의 시간 동안 N보다 적은 갯수 만큼 hit 되었다는 것을 의미한다.
+
+
+
+=== Misc. ===
+## (done) Tiering Buffer 기반 Page Cache Tiering 방식의 RAM-SSD Hybrid Page Cache 아키텍쳐 및 방법
+## (done) ## RAM과 SSD를 어떻게 hybrid로 사용할 것인지, 즉 둘 간의 역할에 대해 설명.
+## (별도 특허화 필요) ## SAVL-like layer를 이용한다는 것도 기술할 것
+
+## Page Cache의 Class를 분류하고 관리하는 방법
+## Page Classification Diagram 관련
+## Page Class Transition Diagram 관련
+## T2에 가는 경우 중, available DRAM size가 부족하고, 그러면서도 update 연산이 많이 일어나는 page들에 대해서 SSD로 내려야 하는 경우, (SSD의 retention time 조절 등을 통해 확보되거나, 처음부터 many-erase에 성능/수명적으로 tolerant한 SSD를 이용하도록) SSD 영역 혹은 SSD unit을 선택하도록 하는 기능도 추가할 것
+
+
+=== Questions ===
+
+# page cache layer가 아닌 block layer에서 caching을 한다고 했을 때에는 어떤 algorithm을 사용해야 할까? 이때도 hybrid page cache에서 사용된 algorithm이 적용될 수 있을까?
+# 분산 환경을 고려한다고 했을 때, disk cache는 어떤 모습이 되어야 할까? 크게 아키텍쳐를 나눈다면 몇 가지로 구분될 수 있을까? 아키텍쳐를 구분하는 기준에는 어떤 것들이 올 수 있는 것일까?
+## memcached, memcachedb, hbase cache, directCache, mySQL cache?, fscache, dm-cache, NetApp flash cache, VeloBit HyperCache, Intel IRST (in ISRT), EMC VFCache, CORFU, FAWN cache 같은 것을 어떻게 구분하고 특징지을 수 있을까?
+# 내가 집중적으로 비교 분석해야 하는 주요 cache 기술에는 어떤 것이 있을까?
+# server-side cache 기술이 client-side cache 기술과 비교해서 근본적으로 달라져야 하는 부분에는 어떤 것들이 있을까?
+# cache 기술 계의 기술 트리는 어떤 모습이 될 수 있을까?
+# SSD 혹은 SSD array (in DAS), distributed SSD 를 large-scale cache로 사용한다고 했을 때 어떤 모습이 되어야 할까? 그리고 이를 위해서 고려되어야 하는 알고리즘/기술들은? 혹시 distributed hash table? consistent hashing? bloom filter? multi-node cache coherency? cache 입장에서의 name node 역할이 필요할까? 혹은 기타 well-known algorithm 들이 여기에 접목되어 어려운 문제를 풀어내는 데 도움이 될 수는 없을까? 매우 효율적이고 멋진 well-known problem (with solution)으로 매핑될 수 있는, 굉장히 현실적인 문제가 있다면 제일 좋을 것 같다.
+# CLRS 혹은 집에 있는 알고리즘 책들을 훓어보면서 알고리즘 목록들을 정리해보는 것도 좋겠음.
+# 주기성 ([[periodicity]]) 발견을 위해서 어떤 방식을 이용할 수 있을까? [[periodicity transform]] 같은 것을 참고할 수 있을까? real-time으로 이러한 transform을 하기에는 computation의 부담이 있을 수 있겠지만, 이것이 간단한 count, plus, minus, multiply 등의 연산으로 구현될 수 있다면 real-time으로 확인하기에도 좋을 것 같다.
+#* [http://sethares.engr.wisc.edu/downper.html What is a periodicity transform?]
+
+
+-- 
+B ::= Peace, Love, Empathy & a Rose @}`-,--
+"Brian M. JUNG" <brian.m.jung@gmail.com>
+
+
+

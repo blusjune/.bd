@@ -1,0 +1,68 @@
+
+
+# /
+total 120
+drwxr-xr-x  27 root     root   4096 Feb 15 00:38 ./
+drwxr-xr-x  27 root     root   4096 Feb 15 00:38 ../
+drwxr-xr-x   2 root     root   4096 Feb 14 08:37 .rpmdb/
+drwxr-xr-x   3 root     root   4096 Feb 11 18:21 app/
+drwxr-xr-x   2 root     root   4096 Feb 14 01:24 bin/
+drwxr-xr-x   3 root     root   4096 Feb 15 00:39 boot/
+drwxr-xr-x   2 root     root   4096 Jan  7 22:29 cdrom/
+drwxr-xr-x  16 root     root   4240 Feb 16 02:26 dev/
+drwxr-xr-x 187 root     root  12288 Feb 16 22:47 etc/
+drwxrwxr-x   5 blusjune wheel  4096 Feb 13 02:51 home/
+lrwxrwxrwx   1 root     root     33 Feb 14 08:38 initrd.img -> /boot/initrd.img-3.0.0-15-generic
+lrwxrwxrwx   1 root     root     32 Jan  7 22:32 initrd.img.old -> boot/initrd.img-3.0.0-12-generic
+drwxr-xr-x  22 root     root   4096 Feb 15 00:38 lib/
+drwxr-xr-x   2 root     root   4096 Feb 15 00:38 lib32/
+drwxr-xr-x   2 root     root   4096 Oct 12 23:27 lib64/
+drwx------   2 root     root  16384 Jan  7 22:27 lost+found/
+drwxr-xr-x   4 root     root   4096 Feb 14 23:49 media/
+drwxr-xr-x   2 root     root   4096 Oct  9 16:31 mnt/
+drwxr-xr-x   4 root     root   4096 Jan  7 22:39 opt/
+dr-xr-xr-x 217 root     root      0 Feb 14 23:48 proc/
+drwx------   4 root     root   4096 Jan  7 22:50 root/
+drwxr-xr-x  28 root     root   1120 Feb 16 22:42 run/
+drwxr-xr-x   2 root     root  12288 Feb 14 08:38 sbin/
+drwxr-xr-x   2 root     root   4096 Jun 22  2011 selinux/
+drwxr-xr-x   2 root     root   4096 Oct 12 23:26 srv/
+drwxr-xr-x  13 root     root      0 Feb 14 23:48 sys/
+drwxrwxrwt  21 root     root   4096 Feb 16 22:55 tmp/
+drwxr-xr-x  11 root     root   4096 Jan  8 02:07 usr/
+drwxr-xr-x  14 root     root   4096 Jan  8 16:38 var/
+lrwxrwxrwx   1 root     root     29 Feb 14 08:38 vmlinuz -> boot/vmlinuz-3.0.0-15-generic
+lrwxrwxrwx   1 root     root     29 Jan  7 22:32 vmlinuz.old -> boot/vmlinuz-3.0.0-12-generic
+lrwxrwxrwx   1 root     root     15 Jan 31 23:37 x -> /home/bx_data/x/
+
+
+# /x
+lrwxrwxrwx 1 root root 15 Jan 31 23:37 /x -> /home/bx_data/x/
+
+
+# /home/bx_data
+total 32
+drwxr-xr-x 8 blusjune blusjune 4096 Feb 13 01:13 ./
+drwxrwxr-x 5 blusjune wheel    4096 Feb 13 02:51 ../
+drwxrwxr-x 2 blusjune blusjune 4096 Jan 13 22:42 brp/
+drwxrwxr-x 2 blusjune blusjune 4096 Feb 13 01:12 lib/
+drwxrwxr-x 2 blusjune blusjune 4096 Jan 13 22:42 prj/
+drwxrwxr-x 2 blusjune blusjune 4096 Jan 13 22:42 t/
+drwxrwxr-x 3 blusjune blusjune 4096 Jan 30 21:06 tsk/
+drwxrwxr-x 3 blusjune blusjune 4096 Feb 16 22:27 x/
+
+
+# /home/bx_data/x
+total 12
+drwxrwxr-x  3 blusjune blusjune 4096 Feb 16 22:27 ./
+drwxr-xr-x  8 blusjune blusjune 4096 Feb 13 01:13 ../
+lrwxrwxrwx  1 blusjune blusjune    6 Jan 31 23:39 brp -> ../brp/
+lrwxrwxrwx  1 blusjune blusjune    6 Jan 31 23:39 lib -> ../lib/
+drwxr-xr-x 13 blusjune blusjune 4096 Feb 16 22:28 nfs/
+lrwxrwxrwx  1 blusjune blusjune    6 Jan 31 23:39 prj -> ../prj/
+lrwxrwxrwx  1 blusjune blusjune    4 Jan 31 23:39 t -> ../t/
+lrwxrwxrwx  1 blusjune blusjune    6 Jan 31 23:39 tsk -> ../tsk/
+
+
+
+

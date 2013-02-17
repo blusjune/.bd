@@ -1,0 +1,343 @@
+## debugfs - ext{2/3/4} file system debugger
+
+##tstamp: 20121108_221028
+
+
+## URL (http://stackoverflow.com/questions/3444844/finding-what-hard-drive-sectors-occupy-a-file)
+
+
+## @ debugfs, dd, blktrace
+
+$ ls -i t/f1
+81788931 f1
+
+
+$ sudo debugfs /dev/sdc1
+
+debugfs: 
+
+
+
+
+debugfs: stat /t/f1
+Inode: 81788931   Type: regular    Mode:  0664   Flags: 0x80000
+Generation: 2741914624    Version: 0x00000000:00000001
+User:     0   Group:     0   Size: 162816
+File ACL: 0    Directory ACL: 0
+Links: 1   Blockcount: 320
+Fragment:  Address: 0    Number: 0    Size: 0
+ ctime: 0x5076a765:808ac92c -- Thu Oct 11 20:03:01 2012
+ atime: 0x5076a765:8ed8e500 -- Thu Oct 11 20:03:01 2012
+ mtime: 0x5076a765:808ac92c -- Thu Oct 11 20:03:01 2012
+crtime: 0x5076a764:25f16da4 -- Thu Oct 11 20:03:00 2012
+Size of extra inode fields: 28
+EXTENTS:
+(0-6):327188495-327188501, (7-15):327188503-327188511, (16-39):327188544-327188567
+
+
+
+
+debugfs: ex /t/f1
+Level Entries       Logical              Physical Length Flags
+ 0/ 0   1/  3     0 -     6 327188495 - 327188501      7 
+ 0/ 0   2/  3     7 -    15 327188503 - 327188511      9 
+ 0/ 0   3/  3    16 -    39 327188544 - 327188567     24 
+
+ 
+ 
+debugfs:  imap
+imap: Usage: imap <file>
+debugfs:  imap /t/f1
+Inode 81788931 is part of block group 9984
+	located at block 327155744, offset 0x0200
+	
+	
+
+debugfs:  bmap
+bmap: Usage: bmap <file> logical_blk
+debugfs:  bmap /t/f1 0
+327188495
+debugfs:  bmap /t/f1 7
+327188503
+debugfs:  bmap /t/f1 6
+327188501
+debugfs:  bmap /t/f1 16
+327188544
+debugfs:  bmap /t/f1 15
+327188511
+
+
+
+debugfs:  ncheck 81788931
+Inode	Pathname
+81788931	/t/f1
+
+
+
+debugfs:  icheck
+icheck: Usage: icheck <block number> ...
+debugfs:  icheck 327188495
+Block	Inode number
+327188495	81788931
+debugfs:  icheck 327188503
+Block	Inode number
+327188503	81788931
+debugfs:  icheck 327188544
+Block	Inode number
+327188544	81788931
+
+
+
+
+
+
+
+
+
+-----------------------------------------------
+
+ncheck                   Do inode->name translation
+icheck                   Do block->inode translation
+
+bmap                     Calculate the logical->physical block mapping for an inode
+imap                     Calculate the location of an inode
+
+
+-
+
+
+
+
+Inode: 81788931   Type: regular    Mode:  0664   Flags: 0x80000
+Generation: 2741914624    Version: 0x00000000:00000001
+User:     0   Group:     0   Size: 162816
+File ACL: 0    Directory ACL: 0
+Links: 1   Blockcount: 320
+Fragment:  Address: 0    Number: 0    Size: 0
+ ctime: 0x5076be52:e4aeba00 -- Thu Oct 11 21:40:50 2012
+ atime: 0x5076be53:02a965f0 -- Thu Oct 11 21:40:51 2012
+ mtime: 0x5076be52:e4aeba00 -- Thu Oct 11 21:40:50 2012
+crtime: 0x5076a764:25f16da4 -- Thu Oct 11 20:03:00 2012
+Size of extra inode fields: 28
+EXTENTS:
+(0):327188536, (1-7):327188495-327188501, (8-15):327188503-327188510, (16-39):327188544-327188567
+(END)
+
+
+-
+
+debugfs:  bmap
+bmap: Usage: bmap <file> logical_blk
+debugfs:  bmap /t/f1 0
+327188536
+
+
+
+debugfs:  imap 
+imap: Usage: imap <file>
+debugfs:  imap /t/f1
+Inode 81788931 is part of block group 9984
+	located at block 327155744, offset 0x0200
+
+
+	
+-
+Filesystem volume name:   <none>
+Last mounted on:          /mnt/sdc1
+Filesystem UUID:          459c1613-502e-40a7-bc88-30e6f514c75a
+Filesystem magic number:  0xEF53
+Filesystem revision #:    1 (dynamic)
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype needs_recovery extent flex_bg sparse_super large_file huge_file uninit_bg dir_nlink extra_isize
+Filesystem flags:         signed_directory_hash
+Default mount options:    (none)
+Filesystem state:         clean
+Errors behavior:          Continue
+Filesystem OS type:       Linux
+Inode count:              122101760
+Block count:              488378390
+Reserved block count:     24418919
+Free blocks:              480664971
+Free inodes:              122101749
+First block:              0
+Block size:               4096
+Fragment size:            4096
+Reserved GDT blocks:      907
+Blocks per group:         32768
+Fragments per group:      32768
+Inodes per group:         8192
+Inode blocks per group:   512
+RAID stride:              1
+RAID stripe width:        1
+Flex block group size:    16
+Filesystem created:       Thu Oct 11 16:43:01 2012
+Last mount time:          Thu Oct 11 16:44:48 2012
+Last write time:          Thu Oct 11 16:44:48 2012
+Mount count:              1
+Maximum mount count:      39
+Last checked:             Thu Oct 11 16:43:01 2012
+Check interval:           15552000 (6 months)
+Next check after:         Tue Apr  9 16:43:01 2013
+Lifetime writes:          144 MB
+Reserved blocks uid:      0 (user root)
+Reserved blocks gid:      0 (group root)
+First inode:              11
+Inode size:               256
+Required extra isize:     28
+Desired extra isize:      28
+Journal inode:            8
+Default directory hash:   half_md4
+Directory Hash Seed:      4cbaae90-4332-4a9c-8cb5-e37120d90d1c
+Journal backup:           inode blocks
+Directories:              3
+ Group  0: block bitmap at 1025, inode bitmap at 1041, inode table at 1057
+           23513 free blocks, 8181 free inodes, 2 used directories, 8177 unused inodes
+           [Checksum 0x400a]
+ Group  1: block bitmap at 1026, inode bitmap at 1042, inode table at 1569
+           31743 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Checksum 0xf0d1]
+ Group  2: block bitmap at 1027, inode bitmap at 1043, inode table at 2081
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+
+
+
+
+
+ Group  0: block bitmap at 1025, inode bitmap at 1041, inode table at 1057
+           23513 free blocks, 8181 free inodes, 2 used directories, 8177 unused inodes
+           [Checksum 0x400a]
+ Group  1: block bitmap at 1026, inode bitmap at 1042, inode table at 1569
+           31743 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Checksum 0xf0d1]
+ Group  2: block bitmap at 1027, inode bitmap at 1043, inode table at 2081
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0xe40d]
+ Group  3: block bitmap at 1028, inode bitmap at 1044, inode table at 2593
+           31743 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Checksum 0x860f]
+ Group  4: block bitmap at 1029, inode bitmap at 1045, inode table at 3105
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0xae5b]
+
+
+
+ Group 9984: block bitmap at 327155712, inode bitmap at 327155728, inode table at 327155744
+           24543 free blocks, 8189 free inodes, 1 used directory, 8189 unused inodes
+           [Checksum 0x73f5]
+ Group 9985: block bitmap at 327155713, inode bitmap at 327155729, inode table at 327156256
+           32688 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Checksum 0x5318]
+ Group 9986: block bitmap at 327155714, inode bitmap at 327155730, inode table at 327156768
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0x12d8]
+ Group 9987: block bitmap at 327155715, inode bitmap at 327155731, inode table at 327157280
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0xb203]
+ Group 9988: block bitmap at 327155716, inode bitmap at 327155732, inode table at 327157792
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0x1007]
+ Group 9989: block bitmap at 327155717, inode bitmap at 327155733, inode table at 327158304
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0xb0dc]
+
+
+
+ Group 14898: block bitmap at 488112130, inode bitmap at 488112146, inode table at 488113184
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0xaec1]
+ Group 14899: block bitmap at 488112131, inode bitmap at 488112147, inode table at 488113696
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0x0e1a]
+ Group 14900: block bitmap at 488112132, inode bitmap at 488112148, inode table at 488114208
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0xac1e]
+ Group 14901: block bitmap at 488112133, inode bitmap at 488112149, inode table at 488114720
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0x0cc5]
+ Group 14902: block bitmap at 488112134, inode bitmap at 488112150, inode table at 488115232
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0xadab]
+ Group 14903: block bitmap at 488112135, inode bitmap at 488112151, inode table at 488115744
+           32768 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Block not init, Checksum 0x0d70]
+ Group 14904: block bitmap at 488112136, inode bitmap at 488112152, inode table at 488116256
+           4118 free blocks, 8192 free inodes, 0 used directories, 8192 unused inodes
+           [Inode not init, Checksum 0x0fd1]
+(END)
+
+
+
+
+
+
+
+root@prince:[_log] # cat 20121011_213929-blkparse.log.1
+
+
+  8,33   0        2     0.000000694 16462  Q  WS 2617510336 + 8 [dd]
+  8,33   0        3     0.000001717 16462  G  WS 2617510336 + 8 [dd]
+  8,33   0        4     0.000002075 16462  P   N [dd]
+  8,33   0        5     0.000003007 16462  I  WS 2617510336 + 8 [dd]
+  8,33   0        6     0.000003579 16462  U   N [dd] 1
+  8,33   0        7     0.000004138 16462  D  WS 2617510336 + 8 [dd]
+  8,33   0       34     0.040539509 16462  Q  WS 2617510008 + 8 [dd]
+  8,33   0       35     0.040540267 16462  G  WS 2617510008 + 8 [dd]
+  8,33   0       36     0.040540754 16462  P   N [dd]
+  8,33   0       37     0.040541473 16462  I  WS 2617510008 + 8 [dd]
+  8,33   0       38     0.040541804 16462  U   N [dd] 1
+  8,33   0       39     0.040542222 16462  D  WS 2617510008 + 8 [dd]
+  8,33   1        7     0.073997571 16462  Q  WS 2617510016 + 8 [dd]
+  8,33   1        8     0.073998139 16462  G  WS 2617510016 + 8 [dd]
+  8,33   1        9     0.073998492 16462  P   N [dd]
+  8,33   1       10     0.073999093 16462  I  WS 2617510016 + 8 [dd]
+  8,33   1       11     0.073999352 16462  U   N [dd] 1
+  8,33   1       12     0.073999691 16462  D  WS 2617510016 + 8 [dd]
+  8,33   0       69     0.107461897 16462  Q  WS 2617510024 + 8 [dd]
+  8,33   0       70     0.107462453 16462  G  WS 2617510024 + 8 [dd]
+  8,33   0       71     0.107462814 16462  P   N [dd]
+  8,33   0       72     0.107463313 16462  I  WS 2617510024 + 8 [dd]
+  8,33   0       73     0.107463557 16462  U   N [dd] 1
+  8,33   0       74     0.107463858 16462  D  WS 2617510024 + 8 [dd]
+  8,33   0      101     0.140950496 16462  Q  WS 2617510032 + 8 [dd]
+  8,33   0      102     0.140951016 16462  G  WS 2617510032 + 8 [dd]
+  8,33   0      103     0.140951332 16462  P   N [dd]
+  8,33   0      104     0.140951828 16462  I  WS 2617510032 + 8 [dd]
+  8,33   0      105     0.140952063 16462  U   N [dd] 1
+  8,33   0      106     0.140952328 16462  D  WS 2617510032 + 8 [dd]
+  8,33   1       45     0.174460711 16462  Q  WS 2617510040 + 8 [dd]
+  8,33   1       46     0.174461507 16462  G  WS 2617510040 + 8 [dd]
+  8,33   1       47     0.174462007 16462  P   N [dd]
+  8,33   1       48     0.174462708 16462  I  WS 2617510040 + 8 [dd]
+  8,33   1       49     0.174463077 16462  U   N [dd] 1
+  8,33   1       50     0.174463528 16462  D  WS 2617510040 + 8 [dd]
+  8,33   0      136     0.207935635 16462  Q  WS 2617510048 + 8 [dd]
+  8,33   0      137     0.207936164 16462  G  WS 2617510048 + 8 [dd]
+  8,33   0      138     0.207936519 16462  P   N [dd]
+  8,33   0      139     0.207937015 16462  I  WS 2617510048 + 8 [dd]
+  8,33   0      140     0.207937271 16462  U   N [dd] 1
+  8,33   0      141     0.207937568 16462  D  WS 2617510048 + 8 [dd]
+  8,33   1       80     0.241435857 16462  Q  WS 2617510056 + 8 [dd]
+  8,33   1       81     0.241436594 16462  G  WS 2617510056 + 8 [dd]
+  8,33   1       82     0.241437132 16462  P   N [dd]
+  8,33   1       83     0.241437842 16462  I  WS 2617510056 + 8 [dd]
+  8,33   1       84     0.241438173 16462  U   N [dd] 1
+  8,33   1       85     0.241438624 16462  D  WS 2617510056 + 8 [dd]
+  8,33   1      112     0.274910841 16462  Q  WS 2617510072 + 8 [dd]
+  8,33   1      113     0.274911388 16462  G  WS 2617510072 + 8 [dd]
+  8,33   1      114     0.274911725 16462  P   N [dd]
+  8,33   1      115     0.274912209 16462  I  WS 2617510072 + 8 [dd]
+  8,33   1      116     0.274912450 16462  U   N [dd] 1
+  8,33   1      117     0.274912769 16462  D  WS 2617510072 + 8 [dd]
+  8,33   0      174     0.308424863 16462  Q  WS 2617510080 + 8 [dd]
+  8,33   0      175     0.308425630 16462  G  WS 2617510080 + 8 [dd]
+...
+
+
+blusjune@prince:[mnt_cherry] $ sudo hdparm --fibmap /mnt/sdc1/t/f1
+
+/mnt/sdc1/t/f1:
+ filesystem blocksize 4096, begins at LBA 2048; assuming 512 byte sectors.
+ byte_offset  begin_LBA    end_LBA    sectors
+           0 2617510336 2617510343          8
+        4096 2617510008 2617510063         56
+       32768 2617510072 2617510135         64
+       65536 2617510400 2617510591        192

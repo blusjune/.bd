@@ -1,0 +1,8 @@
+##tstamp: 20121031_015437
+
+[x_tmp$]
+   comment = x/tmp
+   path = /x/tmp
+   browseable = yes
+   read only = no
+   guest ok = yes

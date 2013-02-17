@@ -1,0 +1,5 @@
+KDB (http://www.kdb.co.kr/)
+ID: b34713z
+PW: des2aes
+RequestNumber: 00050402
+Thu Mar 29 22:30:44 KST 2012

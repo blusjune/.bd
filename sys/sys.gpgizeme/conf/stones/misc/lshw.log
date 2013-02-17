@@ -1,0 +1,287 @@
+stones
+    description: Computer
+    product: VirtualBox ()
+    vendor: innotek GmbH
+    version: 1.2
+    serial: 0
+    width: 64 bits
+    capabilities: smbios-2.5 dmi-2.5 vsyscall32
+    configuration: family=Virtual Machine uuid=430CD4E1-DD85-4B46-9457-1DEB787585DA
+  *-core
+       description: Motherboard
+       product: VirtualBox
+       vendor: Oracle Corporation
+       physical id: 0
+       version: 1.2
+       serial: 0
+     *-firmware
+          description: BIOS
+          vendor: innotek GmbH
+          physical id: 0
+          version: VirtualBox
+          date: 12/01/2006
+          size: 128KiB
+          capabilities: isa pci cdboot bootselect int9keyboard int10video acpi
+     *-memory
+          description: System memory
+          physical id: 1
+          size: 3955MiB
+     *-cpu
+          product: Intel(R) Core(TM) i5-2500 CPU @ 3.30GHz
+          vendor: Intel Corp.
+          physical id: 2
+          bus info: cpu@0
+          width: 64 bits
+          capabilities: fpu fpu_exception wp vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp x86-64 constant_tsc up rep_good nopl pni monitor ssse3 lahf_lm
+     *-pci
+          description: Host bridge
+          product: 440FX - 82441FX PMC [Natoma]
+          vendor: Intel Corporation
+          physical id: 100
+          bus info: pci@0000:00:00.0
+          version: 02
+          width: 32 bits
+          clock: 33MHz
+        *-isa
+             description: ISA bridge
+             product: 82371SB PIIX3 ISA [Natoma/Triton II]
+             vendor: Intel Corporation
+             physical id: 1
+             bus info: pci@0000:00:01.0
+             version: 00
+             width: 32 bits
+             clock: 33MHz
+             capabilities: isa bus_master
+             configuration: latency=0
+        *-ide
+             description: IDE interface
+             product: 82371AB/EB/MB PIIX4 IDE
+             vendor: Intel Corporation
+             physical id: 1.1
+             bus info: pci@0000:00:01.1
+             logical name: scsi5
+             version: 01
+             width: 32 bits
+             clock: 33MHz
+             capabilities: ide bus_master emulated
+             configuration: driver=ata_piix latency=64
+             resources: irq:0 ioport:1f0(size=8) ioport:3f6 ioport:170(size=8) ioport:376 ioport:d000(size=16)
+           *-cdrom
+                description: DVD reader
+                physical id: 0.0.0
+                bus info: scsi@5:0.0.0
+                logical name: /dev/cdrom
+                logical name: /dev/dvd
+                logical name: /dev/sr0
+                capabilities: audio dvd
+                configuration: status=nodisc
+        *-display UNCLAIMED
+             description: VGA compatible controller
+             product: VirtualBox Graphics Adapter
+             vendor: InnoTek Systemberatung GmbH
+             physical id: 2
+             bus info: pci@0000:00:02.0
+             version: 00
+             width: 32 bits
+             clock: 33MHz
+             capabilities: vga_controller bus_master
+             configuration: latency=64
+             resources: memory:e0000000-e0ffffff
+        *-network
+             description: Ethernet interface
+             product: 82540EM Gigabit Ethernet Controller
+             vendor: Intel Corporation
+             physical id: 3
+             bus info: pci@0000:00:03.0
+             logical name: eth1
+             version: 02
+             serial: 08:00:27:27:c4:8e
+             size: 1Gbit/s
+             capacity: 1Gbit/s
+             width: 32 bits
+             clock: 66MHz
+             capabilities: pm pcix bus_master cap_list ethernet physical tp 10bt 10bt-fd 100bt 100bt-fd 1000bt-fd autonegotiation
+             configuration: autonegotiation=on broadcast=yes driver=e1000 driverversion=7.3.21-k8-NAPI duplex=full firmware=N/A ip=10.0.2.15 latency=64 link=yes mingnt=255 multicast=yes port=twisted pair speed=1Gbit/s
+             resources: irq:19 memory:f0000000-f001ffff ioport:d010(size=8)
+        *-generic
+             description: System peripheral
+             product: VirtualBox Guest Service
+             vendor: InnoTek Systemberatung GmbH
+             physical id: 4
+             bus info: pci@0000:00:04.0
+             version: 00
+             width: 32 bits
+             clock: 33MHz
+             capabilities: bus_master
+             configuration: driver=vboxguest latency=0
+             resources: irq:20 ioport:d020(size=32) memory:f0400000-f07fffff memory:f0800000-f0803fff
+        *-multimedia
+             description: Multimedia audio controller
+             product: 82801AA AC'97 Audio Controller
+             vendor: Intel Corporation
+             physical id: 5
+             bus info: pci@0000:00:05.0
+             version: 01
+             width: 32 bits
+             clock: 33MHz
+             capabilities: bus_master
+             configuration: driver=snd_intel8x0 latency=64
+             resources: irq:21 ioport:d100(size=256) ioport:d200(size=64)
+        *-usb:0
+             description: USB controller
+             product: KeyLargo/Intrepid USB
+             vendor: Apple Inc.
+             physical id: 6
+             bus info: pci@0000:00:06.0
+             version: 00
+             width: 32 bits
+             clock: 33MHz
+             capabilities: ohci bus_master cap_list
+             configuration: driver=ohci_hcd latency=64
+             resources: irq:22 memory:f0804000-f0804fff
+        *-bridge UNCLAIMED
+             description: Bridge
+             product: 82371AB/EB/MB PIIX4 ACPI
+             vendor: Intel Corporation
+             physical id: 7
+             bus info: pci@0000:00:07.0
+             version: 08
+             width: 32 bits
+             clock: 33MHz
+             capabilities: bridge bus_master
+             configuration: latency=0
+        *-usb:1
+             description: USB controller
+             product: 82801FB/FBM/FR/FW/FRW (ICH6 Family) USB2 EHCI Controller
+             vendor: Intel Corporation
+             physical id: b
+             bus info: pci@0000:00:0b.0
+             version: 00
+             width: 32 bits
+             clock: 33MHz
+             capabilities: ehci bus_master
+             configuration: driver=ehci_hcd latency=64
+             resources: irq:19 memory:f0805000-f0805fff
+        *-storage
+             description: SATA controller
+             product: 82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode]
+             vendor: Intel Corporation
+             physical id: d
+             bus info: pci@0000:00:0d.0
+             logical name: scsi0
+             logical name: scsi1
+             logical name: scsi2
+             logical name: scsi3
+             version: 02
+             width: 32 bits
+             clock: 33MHz
+             capabilities: storage pm ahci_1.0 bus_master cap_list emulated
+             configuration: driver=ahci latency=64
+             resources: irq:21 ioport:d240(size=8) ioport:d250(size=8) ioport:d260(size=16) memory:f0806000-f0807fff
+           *-disk:0
+                description: ATA Disk
+                product: VBOX HARDDISK
+                physical id: 0
+                bus info: scsi@0:0.0.0
+                logical name: /dev/sda
+                version: 1.0
+                serial: VBbbb4739f-13774658
+                size: 8GiB (8589MB)
+                capabilities: partitioned partitioned:dos
+                configuration: ansiversion=5 signature=000f31f7
+              *-volume
+                   description: EXT4 volume
+                   vendor: Linux
+                   physical id: 1
+                   bus info: scsi@0:0.0.0,1
+                   logical name: /dev/sda1
+                   logical name: /
+                   version: 1.0
+                   serial: 38ce4766-f6e8-4cca-98cf-1a723e5f801b
+                   size: 8190MiB
+                   capacity: 8190MiB
+                   capabilities: primary bootable journaled extended_attributes large_files huge_files dir_nlink recover extents ext4 ext2 initialized
+                   configuration: created=2012-11-10 13:07:16 filesystem=ext4 lastmountpoint=/ modified=2012-11-10 13:17:59 mount.fstype=ext4 mount.options=rw,relatime,errors=remount-ro,user_xattr,barrier=1,data=ordered mounted=2012-11-12 22:28:38 state=mounted
+           *-disk:1
+                description: ATA Disk
+                product: VBOX HARDDISK
+                physical id: 1
+                bus info: scsi@1:0.0.0
+                logical name: /dev/sdb
+                version: 1.0
+                serial: VB848c657d-9549c490
+                size: 512GiB (549GB)
+                capabilities: partitioned partitioned:dos
+                configuration: ansiversion=5 signature=000a2ce2
+              *-volume
+                   description: EXT4 volume
+                   vendor: Linux
+                   physical id: 1
+                   bus info: scsi@1:0.0.0,1
+                   logical name: /dev/sdb1
+                   logical name: /home
+                   version: 1.0
+                   serial: 9f96f1f0-7f89-4b5a-ab37-77720477fc2d
+                   size: 511GiB
+                   capacity: 511GiB
+                   capabilities: primary journaled extended_attributes large_files huge_files dir_nlink recover extents ext4 ext2 initialized
+                   configuration: created=2012-11-10 13:07:17 filesystem=ext4 lastmountpoint=/home modified=2012-11-12 22:28:46 mount.fstype=ext4 mount.options=rw,relatime,user_xattr,barrier=1,data=ordered mounted=2012-11-12 22:28:46 state=mounted
+           *-disk:2
+                description: ATA Disk
+                product: VBOX HARDDISK
+                physical id: 2
+                bus info: scsi@2:0.0.0
+                logical name: /dev/sdc
+                version: 1.0
+                serial: VBd6c326b0-dc319eab
+                size: 512GiB (549GB)
+                capabilities: partitioned partitioned:dos
+                configuration: ansiversion=5 signature=000cf4f1
+              *-volume
+                   description: EXT4 volume
+                   vendor: Linux
+                   physical id: 1
+                   bus info: scsi@2:0.0.0,1
+                   logical name: /dev/sdc1
+                   logical name: /usr
+                   version: 1.0
+                   serial: 3e1669e9-4938-437f-a842-a7bca2bea55c
+                   size: 511GiB
+                   capacity: 511GiB
+                   capabilities: primary journaled extended_attributes large_files huge_files dir_nlink extents ext4 ext2 initialized
+                   configuration: created=2012-11-10 13:07:17 filesystem=ext4 lastmountpoint=/usr modified=2012-11-12 22:28:38 mount.fstype=ext4 mount.options=rw,relatime,user_xattr,barrier=1,data=ordered mounted=2012-11-11 23:55:32 state=mounted
+           *-disk:3
+                description: ATA Disk
+                product: VBOX HARDDISK
+                physical id: 3
+                bus info: scsi@3:0.0.0
+                logical name: /dev/sdd
+                version: 1.0
+                serial: VBc3a0213d-97732f74
+                size: 512GiB (549GB)
+                capabilities: partitioned partitioned:dos
+                configuration: ansiversion=5 signature=0000fbc4
+              *-volume:0
+                   description: Linux swap volume
+                   physical id: 1
+                   bus info: scsi@3:0.0.0,1
+                   logical name: /dev/sdd1
+                   version: 1
+                   serial: 927fd029-a2c3-47f9-852a-f012855ee899
+                   size: 3905MiB
+                   capacity: 3905MiB
+                   capabilities: primary nofs swap initialized
+                   configuration: filesystem=swap pagesize=4096
+              *-volume:1
+                   description: EXT4 volume
+                   vendor: Linux
+                   physical id: 2
+                   bus info: scsi@3:0.0.0,2
+                   logical name: /dev/sdd2
+                   logical name: /var
+                   version: 1.0
+                   serial: 8dec591e-8609-4811-bc21-20a0585fcb27
+                   size: 508GiB
+                   capacity: 508GiB
+                   capabilities: primary journaled extended_attributes large_files huge_files dir_nlink recover extents ext4 ext2 initialized
+                   configuration: created=2012-11-10 13:07:18 filesystem=ext4 lastmountpoint=/var modified=2012-11-12 22:28:42 mount.fstype=ext4 mount.options=rw,relatime,user_xattr,barrier=1,data=ordered mounted=2012-11-12 22:28:42 state=mounted

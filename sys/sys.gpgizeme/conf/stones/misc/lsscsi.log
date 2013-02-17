@@ -1,0 +1,5 @@
+[0:0:0:0]    disk    ATA      VBOX HARDDISK    1.0   /dev/sda
+[1:0:0:0]    disk    ATA      VBOX HARDDISK    1.0   /dev/sdb
+[2:0:0:0]    disk    ATA      VBOX HARDDISK    1.0   /dev/sdc
+[3:0:0:0]    disk    ATA      VBOX HARDDISK    1.0   /dev/sdd
+[5:0:0:0]    cd/dvd  VBOX     CD-ROM           1.0   /dev/sr0

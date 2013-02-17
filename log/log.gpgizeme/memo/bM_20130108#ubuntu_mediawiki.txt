@@ -1,0 +1,113 @@
+##_ver=20130108_131441
+
+
+
+
+##{ installting mediawiki with memcached
+##_ver=20130108_131441
+
+aptitude -y install mysql-server;
+aptitude -y install mysql-client;
+aptitude -y install memcached;
+aptitude -y install mediawiki;
+
+echo "edit memcached to change the binding addr to '0.0.0.0'";
+echo "'-l 127.0.0.1' --> '-l 0.0.0.0'";
+read -p "[Enter]" _null;
+vi /etc/memcached.conf;
+
+echo "restart memcached with changed option";
+read -p "[Enter]" _null;
+sudo /etc/init.d/memcached restart;
+
+echo "check that mysql work properly";
+echo "mysql -p -u root";
+read -p "[Enter]" _null;
+mysql -p -u root;
+
+echo "now start mediawiki setup with URL 'http://$(hostname)/mediawiki'";
+read -p "[Enter]" _null;
+
+##}
+
+
+
+
+##{ changing the URL (for fun faking)
+
+# If you want to change the URL from
+# http://kandinsky/mediawiki/index.php/Main_Page
+# to
+# http://kandinsky/wikini/index.php/Main_Page
+
+
+# open the file '/etc/mediawiki/LocalSettings.php'
+# to change the value of the variable 'wgScriptPath' to '/wikini'
+# --
+# before: #$wgScriptPath       = "/mediawiki";
+# after:  $wgScriptPath       = "/wikini";
+# --
+sudo vi /etc/mediawiki/LocalSettings.php;
+
+
+# add the following line to the file '/etc/mediawiki/apache.conf'
+# --
+# Alias /wikini /var/lib/mediawiki
+# --
+sudo vi /etc/mediawiki/apache.conf;
+
+
+sudo /etc/init.d/apache2 restart;
+
+##}
+
+
+
+
+##{ _ver=20130108_131441
+
+# If you want to change the mediawiki logo image,
+# replace the file with the image that you want
+/usr/share/mediawiki/skins/common/images/wiki.png
+
+##}
+
+
+
+
+##{ _ver=20130108_131441
+
+# to enable 'external image rendering in mediawiki page'
+# edit the following configuration file
+
+	/var/lib/mediawiki/includes/DefaultSettings.php
+
+# and change the value of 'wgAllowExternalImages' to 'true' as the following
+
+	/**  Whether to allow inline image pointing to other websites */
+	#$wgAllowExternalImages = false;
+	$wgAllowExternalImages = true;  # turned into 'true' at 20130125_130958
+
+##}
+
+
+
+
+##{ _ver=20130108_131441
+
+# to enable file uploading to mediawiki
+
+# 1st, make sure that php allows it
+# by changing the following files
+# so that 'file_uploads' variable has 'On' value
+
+	vi /etc/php5/apache2/php.ini
+	vi /etc/php5/cli/php.ini
+
+# 2nd, make sure that mediawiki allows it
+# by changing the following files
+# so that 'wgEnableUploads' variable has 'true' value
+
+	vi /var/lib/mediawiki/LocalSettings.php
+
+##}
