@@ -1,8 +1,11 @@
 #!/bin/sh
 ##_ver=20130218_140415
+##_ver=20130221_184531
 
 
 
+
+## set $dir=/mnt/diskut/filebench_d
 
 _tmpdir="30.tmp";			# temporary directory
 _tlog_wloadgen=".tlog.wloadgen";	# testlog for workload generation

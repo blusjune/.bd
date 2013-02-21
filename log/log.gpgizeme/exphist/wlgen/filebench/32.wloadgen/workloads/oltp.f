@@ -24,7 +24,7 @@
 #
 
 #set $dir=/tmp
-set $dir=/mnt/hdd_4/filebench
+set $dir=/mnt/diskut/filebench_d
 set $eventrate=0
 set $runtime=30
 set $iosize=2k

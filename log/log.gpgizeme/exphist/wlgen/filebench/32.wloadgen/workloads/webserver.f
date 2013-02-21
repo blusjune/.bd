@@ -24,7 +24,7 @@
 #
 
 #set $dir=/tmp
-set $dir=/mnt/hdd_4/filebench
+set $dir=/mnt/diskut/filebench_d
 set $nfiles=1000
 set $meandirwidth=20
 set $meanfilesize=16k

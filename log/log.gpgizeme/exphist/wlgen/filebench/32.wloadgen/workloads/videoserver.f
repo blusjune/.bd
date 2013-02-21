@@ -34,7 +34,7 @@
 #
 
 #set $dir=/tmp
-set $dir=/mnt/hdd_4/filebench
+set $dir=/mnt/diskut/filebench_d
 set $eventrate=96
 set $filesize=10g
 set $nthreads=48

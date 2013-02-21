@@ -27,7 +27,7 @@
 # $nthreads - number of worker threads
 
 #set $dir=/tmp
-set $dir=/mnt/hdd_4/filebench
+set $dir=/mnt/diskut/filebench_d
 set $cached=false
 set $eventrate=10
 set $meandirwidth=20

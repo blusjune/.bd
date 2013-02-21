@@ -25,7 +25,7 @@
 # ident	"%Z%%M%	%I%	%E% SMI"
 
 #set $dir=/tmp
-set $dir=/mnt/hdd_4/filebench
+set $dir=/mnt/diskut/filebench_d
 set $nfiles=1000
 set $dirwidth=20
 set $filesize=16k
