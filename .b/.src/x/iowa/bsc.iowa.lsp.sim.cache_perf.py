@@ -16,23 +16,23 @@ _this_prog = os.path.basename(sys.argv[0])
 ##
 ## processing input parameters
 ##
-_ioc_permill = None # IO contribution (IOC) permill
+_ioc_percent = None # IO contribution (IOC) percent
 def print_help_n_exit(_retval):
-	print "Usage", _this_prog, "[-h|--help] -c|--ioc-permill=<_ioc_permill>"
+	print "Usage", _this_prog, "[-h|--help] -c|--ioc-percent=<_ioc_percent>"
 	sys.exit(int(_retval))
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hc:", ["help", "ioc-permill="])
+	opts, args = getopt.getopt(sys.argv[1:], "hc:", ["help", "ioc-percent="])
 except getopt.GetoptError:
 	print_help_n_exit(1)
 for opt, arg in opts:
 	if opt in ("-h", "--help"):
 		print_help_n_exit(0)
-	elif opt in ("-c", "--ioc-permill"):
-		_ioc_permill = int(arg)
+	elif opt in ("-c", "--ioc-percent"):
+		_ioc_percent = int(arg)
 
 ## sanity check
-if _ioc_permill is None:
-	print "#!! ERROR: _ioc_permill is not set"
+if _ioc_percent is None:
+	print "#!! ERROR: _ioc_percent is not set"
 	print_help_n_exit(2)
 
 
@@ -64,7 +64,8 @@ for line in sys.stdin:
 	## update loop variables
 	vtime_L10 += 1
 _ioc_total = vtime_L10
-_ioc_stop_target = int((float(_ioc_permill) / float(1000)) * float(_ioc_total))
+_ioc_stop_target = int((float(_ioc_percent) / float(100)) * float(_ioc_total))
+_n_o_addr_total = len(_kv_cdst__hits_per_addr) # total number of addresses accessed
 ## print the collected and calculated results for processing_loop_10
 for kv_key, kv_val in _kv_list__addr_hit_tstamp.items():
 	print "__list__addr_hit_tstamp__ " + str(kv_key) + " : " + str(kv_val)
@@ -97,12 +98,16 @@ for item in _list__addrs_per_hitnum:	# item[0]: hitnum ; item[1]: number of corr
 	if _sigioc_acc >= _ioc_stop_target:
 		_sighitcnt = item[0]
 		break;
+_sigaddrs_efficiency = ( float(_sigioc_acc) / float(_n_o_sigaddrs) )
 ## NOW we have '_sighitcnt', '_n_o_sigaddrs', and '_sigioc_acc'
 ## print the collected and calculated results for processing_loop_30
-print "__valu__sig__ _ioc_permill : ", _ioc_permill	# permill value defining significant IO contribution
-print "__valu__sig__ _sighitcnt : ", _sighitcnt	# significant hit count
+print "__valu__sig__ _ioc_percent : ", _ioc_percent	# percent value defining significant IO contribution
+print "__valu__sig__ _sighitcnt : ", _sighitcnt	# significant hit count as a threshold
 print "__valu__sig__ _n_o_sigaddrs : ", _n_o_sigaddrs	# number of significant addresses (hits>=sighitcnt)
 print "__valu__sig__ _sigioc_acc : ", _sigioc_acc	# IO contribution by significant addresses: 
+print "__valu__sig__ _sigaddrs_efficiency : ", _sigaddrs_efficiency	# efficiency index about significant addresses to the IO contribution (_sigioc_acc / _n_o_sigaddrs)
+print "__valu__sig__ _n_o_addr_total : ", _n_o_addr_total	# total number of addresses accessed
+print "__valu__sig__ _ioc_total : ", _ioc_total	# IO contribution total (# of total IO accesses)
 
 
 ##
