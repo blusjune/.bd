@@ -10,7 +10,7 @@ _this_prog=$(basename $0);
 . ..bhdr; echo "$_BHDR $_this_prog";
 _print_help()
 {
-	echo "#>> blkparse output log file name should be specified";
+	echo "#>> $_this_prog <blkparse_textlogfile> <gbl_phase_filter:['Q'|'D']>";
 }
 _cmd__print_seekdist=".tmp.print_seekdist.py";
 
@@ -42,13 +42,18 @@ if [ "X$1" != "X" ]; then
 		exit 0;
 	else
 		_if=$1;
+		if [ "X$#" = "X2" ]; then
+			_gbl_phase_filter="$2";
+		else
+			_gbl_phase_filter="D"; # 'D' by default
+		fi
 	fi
 else
 	if [ "X$_if" = "X" ]; then
 		read -p "#?? input file (blkparse output): " _if;
 	fi
 fi
-echo "#>> extracting raw data from '$_if' for further processing ...";
+echo "#>> extracting raw data from '$_if' (with gbl_phase_filter '$_gbl_phase_filter')";
 
 
 
@@ -63,7 +68,8 @@ _of_W_seek="$_if.W.seek"; ## Write
 
 
 echo "#>> generating '$_of_1' ...";
-cat $_if | awk '{ print "_" $7, "__" $6, "___" $1, $0 }' | grep -e '_[RW]' | grep '__Q' > $_of_1;	## Q phase
+cat $_if | awk '{ print "_" $7, "__" $6, "___" $1, $0 }' | grep -e '_[RW]' | grep "__${_gbl_phase_filter}" > $_of_1;	## Q|D phase
+#cat $_if | awk '{ print "_" $7, "__" $6, "___" $1, $0 }' | grep -e '_[RW]' | grep '__Q' > $_of_1;	## Q phase
 #cat $_if | awk '{ print "_" $7, "__" $6, "___" $1, $0 }' | grep -e '_[RW]' | grep '__D' > $_of_1;	## D phase
 
 

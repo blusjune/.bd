@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 ## bsc.iowa.lsp.sim.iox.py # Simulator/IOXceleration
 ## LSP: Line-by-line Stream Processing
 ##
@@ -18,11 +18,15 @@ _this_prog = os.path.basename(sys.argv[0])
 ## processing input parameters
 ##
 _ioc_percent = None # IO contribution (IOC) percent
+_iow_size = None # IO window (IOW) size
+
 def print_help_n_exit(_retval):
-	print "Usage", _this_prog, "[-h|--help] -c|--ioc-percent=<_ioc_percent>"
+	print "Usage", _this_prog, "[-h|--help] -c|--ioc-percent=<_ioc_percent> -w|--iow-size=<_iow_size>"
 	sys.exit(int(_retval))
+
+## main getopt processing with exception handling
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hc:", ["help", "ioc-percent="])
+	opts, args = getopt.getopt(sys.argv[1:], "hc:w:", ["help", "ioc-percent=", "iow-size="])
 except getopt.GetoptError:
 	print_help_n_exit(1)
 for opt, arg in opts:
@@ -30,10 +34,15 @@ for opt, arg in opts:
 		print_help_n_exit(0)
 	elif opt in ("-c", "--ioc-percent"):
 		_ioc_percent = int(arg)
+	elif opt in ("-w", "--iow-size"):
+		_iow_size = int(arg)
 
 ## sanity check
 if _ioc_percent is None:
 	print "#!! ERROR: _ioc_percent is not set"
+	print_help_n_exit(2)
+if _iow_size is None:
+	print "#!! ERROR: _iow_size is not set"
 	print_help_n_exit(2)
 
 
@@ -44,27 +53,51 @@ def hamming_distance(v1, v2):
 	assert len(v1) == len(v2)
 	return sum(e1 != e2 for e1, e2 in zip(v1, v2))
 
+from math import sqrt
+def meanstdv(x):
+	n, mean, stdv = len(x), 0, 0
+	for i in x:
+		mean = mean + i
+	mean = mean / float(n)
+	for i in x:
+		stdv = stdv + (i - mean)**2
+	stdv = sqrt(stdv / float(n-1))
+	return mean, stdv
+
 
 ##
 ## processing_loop_10
 ##	- count: number of hits for each address
 ##	- collect: hit timestamps for each address
+##	- collect: per-IO window statistics
 ##
 _kv_cdst__hits_per_addr = defaultdict(int)
 _kv_list__addr_hit_tstamp = {}
-vtime_L10 = 0	# vtime: virtual time (not 'real' time) of which value is increased by stream line count
+_kv_list__iow_list = {} # IOW(IO Window) list
+linecount_L10 = 0	# line count is used as a virtual time (not 'real' time) of which value is increased by stream line count
+iow_index = 0
 for line in sys.stdin:
 	addr_L10 = int(line.strip())
 	## count: address hits
 	_kv_cdst__hits_per_addr[addr_L10] += 1
 	## collect: address hit timestamp
 	if addr_L10 not in _kv_list__addr_hit_tstamp:
-		_kv_list__addr_hit_tstamp[addr_L10] = [vtime_L10]
+		_kv_list__addr_hit_tstamp[addr_L10] = [linecount_L10]
 	else:
-		_kv_list__addr_hit_tstamp[addr_L10].append(vtime_L10)
+		_kv_list__addr_hit_tstamp[addr_L10].append(linecount_L10)
+	## collect: IOW list (for future statistical processing per IO Window)
+	if iow_index not in _kv_list__iow_list:
+		_kv_list__iow_list[iow_index] = [addr_L10]
+	else:
+		_kv_list__iow_list[iow_index].append(addr_L10)
 	## update loop variables
-	vtime_L10 += 1
-_ioc_total = vtime_L10
+	if (linecount_L10 % _iow_size) == (_iow_size - 1):
+		_kv_list__iow_list[iow_index] = [int(x) for x in _kv_list__iow_list[iow_index]]
+		_kv_list__iow_list[iow_index].sort()
+		iow_index += 1
+	linecount_L10 += 1
+	## End-of-for-loop
+_ioc_total = linecount_L10
 _ioc_stop_target = int((float(_ioc_percent) / float(100)) * float(_ioc_total))
 _n_o_addr_total = len(_kv_cdst__hits_per_addr) # total number of addresses accessed
 ## print the collected and calculated results for processing_loop_10
@@ -151,6 +184,18 @@ for k in _kv_list__addr_hit_tstamp.keys():
 ## print the collected and calculated results
 for kv_key, kv_val in _kv_cdst__addr_hit_interval.items():
 	print "__cdst__addr_hit_interval__ " + str(kv_key) + " : " + str(kv_val)
+
+
+##
+## processing loop 60
+##  - IOW statistical processing
+##
+_kv_list__iow_stat = {}
+for k_iow_index, v_iow_alist in _kv_list__iow_list.items():
+	_kv_list__iow_stat[k_iow_index] = meanstdv(_kv_list__iow_stat[k_iow_index])
+
+for kv_key, kv_val in _kv_list__iow_stat.items():
+	print "__list__iow_stat__ " + str(kv_key) + " : " + str(kv_val)
 
 
 
