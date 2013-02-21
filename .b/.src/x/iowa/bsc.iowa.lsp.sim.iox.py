@@ -1,8 +1,9 @@
 #!/usr/bin/python
-## bsc.iowa.lsp.cache_perf_sim.py
+## bsc.iowa.lsp.sim.iox.py # Simulator/IOXceleration
 ## LSP: Line-by-line Stream Processing
 ##
 ## _ver=20130208_151133
+## _ver=20130221_154549
 
 
 import sys, os, getopt
