@@ -41,6 +41,15 @@ google-chrome http://kandinsky:8787 # type ID/PW (me?!)
 * R example:: Kmeans [http://stat.ethz.ch/R-manual/R-patched/library/stats/html/kmeans.html]
 
 
+* R package install howto
+; e1071
+: Misc Functions of the Department of Statistics (e1071), TU Wien
+:* package-installation and loading
+ install.packages("e1071") # installing the package 'e1071'
+ library("e1071") # loading the installed package 'e1071'
+
+
+
 
 === Examples ===
 
@@ -58,3 +67,4 @@ google-chrome http://kandinsky:8787 # type ID/PW (me?!)
 === Misc. ===
 
 * WEKA Tutorial [http://www.cs.utexas.edu/users/ml/tutorials/Weka-tut/]
+* weka is a metric prefix for 10^30
