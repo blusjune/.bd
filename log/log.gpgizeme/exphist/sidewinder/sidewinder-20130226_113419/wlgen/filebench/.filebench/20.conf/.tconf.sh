@@ -37,7 +37,7 @@ if [ "X$_filebench_wload_src_target" = "X" ]; then
 fi
 echo "#>> _filebench_wload_src_target: '$_filebench_wload_src_target' ($_conf_status)";
 
-_filebench_runntime_in_sec="60";
+_filebench_runntime_in_sec="3600";
 _filebench_waiting_for_iotrace="n";	# if 'y', filebench will not be started waiting for start of iotrace
 
 _blktrace_opt_target_dev="/dev/sdd";
