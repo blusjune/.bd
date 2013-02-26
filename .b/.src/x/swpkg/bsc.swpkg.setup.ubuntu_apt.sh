@@ -4,6 +4,7 @@
 ##tstamp: 20121109_005459
 ##tstamp: 20121207_000343
 ##_ver=20130127_224936
+##_ver=20130227_011315
 
 
 
@@ -160,6 +161,7 @@ java7-jdk \\
 kernel-package \\
 kernelshark \\
 kerneltop \\
+libatlas-dev \\
 libbz2-dev \\
 libcurl3 \\
 libcurl4-openssl-dev \\
@@ -448,6 +450,10 @@ python-dev \\
 python-git \\
 python-gnuplot \\
 python-libsvm \\
+python-matplotlib \\
+python-numpy \\
+python-scipy \\
+python-setuptools \\
 python-sklearn \\
 python-twisted \\
 python2.7-dev \\
