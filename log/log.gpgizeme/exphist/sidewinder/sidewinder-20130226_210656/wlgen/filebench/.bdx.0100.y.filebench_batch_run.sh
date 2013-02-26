@@ -29,9 +29,11 @@ _target="varmail.f"; _target_wlgen_proc;
 _target="videoserver.f"; _target_wlgen_proc;
 _target="webserver.f"; _target_wlgen_proc;
 
+
 ## the followings do not work properly (or did I do wrong?)
 #_target="mongo.f"; _target_wlgen_proc;
 #_target="oltp.f"; _target_wlgen_proc;
 #_target="tpcso.f"; _target_wlgen_proc;
 
 
+cp -pr .tools/.bdx.*.y.*.sh tdir/;

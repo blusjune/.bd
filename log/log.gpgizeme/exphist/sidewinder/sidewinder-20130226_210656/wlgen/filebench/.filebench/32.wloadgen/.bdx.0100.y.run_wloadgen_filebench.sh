@@ -3,14 +3,19 @@
 ##_ver=20130219_103944
 ##_ver=20130225_234440
 ##_ver=20130226_101423
+##_ver=20130226_205640
+
+
 
 
 #. ../20.conf/.tconf.sh
 . ./.tconf.sh
 
 
+
+
 _testid_radix="$(echo $_filebench_wload_src_target | sed -e 's/\(.*\)\.f/\1/g')";
-_testid="$(tstamp).$_testid_radix";
+_testid="tid.$(tstamp).$_testid_radix";
 echo "$_testid" > ../${_tmpdir}/${_tlog_wloadgen};
 
 

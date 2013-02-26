@@ -39,10 +39,10 @@ for opt, arg in opts:
 
 ## sanity check
 if _ioc_percent is None:
-	print "#>> ERROR: _ioc_percent is not set"
+	print "#!! ERROR: _ioc_percent is not set"
 	print_help_n_exit(2)
 if _iow_size is None:
-	print "#>> ERROR: _iow_size is not set"
+	print "#!! ERROR: _iow_size is not set"
 	print_help_n_exit(2)
 
 

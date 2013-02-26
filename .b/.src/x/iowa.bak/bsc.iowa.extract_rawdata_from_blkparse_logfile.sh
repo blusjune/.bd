@@ -12,9 +12,8 @@ _print_help()
 {
 	echo "#>> $_this_prog <blkparse_textlogfile> <gbl_phase_filter:['Q'|'D']>";
 }
-
-
 _cmd__print_seekdist=".tmp.print_seekdist.py";
+
 cat > $_cmd__print_seekdist << EOF
 #!/usr/bin/python
 ##-------------------------------------------
@@ -46,7 +45,7 @@ if [ "X$1" != "X" ]; then
 		if [ "X$#" = "X2" ]; then
 			_gbl_phase_filter="$2";
 		else
-			_gbl_phase_filter="Q"; # 'Q' by default
+			_gbl_phase_filter="D"; # 'D' by default
 		fi
 	fi
 else
@@ -94,4 +93,3 @@ _INFILE="$_of_W_addr" python $_cmd__print_seekdist > $_of_W_seek;
 
 
 
-rm $_cmd__print_seekdist
