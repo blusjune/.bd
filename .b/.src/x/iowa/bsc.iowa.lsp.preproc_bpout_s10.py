@@ -68,7 +68,9 @@ for line in sys.stdin:
 			line_count += 1
 	line_count_total += 1
 
-print "## line_count : " + str(line_count)
+# print "## line_count : " + str(line_count)
+summary_line = "## line_count : " + str(line_count) + "\n"
+sys.stderr.write(summary_line)
 
 
 

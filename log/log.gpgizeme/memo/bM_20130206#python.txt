@@ -2,6 +2,28 @@
 
 === 20130226_171426 ===
 
+==== token split in python ====
+
+mystring = "ok, good   i love      you"
+tokens = mystring.strip().split()
+print tokens[0], tokens[1], tokens[2], tokens[3], tokens[4]
+
+
+==== print out to stderr in python ====
+
+ <pre>
+import sys
+
+sys.stderr.write("spam\n")
+
+errno = -2
+errmsg = "## this is an error message (errno:" + errno + ")\n"
+sys.stderr.write(errmsg)
+</pre>
+
+<br/>
+----
+
 ==== using shell environment variable in python ====
 
  <pre>
@@ -26,8 +48,8 @@ EOF
 chmod 755 $_cmd__print_seekdist
 </pre>
 
-----
 <br/>
+----
 
 === 20130206_013644 ===
 
@@ -104,5 +126,5 @@ blusjune@stones:[.src] $
 
 </pre>
 
-----
 <br/>
+----
