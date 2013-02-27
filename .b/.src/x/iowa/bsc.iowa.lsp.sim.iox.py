@@ -4,6 +4,7 @@
 ##
 ## _ver=20130208_151133
 ## _ver=20130221_154549
+## _ver=20130228_013813
 
 
 import sys, os, getopt
@@ -167,7 +168,7 @@ for kv_key, kv_val in _kv_list__sig_hitnum_and_addrs.items():
 
 
 ##
-## processing loop 50
+## processing_loop_50
 ##	- address hit interval (requires: _kv_list__addr_hit_tstamp)
 ##
 _kv_cdst__addr_hit_interval = defaultdict(int)
@@ -181,22 +182,27 @@ for k in _kv_list__addr_hit_tstamp.keys():
 			_kv_cdst__addr_hit_interval[vtime_curr - vtime_prev] += 1
 		vtime_prev = vtime_curr
 		foo += 1
-## print the collected and calculated results
+## print the collected and calculated results for processing_loop_50
 for kv_key, kv_val in _kv_cdst__addr_hit_interval.items():
 	print "__cdst__addr_hit_interval__ " + str(kv_key) + " : " + str(kv_val)
 
 
 ##
-## processing loop 60
+## processing_loop_60
 ##  - statistical processing for IOW (IO Window)
 ##
 _kv_list__iow_stat = {}
 for k_iow_index, v_iow_alist in _kv_list__iow_list.items():
-	_kv_list__iow_stat[k_iow_index] = meanstdv(_kv_list__iow_stat[k_iow_index])
+	_kv_list__iow_stat[k_iow_index] = meanstdv(v_iow_alist)
 
 for kv_key, kv_val in _kv_list__iow_stat.items():
-	print "__list__iow_stat__ " + str(kv_key) + " : " + str(kv_val)
+	print "__list__iow_stat__ " + str(kv_key) + " : " + str(kv_val[0]) + " : " + str(kv_val[1])
+	## kv_key:k_iow_index; kv_val[0]:mean; kv_val[1]:stdv;
 
 
+##
+## processing_loop_70
+##  - periodicity detection
+##
 
 
