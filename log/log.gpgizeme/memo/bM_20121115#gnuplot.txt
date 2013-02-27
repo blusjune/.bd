@@ -2,3 +2,8 @@
 
 set title "[ Address Access Pattern ]"
 plot [-1000:1000] [0:2000]  "./ifreq__seek_d2d_c.log" using 1:3 with points;
+
+
+##_ver=20130227_221739
+## overlay two graphs in a single plot
+plot "./tracelog.fileserver.R.addr" u 2 w points, "./tracelog.fileserver.W.addr" u 2 w points;

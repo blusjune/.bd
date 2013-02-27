@@ -65,7 +65,8 @@ for line in sys.stdin:
 				uio_addr = int(line_items[7])
 				uio_iosize = int(line_items[9])
 				uio_devid = line_items[0]
-				uio_timens = int(float(line_items[3]) * (10**9)) # in nanosecond
+#				uio_timens = int(float(line_items[3]) * (10**9)) # in nanosecond
+				uio_timens = float(line_items[3]) # in nanosecond
 				print "_" + uio_rwflag + " " + "__" + uio_gblphase + " " + "___" + uio_devid + " " + str(uio_timens) + " " + str(uio_addr) + " " + str(uio_iosize)
 				line_count += 1
 	line_count_total += 1
