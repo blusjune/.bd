@@ -10,6 +10,7 @@
 ##
 ##_ver=20130226_172858
 ##_ver=20130226_185715
+##_ver=20130227_215119
 
 
 
@@ -60,17 +61,17 @@ for line in sys.stdin:
 	if "R" in uio_rwflag or "W" in uio_rwflag:
 		uio_gblphase = line_items[5]
 		if _arg_gbl_phase_filter in uio_gblphase:
-			uio_devid = line_items[0]
-			uio_timens = int(float(line_items[3]) * (10**9)) # in nanosecond
-			uio_addr = int(line_items[7])
-			uio_iosize = int(line_items[9])
-			print "_" + uio_rwflag + " " + "__" + uio_gblphase + " " + "___" + uio_devid + " " + str(uio_timens) + " " + str(uio_addr) + " " + str(uio_iosize)
-			line_count += 1
+			if (line_items[7].isdigit() is True) and (line_items[9].isdigit() is True):
+				uio_addr = int(line_items[7])
+				uio_iosize = int(line_items[9])
+				uio_devid = line_items[0]
+				uio_timens = int(float(line_items[3]) * (10**9)) # in nanosecond
+				print "_" + uio_rwflag + " " + "__" + uio_gblphase + " " + "___" + uio_devid + " " + str(uio_timens) + " " + str(uio_addr) + " " + str(uio_iosize)
+				line_count += 1
 	line_count_total += 1
 
-# print "## line_count : " + str(line_count)
-summary_line = "## line_count : " + str(line_count) + "\n"
-sys.stderr.write(summary_line)
+#summary_line = "## line_count : " + str(line_count) + "\n"
+#sys.stderr.write(summary_line)
 
 
 
