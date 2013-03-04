@@ -11,6 +11,7 @@
 ##_ver=20130226_172858
 ##_ver=20130226_185715
 ##_ver=20130227_215119
+##_ver=20130305_031555
 
 
 
@@ -57,18 +58,19 @@ line_count_total = 0
 line_count = 0
 for line in sys.stdin:
 	line_items = line.strip().split()
-	uio_rwflag = line_items[6]
-	if "R" in uio_rwflag or "W" in uio_rwflag:
-		uio_gblphase = line_items[5]
-		if _arg_gbl_phase_filter in uio_gblphase:
-			if (line_items[7].isdigit() is True) and (line_items[9].isdigit() is True):
-				uio_addr = int(line_items[7])
-				uio_iosize = int(line_items[9])
-				uio_devid = line_items[0]
-#				uio_timens = int(float(line_items[3]) * (10**9)) # in nanosecond
-				uio_timens = float(line_items[3]) # in nanosecond
-				print "_" + uio_rwflag + " " + "__" + uio_gblphase + " " + "___" + uio_devid + " " + str(uio_timens) + " " + str(uio_addr) + " " + str(uio_iosize)
-				line_count += 1
+	if line_items.__len__() >= 7:
+		uio_rwflag = line_items[6]
+		if "R" in uio_rwflag or "W" in uio_rwflag:
+			uio_gblphase = line_items[5]
+			if _arg_gbl_phase_filter in uio_gblphase:
+				if (line_items[7].isdigit() is True) and (line_items[9].isdigit() is True):
+					uio_addr = int(line_items[7])
+					uio_iosize = int(line_items[9])
+					uio_devid = line_items[0]
+				#	uio_timens = int(float(line_items[3]) * (10**9)) # in nanosecond
+					uio_timens = float(line_items[3]) # in nanosecond
+					print "_" + uio_rwflag + " " + "__" + uio_gblphase + " " + "___" + uio_devid + " " + str(uio_timens) + " " + str(uio_addr) + " " + str(uio_iosize)
+					line_count += 1
 	line_count_total += 1
 
 #summary_line = "## line_count : " + str(line_count) + "\n"

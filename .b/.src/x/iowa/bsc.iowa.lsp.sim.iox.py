@@ -4,7 +4,10 @@
 ##
 ## _ver=20130208_151133
 ## _ver=20130221_154549
-## _ver=20130228_013813
+## _ver=20130305_035930
+## _ver=20130305_042344
+
+
 
 
 import sys, os, getopt
@@ -20,14 +23,16 @@ _this_prog = os.path.basename(sys.argv[0])
 ##
 _ioc_percent = None # IO contribution (IOC) percent
 _iow_size = None # IO window (IOW) size
+_prd_t1 = None # periodicity t1 value
+_prd_t2 = None # periodicity t2 value (currently this is dummy variable - actually t2 may be set as _ioc_total)
 
 def print_help_n_exit(_retval):
-	print "Usage", _this_prog, "[-h|--help] -c|--ioc-percent=<_ioc_percent> -w|--iow-size=<_iow_size>"
+	print "Usage", _this_prog, "[-h|--help] -c|--ioc-percent=<_ioc_percent> -w|--iow-size=<_iow_size> -p|--periodicity-t1=<_prd_t1> -q|--periodicity-t2=<_prd_t2>"
 	sys.exit(int(_retval))
 
 ## main getopt processing with exception handling
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hc:w:", ["help", "ioc-percent=", "iow-size="])
+	opts, args = getopt.getopt(sys.argv[1:], "hc:w:p:q:", ["help", "ioc-percent=", "iow-size=", "periodicity-t1=", "periodicity-t2="])
 except getopt.GetoptError:
 	print_help_n_exit(1)
 for opt, arg in opts:
@@ -37,6 +42,10 @@ for opt, arg in opts:
 		_ioc_percent = int(arg)
 	elif opt in ("-w", "--iow-size"):
 		_iow_size = int(arg)
+	elif opt in ("-p", "--periodicity-t1"):
+		_prd_t1 = int(arg)
+	elif opt in ("-p", "--periodicity-t2"):
+		_prd_t2 = int(arg)
 
 ## sanity check
 if _ioc_percent is None:
@@ -44,6 +53,9 @@ if _ioc_percent is None:
 	print_help_n_exit(2)
 if _iow_size is None:
 	print "#>> ERROR: _iow_size is not set"
+	print_help_n_exit(2)
+if _prd_t1 is None:
+	print "#>> ERROR: _prd_t1 is not set"
 	print_help_n_exit(2)
 
 
@@ -94,6 +106,17 @@ def pmkvl_update(kvl, t1, key, clk):
 	## END_OF_DEF
 
 
+def pmkvl_print(kvlbase, t1, t2):
+	for kv_key, kv_val in kvlbase[t1].items():
+		print "__list__periodicity_metric__t1_" + str(t1) + "__t2_" + str(t2) + "__ " + str(kv_key) + " : " + str(kv_val[0]) + " : " + str(float(kv_val[0]) / (float(t2)/float(t1)))
+
+
+
+
+###############################################################################################################################
+###############################################################################################################################
+
+
 
 
 ##
@@ -105,17 +128,20 @@ def pmkvl_update(kvl, t1, key, clk):
 _kv_cdst__hits_per_addr = defaultdict(int)
 _kv_list__addr_hit_tstamp = {}
 _kv_list__iow_list = {} # IOW(IO Window) list
-_kv_list__periodicity_metric__t1_1000__t2_pinf = {} # periodicity metrics accumulated (t1=1000, t2=positive_infinite)
-_kv_list__periodicity_metric__t1_10000__t2_pinf = {} # periodicity metrics accumulated (t1=10000, t2=positive_infinite)
-_kv_list__periodicity_metric__t1_20000__t2_pinf = {} # periodicity metrics accumulated (t1=20000, t2=positive_infinite)
-_kv_list__periodicity_metric__t1_30000__t2_pinf = {} # periodicity metrics accumulated (t1=30000, t2=positive_infinite)
-_kv_list__periodicity_metric__t1_50000__t2_pinf = {} # periodicity metrics accumulated (t1=50000, t2=positive_infinite)
-_kv_list__periodicity_metric__t1_70000__t2_pinf = {} # periodicity metrics accumulated (t1=70000, t2=positive_infinite)
-
+_kv_list__periodicity_metric = {} # periodicity metrics accumulated (t1=variable, t2=positive_infinite)
+_kv_list__periodicity_metric[_prd_t1] = {} # t1=_prd_t1, t2=positive_infinite(_ioc_total)
+#_kv_list__periodicity_metric[20000] = {} # t1=20000, t2=positive_infinite(_ioc_total)
+#_kv_list__periodicity_metric[30000] = {} # t1=30000, t2=positive_infinite(_ioc_total)
+#_kv_list__periodicity_metric[50000] = {} # t1=50000, t2=positive_infinite(_ioc_total)
+#_kv_list__periodicity_metric[70000] = {} # t1=70000, t2=positive_infinite(_ioc_total)
 linecount_L10 = 0	# line count is used as a virtual time (not 'real' time) of which value is increased by stream line count
 iow_index = 0
 for line in sys.stdin:
-	addr_L10 = int(line.strip())
+	line_items = line.strip().split()
+	if line_items.__len__() == 1:
+		addr_L10 = int(line_items[0]) # case A: single item per line (addr)
+	else:
+		addr_L10 = int(line_items[1]) # case B: two items per line (timestamp, addr)
 	## count: address hits
 	_kv_cdst__hits_per_addr[addr_L10] += 1
 	## collect: address hit timestamp
@@ -129,12 +155,11 @@ for line in sys.stdin:
 	else:
 		_kv_list__iow_list[iow_index].append(addr_L10)
 	## collect: periodicity metrics
-	pmkvl_update(_kv_list__periodicity_metric__t1_1000__t2_pinf, 1000, addr_L10, linecount_L10)
-	pmkvl_update(_kv_list__periodicity_metric__t1_10000__t2_pinf, 10000, addr_L10, linecount_L10)
-	pmkvl_update(_kv_list__periodicity_metric__t1_20000__t2_pinf, 20000, addr_L10, linecount_L10)
-	pmkvl_update(_kv_list__periodicity_metric__t1_30000__t2_pinf, 30000, addr_L10, linecount_L10)
-	pmkvl_update(_kv_list__periodicity_metric__t1_50000__t2_pinf, 50000, addr_L10, linecount_L10)
-	pmkvl_update(_kv_list__periodicity_metric__t1_70000__t2_pinf, 70000, addr_L10, linecount_L10)
+	pmkvl_update(_kv_list__periodicity_metric[_prd_t1], _prd_t1, addr_L10, linecount_L10)
+#	pmkvl_update(_kv_list__periodicity_metric[20000], 20000, addr_L10, linecount_L10)
+#	pmkvl_update(_kv_list__periodicity_metric[30000], 30000, addr_L10, linecount_L10)
+#	pmkvl_update(_kv_list__periodicity_metric[50000], 50000, addr_L10, linecount_L10)
+#	pmkvl_update(_kv_list__periodicity_metric[70000], 70000, addr_L10, linecount_L10)
 
 	## update loop variables
 	if (linecount_L10 % _iow_size) == (_iow_size - 1):
@@ -152,18 +177,11 @@ for kv_key, kv_val in _kv_list__addr_hit_tstamp.items():
 	print "__list__addr_hit_tstamp__ " + str(kv_key) + " : " + str(kv_val)
 for kv_key, kv_val in _kv_cdst__hits_per_addr.items():
 	print "__cdst__hits_per_addr__ " + str(kv_key) + " : " + str(kv_val)
-for kv_key, kv_val in _kv_list__periodicity_metric__t1_1000__t2_pinf.items():
-	print "__list__periodicity_metric__t1_1000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
-for kv_key, kv_val in _kv_list__periodicity_metric__t1_10000__t2_pinf.items():
-	print "__list__periodicity_metric__t1_10000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
-for kv_key, kv_val in _kv_list__periodicity_metric__t1_20000__t2_pinf.items():
-	print "__list__periodicity_metric__t1_20000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
-for kv_key, kv_val in _kv_list__periodicity_metric__t1_30000__t2_pinf.items():
-	print "__list__periodicity_metric__t1_30000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
-for kv_key, kv_val in _kv_list__periodicity_metric__t1_50000__t2_pinf.items():
-	print "__list__periodicity_metric__t1_50000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
-for kv_key, kv_val in _kv_list__periodicity_metric__t1_70000__t2_pinf.items():
-	print "__list__periodicity_metric__t1_70000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
+pmkvl_print(_kv_list__periodicity_metric, _prd_t1, _ioc_total) # __list__periodicity_metric__
+#pmkvl_print(_kv_list__periodicity_metric, 20000, _ioc_total)
+#pmkvl_print(_kv_list__periodicity_metric, 30000, _ioc_total)
+#pmkvl_print(_kv_list__periodicity_metric, 50000, _ioc_total)
+#pmkvl_print(_kv_list__periodicity_metric, 70000, _ioc_total)
 
 
 
