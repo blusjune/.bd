@@ -66,6 +66,36 @@ def meanstdv(x):
 	return mean, stdv
 
 
+## periodicity marking key-value list (pmkvl) update function
+## in a memory-and-computation efficient manner
+##
+## kvl[key][0]: periodicity metric
+## kvl[key][1]: last clock
+## t1: t1 interval (to update periodicity metric)
+## key: currently hit item
+## clk: starts from zero(0)
+##
+## kvl[key][0] is being updated once during t1, accumulated during t2
+##             and can be normalized by N(=t2/t1)
+##
+def pmkvl_update(kvl, t1, key, clk):
+	if key not in kvl:
+		kvl[key] = [1, clk]
+	else:
+		bnd_lower = (int(clk/t1) * t1)
+		bnd_upper = bnd_lower + (t1 - 1)
+		lastclk = kvl[key][1]
+		if lastclk >= bnd_lower and lastclk <= bnd_upper:
+			kvl[key][1] = clk # update the lastclk
+		else:
+			kvl[key][0] += 1
+			kvl[key][1] = clk # update the lastclk
+#	return kvl # for debugging only
+	## END_OF_DEF
+
+
+
+
 ##
 ## processing_loop_10
 ##	- count: number of hits for each address
@@ -75,6 +105,13 @@ def meanstdv(x):
 _kv_cdst__hits_per_addr = defaultdict(int)
 _kv_list__addr_hit_tstamp = {}
 _kv_list__iow_list = {} # IOW(IO Window) list
+_kv_list__periodicity_metric__t1_1000__t2_pinf = {} # periodicity metrics accumulated (t1=1000, t2=positive_infinite)
+_kv_list__periodicity_metric__t1_10000__t2_pinf = {} # periodicity metrics accumulated (t1=10000, t2=positive_infinite)
+_kv_list__periodicity_metric__t1_20000__t2_pinf = {} # periodicity metrics accumulated (t1=20000, t2=positive_infinite)
+_kv_list__periodicity_metric__t1_30000__t2_pinf = {} # periodicity metrics accumulated (t1=30000, t2=positive_infinite)
+_kv_list__periodicity_metric__t1_50000__t2_pinf = {} # periodicity metrics accumulated (t1=50000, t2=positive_infinite)
+_kv_list__periodicity_metric__t1_70000__t2_pinf = {} # periodicity metrics accumulated (t1=70000, t2=positive_infinite)
+
 linecount_L10 = 0	# line count is used as a virtual time (not 'real' time) of which value is increased by stream line count
 iow_index = 0
 for line in sys.stdin:
@@ -91,6 +128,14 @@ for line in sys.stdin:
 		_kv_list__iow_list[iow_index] = [addr_L10]
 	else:
 		_kv_list__iow_list[iow_index].append(addr_L10)
+	## collect: periodicity metrics
+	pmkvl_update(_kv_list__periodicity_metric__t1_1000__t2_pinf, 1000, addr_L10, linecount_L10)
+	pmkvl_update(_kv_list__periodicity_metric__t1_10000__t2_pinf, 10000, addr_L10, linecount_L10)
+	pmkvl_update(_kv_list__periodicity_metric__t1_20000__t2_pinf, 20000, addr_L10, linecount_L10)
+	pmkvl_update(_kv_list__periodicity_metric__t1_30000__t2_pinf, 30000, addr_L10, linecount_L10)
+	pmkvl_update(_kv_list__periodicity_metric__t1_50000__t2_pinf, 50000, addr_L10, linecount_L10)
+	pmkvl_update(_kv_list__periodicity_metric__t1_70000__t2_pinf, 70000, addr_L10, linecount_L10)
+
 	## update loop variables
 	if (linecount_L10 % _iow_size) == (_iow_size - 1):
 		_kv_list__iow_list[iow_index] = [int(x) for x in _kv_list__iow_list[iow_index]]
@@ -98,6 +143,7 @@ for line in sys.stdin:
 		iow_index += 1
 	linecount_L10 += 1
 	## End-of-for-loop
+
 _ioc_total = linecount_L10
 _ioc_stop_target = int((float(_ioc_percent) / float(100)) * float(_ioc_total))
 _n_o_addr_total = len(_kv_cdst__hits_per_addr) # total number of addresses accessed
@@ -106,6 +152,20 @@ for kv_key, kv_val in _kv_list__addr_hit_tstamp.items():
 	print "__list__addr_hit_tstamp__ " + str(kv_key) + " : " + str(kv_val)
 for kv_key, kv_val in _kv_cdst__hits_per_addr.items():
 	print "__cdst__hits_per_addr__ " + str(kv_key) + " : " + str(kv_val)
+for kv_key, kv_val in _kv_list__periodicity_metric__t1_1000__t2_pinf.items():
+	print "__list__periodicity_metric__t1_1000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
+for kv_key, kv_val in _kv_list__periodicity_metric__t1_10000__t2_pinf.items():
+	print "__list__periodicity_metric__t1_10000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
+for kv_key, kv_val in _kv_list__periodicity_metric__t1_20000__t2_pinf.items():
+	print "__list__periodicity_metric__t1_20000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
+for kv_key, kv_val in _kv_list__periodicity_metric__t1_30000__t2_pinf.items():
+	print "__list__periodicity_metric__t1_30000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
+for kv_key, kv_val in _kv_list__periodicity_metric__t1_50000__t2_pinf.items():
+	print "__list__periodicity_metric__t1_50000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
+for kv_key, kv_val in _kv_list__periodicity_metric__t1_70000__t2_pinf.items():
+	print "__list__periodicity_metric__t1_70000__t2_pinf__ " + str(kv_key) + " : " + str(kv_val[0]) 
+
+
 
 
 ##
@@ -200,9 +260,5 @@ for kv_key, kv_val in _kv_list__iow_stat.items():
 	## kv_key:k_iow_index; kv_val[0]:mean; kv_val[1]:stdv;
 
 
-##
-## processing_loop_70
-##  - periodicity detection
-##
 
 
