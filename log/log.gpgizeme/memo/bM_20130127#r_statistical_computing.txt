@@ -1,6 +1,79 @@
-##_ver=20130127_225539
 
-== R Installation ==
+
+== 20130304_190007 ==
+
+
+
+=== test type of some object ===
+
+ <pre>
+> x <- scan("/tmp/scan.txt", what=list(NULL, name=character()))
+> x <- x[sapply(x, length) > 0]
+> is.vector(x)
+
+
+> x = mat.or.vec(100,1)
+> if (is.integer(x) == TRUE) { print ("YES") } else { print ("NO") }
+[1] "NO"
+> if (is.vector(x) == TRUE) { print ("YES, vector") } else { print ("NO, NOT vector") }
+[1] "YES, vector"
+</pre>
+
+
+
+
+=== Data import (load data from a file) ===
+
+ <pre>
+ > x1 <- scan("/etc/hosts", what=character())
+
+ > x1     
+ [1] "127.0.0.1"       "localhost"       "#127.0.1.1"      "stones"         
+ [5] "#"               "The"             "following"       "lines"          
+ [9] "are"             "desirable"       "for"             "IPv6"           
+[13] "capable"         "hosts"           "::1"             "ip6-localhost"  
+[17] "ip6-loopback"    "fe00::0"         "ip6-localnet"    "ff00::0"        
+[21] "ip6-mcastprefix" "ff02::1"         "ip6-allnodes"    "ff02::2"        
+[25] "ip6-allrouters"  "10.0.2.15"       "stones-eth0"     "#192.168.1.109" 
+[29] "stones"          "hd-master-01"    "#192.168.1.110"  "pavement"       
+[33] "hd-slave-0001"   "192.168.1.112"   "stones"          "hd-master-01"   
+[37] "hd-slave-0001"   "kandinsky"       "192.168.1.110"   "pavement"       
+[41] "hd-slave-0002"  
+</pre>
+
+*
+
+
+
+=== function defintion, for loop in R ===
+
+ <pre>
+> avg_smoothing <- function(src, srcl, sf) {
+    tgtl = srcl + 1 - sf
+    tgt <- mat.or.vec(tgtl, 1)
+    for (i in 1:tgtl) {
+        tgt[i] = mean(src[i:(i+sf-1)])
+    }
+    return (tgt)
+}
+
+> vec1 <- rnorm(100, mean=10, sd=1)
+> vec1_sf2 <- avg_smoothing(vec1, 100, 2)
+> vec1_sf4 <- avg_smoothing(vec1, 100, 4)
+> vec1_sf8 <- avg_smoothing(vec1, 100, 8)
+
+> plot(vec1, col="gray", type="l")
+> points(vec1_sf2, col="red", type="l")
+> points(vec1_sf4, col="blue", type="l")
+> points(vec1_sf8, col="green", type="l")
+</pre>
+
+
+
+
+== 20130127_225539 ==
+
+=== R Installation ===
 
 * to install R statistical computing software
 ** me@matrix$ sudo apt-get install r-base
@@ -26,7 +99,7 @@ google-chrome http://kandinsky:8787 # type ID/PW (me?!)
 
 * Debian Packages of R Software [http://cran.r-project.org/bin/linux/debian/README.html]
 
-== R Guide/Tutorial/Example ==
+=== R Guide/Tutorial/Example ===
 
 * R Tutorial [http://www.r-tutor.com/]
 ** R Tutorial:: Data Import [http://www.r-tutor.com/r-introduction/data-frame/data-import]
@@ -49,19 +122,12 @@ google-chrome http://kandinsky:8787 # type ID/PW (me?!)
  library("e1071") # loading the installed package 'e1071'
 
 
-
-
-=== Examples ===
-
 * Importing SAS, SPSS and Stata files into R [http://staff.washington.edu/glynn/r_import.pdf]
-
 
 
 === R Troubleshooting ===
 
 * Problems importing csv file/converting from integer to double in R [http://stackoverflow.com/questions/8381839/problems-importing-csv-file-converting-from-integer-to-double-in-r]
-
-
 
 
 === Misc. ===

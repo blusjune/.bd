@@ -1,0 +1,20 @@
+== lsof usage ==
+
+
+=== command arguments of lsof ===
+
+By default One file per line is displayed. Most of the columns are self explanatory. We will explain the details about couple of cryptic columns (FD and TYPE).
+
+FD - Represents the file descriptor. Some of the values of FDs are,
+
+:* cwd : Current Working Directory
+:* txt : Text file
+:* mem : Memory mapped file
+:* mmap : Memory mapped device
+:* NUMBER : Represent the actual file descriptor. The character after the number i.e '1u', represents the mode in which the file is opened. r for read, w for write, u for read and write.
+
+
+==== References - lsof ====
+
+* [http://www.thegeekstuff.com/2012/08/lsof-command-examples/ 15 lsof command examples]
+* [http://www.dedoimedo.com/computers/lsof.html Linux super-duper admin tools: lsof]
