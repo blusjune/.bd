@@ -1,5 +1,122 @@
 
 
+
+
+== 20130306_185022 ==
+
+=== R package ('e1071') installation from command line ===
+
+: Assumes that already downloaded and unpacked properly the 'e1071_1.6-1.tar.gz' file
+
+ <pre>
+
+1mjjung@secm:[e1071] $ R CMD INSTALL e1071
+Job <13412785> is submitted to queue <int>.
+<<Waiting for dispatch ...>>
+<<Starting on gaura007>>
+Warning: invalid package 'e1071'
+Error: ERROR: no packages specified
+
+
+
+
+a1mjjung@secm:[e1071] $ cd ..
+la1mjjung@secm:[e1071_build] $ l
+total 280
+drwxrwxr-x 3 a1mjjung X0101   4096 Mar  6 18:44 ./
+drwxrwxr-x 3 a1mjjung X0101   4096 Mar  6 18:44 ../
+drwxr-xr-x 7 a1mjjung X0101   4096 Mar  6 18:45 e1071/
+-rw-r--r-- 1 a1mjjung X0101 258910 Mar  6 18:43 e1071_1.6-1.tar.gz
+
+
+
+
+a1mjjung@secm:[e1071_build] $ R CMD INSTALL e1071
+Job <13412786> is submitted to queue <int>.
+<<Waiting for dispatch ...>>
+<<Starting on gaura010>>
+* installing to library '/home/X0101/a1mjjung/R/x86_64-unknown-linux-gnu-library/2.15'
+* installing *source* package 'e1071' ...
+** package 'e1071' successfully unpacked and MD5 sums checked
+checking for C++ compiler default output file name... a.out
+checking whether the C++ compiler works... yes
+checking whether we are cross compiling... no
+checking for suffix of executables... 
+checking for suffix of object files... o
+checking whether we are using the GNU C++ compiler... yes
+checking whether g++ accepts -g... yes
+** libs
+gcc -I/apps/R_project/R-2.15.2/lib64/R/include -DNDEBUG  -I/usr/local/include    -fpic  -std=gnu99 -g -O2 -fopenmp -m64 -I/apps/intel/ComposerXE/composerxe-2011.5.220/mkl/include  -c Rsvm.c -o Rsvm.o
+gcc -I/apps/R_project/R-2.15.2/lib64/R/include -DNDEBUG  -I/usr/local/include    -fpic  -std=gnu99 -g -O2 -fopenmp -m64 -I/apps/intel/ComposerXE/composerxe-2011.5.220/mkl/include  -c cmeans.c -o cmeans.o
+gcc -I/apps/R_project/R-2.15.2/lib64/R/include -DNDEBUG  -I/usr/local/include    -fpic  -std=gnu99 -g -O2 -fopenmp -m64 -I/apps/intel/ComposerXE/composerxe-2011.5.220/mkl/include  -c cshell.c -o cshell.o
+gcc -I/apps/R_project/R-2.15.2/lib64/R/include -DNDEBUG  -I/usr/local/include    -fpic  -std=gnu99 -g -O2 -fopenmp -m64 -I/apps/intel/ComposerXE/composerxe-2011.5.220/mkl/include  -c floyd.c -o floyd.o
+g++ -I/apps/R_project/R-2.15.2/lib64/R/include -DNDEBUG  -I/usr/local/include    -fpic  -g -O2 -fopenmp -m64 -I/apps/intel/ComposerXE/composerxe-2011.5.220/mkl/include  -c svm.cpp -o svm.o
+g++ -shared -L/usr/local/lib64 -o e1071.so Rsvm.o cmeans.o cshell.o floyd.o svm.o
+installing to /home/X0101/a1mjjung/R/x86_64-unknown-linux-gnu-library/2.15/e1071/libs
+** R
+** inst
+** preparing package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+   'svmdoc.Rnw' 
+** testing if installed package can be loaded
+
+* DONE (e1071)
+
+
+
+
+a1mjjung@secm:[e1071_build] $ R
+Job <13412787> is submitted to queue <int>.
+<<Waiting for dispatch ...>>
+<<Starting on gaura010>>
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ?svm
+No documentation for 'svm' in specified packages and libraries:
+you could try '??svm'
+> library(e1071) 
+Loading required package: class
+> ?svm
+> 
+Save workspace image? [y/n/c]: y
+
+
+
+
+a1mjjung@secm:[e1071_build] $ pwd
+/home/X0101/a1mjjung/x/R/e1071_build
+
+a1mjjung@secm:[e1071_build] $ ls -alF
+total 284
+drwxrwxr-x 3 a1mjjung X0101   4096 Mar  6 18:47 ./
+drwxrwxr-x 3 a1mjjung X0101   4096 Mar  6 18:44 ../
+-rw------- 1 a1mjjung X0101     25 Mar  6 18:47 .Rhistory
+drwxr-xr-x 7 a1mjjung X0101   4096 Mar  6 18:46 e1071/
+-rw-r--r-- 1 a1mjjung X0101 258910 Mar  6 18:43 e1071_1.6-1.tar.gz
+
+</pre>
+
+
+
 == 20130304_190007 ==
 
 
