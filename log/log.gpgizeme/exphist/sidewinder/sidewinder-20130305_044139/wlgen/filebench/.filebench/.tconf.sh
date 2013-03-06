@@ -1,1 +1,0 @@
-20.conf/.tconf.sh
