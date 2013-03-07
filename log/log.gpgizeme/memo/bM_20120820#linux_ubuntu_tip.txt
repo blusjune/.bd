@@ -1,5 +1,45 @@
 
 
+
+==== Ubuntu Upgrade from Maverick (10.10 to newer version) // 2013-01-30 ====
+
+
+; problem
+
+!!! Need to install missing software packages into some nodes in 16-node cluster. But the problem is too old (end-of-life) distribution version to get support or to install. So I searched the way to solve this problem, the following is the result. (it works!)
+
+; solution (B.GOOD)
+
+How to install software or upgrade from old unsupported release? [http://askubuntu.com/questions/91815/how-to-install-software-or-upgrade-from-old-unsupported-release]
+: answered Dec 31 '11 at 18:54
+
+The repositories for older releases that are not supported (like 9.04, 9.10, and 10.10) get moved to an archive server. There are repositories available at http://old-releases.ubuntu.com
+
+The reason for this is that it is now out of support and no longer receiving updates and security patches.
+
+I would urge you to consider a supported distribution. If your computer is too old in terms of memory or processor then you should consider a distribution such as Lubuntu or Xubuntu.
+
+If you want to continue using an outdated release then edit <span style="color:red">'''/etc/apt/sources.list'''</span> and change archive.ubuntu.com to <span style="color:red">'''old-releases.ubuntu.com'''</span>
+
+You can do this with sed
+
+ sudo sed -i -e 's/archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+
+then update with
+
+ sudo apt-get update && sudo apt-get dist-upgrade
+
+See also:
+
+[https://help.ubuntu.com/community/EOLUpgrades/ EOL (End-of-Life) Upgrades]
+
+
+
+
+
+
+
+
 ##-----------------------------------------------------------------------------
 ##_ver=20130129_000552
 ## how to allow for remote user to connect to my X server in Ubuntu?

@@ -5,6 +5,7 @@
 ##tstamp: 20121207_000343
 ##_ver=20130127_224936
 ##_ver=20130227_011315
+##_ver=20130307_153731
 
 
 
@@ -151,7 +152,7 @@ graphviz \\
 gtkwave \\
 happycoders-libdbg \\
 iasl \\
-idle-python2.7 \\
+inotify-tools \\
 iotop \\
 iproute \\
 iscsitarget \\
@@ -165,6 +166,7 @@ libatlas-dev \\
 libbz2-dev \\
 libcurl3 \\
 libcurl4-openssl-dev \\
+libinotifytools0-dev \\
 libjpeg62-dev \\
 libncurses5-dev \\
 libpci-dev \\
@@ -259,7 +261,6 @@ uuid-dev \\
 valgrind \\
 vim \\
 vim-doc \\
-vim-python \\
 vite \\
 weka \\
 weka-doc \\
@@ -441,6 +442,7 @@ _task_51__python()
 ## python and related
 
 _inst \\
+idle-python2.7 \\
 ipython \\
 ipython-notebook \\
 ipython3 \\
@@ -449,6 +451,7 @@ python-all \\
 python-dev \\
 python-git \\
 python-gnuplot \\
+python-inotifyx \\
 python-libsvm \\
 python-matplotlib \\
 python-numpy \\
@@ -459,6 +462,7 @@ python-twisted \\
 python2.7-dev \\
 python3-all \\
 python3-all-dev \\
+vim-python \\
 
 }
 
