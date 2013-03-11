@@ -1,0 +1,36 @@
+== 2012-03-08 ==
+
+=== blktrace/btreplay case ===
+
+1. Error Message
+
+ <pre>
+blusjune@jimi-hendrix:[btreplay] $ make
+gcc -Wall -W -O2 -g -I. -I.. -I../btt -D_GNU_SOURCE -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -UCOUNT_IOS -UDEBUG -DNDEBUG -c -o btrecord.o btrecord.c
+gcc -Wall -W -O2 -g -I. -I.. -I../btt -D_GNU_SOURCE -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -UCOUNT_IOS -UDEBUG -DNDEBUG -o btrecord btrecord.o
+gcc -Wall -W -O2 -g -I. -I.. -I../btt -D_GNU_SOURCE -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -UCOUNT_IOS -UDEBUG -DNDEBUG -c -o btreplay.o btreplay.c
+gcc -Wall -W -O2 -g -I. -I.. -I../btt -D_GNU_SOURCE -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -UCOUNT_IOS -UDEBUG -DNDEBUG -o btreplay btreplay.o -laio -lrt
+/usr/bin/ld: btreplay.o: undefined reference to symbol 'pthread_create@@GLIBC_2.2.5'
+/usr/bin/ld: note: 'pthread_create@@GLIBC_2.2.5' is defined in DSO /lib/x86_64-linux-gnu/libpthread.so.0 so try adding it to the linker command line
+/lib/x86_64-linux-gnu/libpthread.so.0: could not read symbols: Invalid operation
+collect2: ld returned 1 exit status
+make: *** [btreplay] Error 1
+blusjune@jimi-hendrix:[btreplay] $ 
+</pre>
+
+
+2. Solution
+
+Good hint for solution was:
+ /usr/bin/ld: note: 'pthread_create@@GLIBC_2.2.5' is defined in DSO /lib/x86_64-linux-gnu/libpthread.so.0 so try adding it to the linker command line
+
+So, I added '-lpthread' to LIBS variable
+
+ <pre>
+PROGS   = btrecord btreplay
+LIBS    = -laio -lrt                # original problematic configuration
+#LIBS   = -laio -lrt -lpthread      # my solution: just '-lpthread' added
+</pre>
+
+
+

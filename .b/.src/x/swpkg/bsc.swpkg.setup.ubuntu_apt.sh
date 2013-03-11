@@ -266,6 +266,7 @@ weka \\
 weka-doc \\
 xz-utils \\
 zlib1g-dev \\
+icheck \\
 
 }
 
