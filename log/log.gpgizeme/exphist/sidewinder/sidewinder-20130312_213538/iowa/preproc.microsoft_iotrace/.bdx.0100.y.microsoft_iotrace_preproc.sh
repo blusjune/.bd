@@ -25,6 +25,7 @@ if [ "X$_basename" = "X" ]; then
 	_basename="_noname_";
 fi
 _fileout="${_tid}.${_basename}.out";
+_fileout_010=$_fileout;
 echo "[$_tid] '$_fileout' file will be generated";
 
 _ts_1=$(tstamp-e);
@@ -41,8 +42,9 @@ echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
 
 
 _tasknum="020"; _tid="T${_tasknum}";
-_infile=$_fileout;
+_infile=$_fileout_010;
 _fileout="${_tid}.${_basename}.A.out";
+_fileout_020=$_fileout;
 echo "[$_tid] '$_fileout' file will be generated";
 
 _ts_1=$(tstamp-e);
@@ -54,8 +56,9 @@ echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
 
 
 _tasknum="021"; _tid="T${_tasknum}";
-_infile=$_fileout;
+_infile=$_fileout_010;
 _fileout="${_tid}.${_basename}.R.out";
+_fileout_021=$_fileout;
 echo "[$_tid] '$_fileout' file will be generated";
 
 _ts_1=$(tstamp-e);
@@ -67,8 +70,9 @@ echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
 
 
 _tasknum="022"; _tid="T${_tasknum}";
-_infile=$_fileout;
+_infile=$_fileout_010;
 _fileout="${_tid}.${_basename}.W.out";
+_fileout_022=$_fileout;
 echo "[$_tid] '$_fileout' file will be generated";
 
 _ts_1=$(tstamp-e);
