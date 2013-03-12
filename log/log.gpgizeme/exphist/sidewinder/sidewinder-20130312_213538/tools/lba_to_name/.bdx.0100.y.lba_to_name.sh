@@ -2,6 +2,7 @@
 ##.bdx.0100.y.lba_to_name.sh
 ##_ver=20130311_153256
 ##_ver=20130311_190202
+##_ver=20130312_190544
 
 
 
@@ -100,7 +101,7 @@ for _items in $_conf__target_lba_list; do
 
 	echo -n "${_target_dev_part}: $_lba_target ";
 
-	_testblk_result="$(sudo debugfs -R "testb $_fblk" $_target_dev_part 2>&1)";
+	_testblk_result="$(sudo debugfs -R "testb $_fblk" $_target_dev_part 2>&1 | grep -v 'debugfs')";
 	_invalid_flag="$(echo $_testblk_result | grep -i "invalid block")";
 	if [ "X$_invalid_flag" != "X" ]; then
 		echo "-> _EXCEPTION_ # fsblock $_fblk seems INVALID BLOCK -- Skip processing";	
@@ -112,13 +113,11 @@ for _items in $_conf__target_lba_list; do
 		continue;
 	fi
 
-	_inode=$(sudo debugfs -R "icheck $_fblk" $_target_dev_part 2>&1 | grep $_fblk | awk '{ print $2 }')
+	_inode=$(sudo debugfs -R "icheck $_fblk" $_target_dev_part 2>&1 | grep -v 'debugfs' | grep $_fblk | awk '{ print $2 }')
 	if [ "X$_inode" = "X<block" ]; then # exceptional case: "<block not found>"
 		echo "-> _EXCEPTION_ # inode for $_fblk is NOT FOUND -- Skip processing";
 	else
-#		_target_name=$(sudo debugfs -R "ncheck $_inode" $_target_dev_part 2>&1 | grep $_inode | awk '{ print $2 }');
-#		_target_name=$(sudo debugfs -R "ncheck $_inode" $_target_dev_part 2>&1 | grep $_inode | sed -e "s/$_inode\(.*\)/\1/g" | awk '{ print $0 }');
-		_target_name=$(sudo debugfs -R "ncheck $_inode" $_target_dev_part 2>&1 | grep $_inode | sed -e "s/$_inode[ 	]*\(.*\)/\1/g" | awk '{ print $0 }');
+		_target_name=$(sudo debugfs -R "ncheck $_inode" $_target_dev_part 2>&1 | grep -v 'debugfs' | grep $_inode | sed -e "s/$_inode[ 	]*\(.*\)/\1/g" | awk '{ print $0 }');
 		echo "-> $_target_name # DEV:LBA:FBLK:INODE( $_target_dev_part : $_lba_target : $_fblk : $_inode )";
 	fi
 done
