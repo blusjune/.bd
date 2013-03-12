@@ -42,11 +42,37 @@ echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
 
 _tasknum="020"; _tid="T${_tasknum}";
 _infile=$_fileout;
-_fileout="${_tid}.${_basename}.out";
+_fileout="${_tid}.${_basename}.A.out";
 echo "[$_tid] '$_fileout' file will be generated";
 
 _ts_1=$(tstamp-e);
 cat $_infile | cut -d ',' -f 4 | bsc.lsp.hex2dec > $_fileout; # extract only byte-offset and convert hexadecimal to decimal value
+_ts_2=$(tstamp-e);
+echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
+
+
+
+
+_tasknum="021"; _tid="T${_tasknum}";
+_infile=$_fileout;
+_fileout="${_tid}.${_basename}.R.out";
+echo "[$_tid] '$_fileout' file will be generated";
+
+_ts_1=$(tstamp-e);
+cat $_infile | grep DiskRead | cut -d ',' -f 4 | bsc.lsp.hex2dec > $_fileout; # extract only byte-offset and convert hexadecimal to decimal value
+_ts_2=$(tstamp-e);
+echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
+
+
+
+
+_tasknum="022"; _tid="T${_tasknum}";
+_infile=$_fileout;
+_fileout="${_tid}.${_basename}.W.out";
+echo "[$_tid] '$_fileout' file will be generated";
+
+_ts_1=$(tstamp-e);
+cat $_infile | grep DiskWrite | cut -d ',' -f 4 | bsc.lsp.hex2dec > $_fileout; # extract only byte-offset and convert hexadecimal to decimal value
 _ts_2=$(tstamp-e);
 echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
 
