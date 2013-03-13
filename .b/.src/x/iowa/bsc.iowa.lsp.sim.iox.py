@@ -6,6 +6,7 @@
 ## _ver=20130221_154549
 ## _ver=20130305_035930
 ## _ver=20130305_042344
+## _ver=20130313_161428
 
 
 
@@ -137,11 +138,11 @@ _kv_list__periodicity_metric[_prd_t1] = {} # t1=_prd_t1, t2=positive_infinite(_i
 linecount_L10 = 0	# line count is used as a virtual time (not 'real' time) of which value is increased by stream line count
 iow_index = 0
 for line in sys.stdin:
-	line_items = line.strip().split()
+	line_items = line.strip().split(',')
 	if line_items.__len__() == 1:
 		addr_L10 = int(line_items[0]) # case A: single item per line (addr)
 	else:
-		addr_L10 = int(line_items[1]) # case B: two items per line (timestamp, addr)
+		addr_L10 = int(line_items[1]) # case B: more than two items per line (timestamp, addr, iosize, fileobjid, dirpath)
 	## count: address hits
 	_kv_cdst__hits_per_addr[addr_L10] += 1
 	## collect: address hit timestamp
