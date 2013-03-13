@@ -16,7 +16,7 @@ _proc_10()
 	_of_W_addr="${_if}.W.addr";
 	_tdir="tdir";
 
-	cat $_if | bsc.iowa.lsp.preproc_bpout_s10 -p Q > $_tdir/$_of_p1;
+	cat $_if | bsc.iowa.lsp.preproc_bpout_s010 -p Q > $_tdir/$_of_p1;
 
 	cat $_tdir/$_of_p1 | awk '{ print $4, $5 }' > $_tdir/$_of_A_addr
 	cat $_tdir/$_of_p1 | grep '_R' | awk '{ print $4, $5 }' > $_tdir/$_of_R_addr

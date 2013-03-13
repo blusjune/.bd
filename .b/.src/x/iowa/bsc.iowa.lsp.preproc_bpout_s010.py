@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-##bsc.iowa.lsp.preproc_bpout_s10.py
+##bsc.iowa.lsp.preproc_bpout_s010.py
 ## : preprocessing to extract
 ##   - R/W flag
 ##   - GBL phase
@@ -12,6 +12,7 @@
 ##_ver=20130226_185715
 ##_ver=20130227_215119
 ##_ver=20130305_031555
+##_ver=20130313_131457
 
 
 
