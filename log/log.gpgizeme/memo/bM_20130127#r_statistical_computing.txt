@@ -1,5 +1,129 @@
 
+== 20130313_172639 ==
 
+
+=== SVM example ===
+
+ <pre>
+     data(iris)
+     attach(iris)
+     
+     ## classification mode
+     # default with factor response:
+     model <- svm(Species ~ ., data = iris)
+     
+     # alternatively the traditional interface:
+     x <- subset(iris, select = -Species)
+     y <- Species
+     model <- svm(x, y) 
+     
+     print(model)
+     summary(model)
+     
+     # test with train data
+     pred <- predict(model, x)
+     # (same as:)
+     pred <- fitted(model)
+     
+     # Check accuracy:
+     table(pred, y)
+     
+     # compute decision values and probabilities:
+     pred <- predict(model, x, decision.values = TRUE)
+     attr(pred, "decision.values")[1:4,]
+     
+     # visualize (classes by color, SV by crosses):
+     plot(cmdscale(dist(iris[,-5])),
+          col = as.integer(iris[,5]),
+          pch = c("o","+")[1:150 %in% model$index + 1])
+</pre>
+
+
+=== cmdscale (Classical MultiDimensional Scaling) ===
+
+* Description
+: Classical multidimensional scaling of a data matrix. (a.k.a. principal coordinates analysis (Gower, 1966)
+
+* Usage
+: cmdscale(d, k=2, eig=FALSE, add=FALSE, x.ret=FALSE)
+
+* Arguments
+: '''d [mandatory]''': a distance structure such as that returned by 'dist' or a full symmetric matrix containing the dissimilarities
+: k [optional]: the maximum dimension of the space which the data are to be represented in; must be in {1, 2, ..., n-1}
+: eig [optional]: indicates whether eigenvalues should be returned
+: add [optional]: logical indicating if an additive constant c* should be computed, and added to the non-diagonal dissimilarities such that the modified dissimilarities are Euclidean
+: x.ret [optional]: indicates whether the doubly centered symmetric distance matrix should be returned
+
+* Details
+: Multidimensional scaling takes a set of dissimilarities and returns a set of points such that the distances between the points are approximately equal to the dissimilarities
+
+
+=== dist (Distance matrix computation) ===
+
+This computes and returns the distance matrix computed by using the specified distance measure to compute the distances between the rows of a data matrix
+
+* Usage
+: dist(x, method = "euclidean", diag = FALSE, upper = FALSE, p = 2)
+
+* Arguments
+: x
+:: a numeric matrix, data frame or 'dist' object
+: method
+:: the distance measure to be used. this must be one of "euclidean", "maximum", "manhattan", "canberra", "binary", or "minkowski" (any unambiguous substring can be given)
+: diag
+
+* Examples (by blusjune)
+
+ <pre>
+> mat_a
+     [,1] [,2] [,3] [,4]
+[1,]    1    1    1    1
+[2,]    2    2    2    2
+[3,]    3    3    3    3
+[4,]    0    0    0    0
+> dist(mat_a)
+  1 2 3
+2 2    
+3 4 2  
+4 2 4 6
+> cmdscale(dist(mat_a))
+     [,1]          [,2]
+[1,]    1  5.809542e-08
+[2,]   -1  3.057654e-09
+[3,]   -3  9.172961e-09
+[4,]    3 -9.172961e-09
+> dist(cmdscale(dist(mat_a)))
+  1 2 3
+2 2    
+3 4 2  
+4 2 4 6
+</pre>
+
+ <pre>
+> mat_b
+     [,1] [,2] [,3]
+[1,]    1    1    1
+[2,]    2    2    2
+[3,]    0    0    0
+> dist(mat_b)
+         1        2
+2 1.732051         
+3 1.732051 3.464102
+> cmdscale(dist(mat_b))
+              [,1]         [,2]
+[1,]  7.412908e-33 1.564993e-08
+[2,] -1.732051e+00 2.477578e-09
+[3,]  1.732051e+00 2.477578e-09
+> dist(cmdscale(dist(mat_b)))
+         1        2
+2 1.732051         
+3 1.732051 3.464102
+
+> ((1-2)**2 + (1-2)**2 + (1-2)**2) ** 0.5
+[1] 1.732051
+> ((2-0)**2 + (2-0)**2 + (2-0)**2) ** 0.5
+[1] 3.464102
+</pre>
 
 
 == 20130306_185022 ==
