@@ -1,13 +1,92 @@
-##tstamp: 20121031_014752
-##tstamp: 20121106_211925
-##tstamp: 20121107_013343
+##_ver=20121031_014752
 ##_ver=20121212_225051
+##_ver=20130402_015830
 
 
 
 
-## http://
+== 20130402_014346 ==
 
+=== export and import database using mysqldump ===
+
+* Reference
+:- [http://www.cyberciti.biz/faq/import-mysql-dumpfile-sql-datafile-into-my-database/ Import MySQL Dumpfile, SQL Datafile Into My Database]
+:- [http://stackoverflow.com/questions/105776/how-do-i-restore-a-mysql-dump-file How do I restore a MySQL .dump file?]
+:- [http://stackoverflow.com/questions/859313/import-sql-dump-into-mysql Import SQL dump into MySQL]
+
+ <pre>
+$ mysqldump -p -u root wikidb > wikidb.sql
+$ mysql -p -u root;
+mysql> create database wikini;
+$ mysql -p -u root wikini < wikidb.sql
+</pre>
+
+
+
+
+== 20130108_133330 ==
+=== migration mysql db from this to another machine ===
+
+* reference
+: [http://stackoverflow.com/questions/328922/transfer-mysql-database-to-another-computer transfer mysql databse to another computer // stackoverflow]
+
+ <pre>
+$ mysqldump -u username -p wikidb > wikidb.sql;
+	# basic essential minimal command.
+	# 'wikiuser' was the name for 'wikidb', but
+	# you may have to use 'root' username.
+$ mysqldump -u username --opt --compress --all-databases > alldb.sql;
+	# benefit of this way is: you will not lose user privilege settings.
+</pre>
+
+
+
+
+== 20121212_225118 ==
+
+=== BMF (Benchmark Factory) Trouble-shooting ===
+* when you get the following error message at BMF (benchmark factory) mysql connection test
+ [MySQL][ODBC 3.51 driver] Can't Connect to mysql server on 'b07' (10061)
+
+: 1. please make sure that the mysql bind address is set to '0.0.0.0' not '127.0.0.1'
+ <pre>
+	foo@bar$ vi /etc/mysql/my.cnf
+		bind-address	= 0.0.0.0
+	foo@bar$ /etc/init.d/mysql restart
+</pre>
+: 2. and then reconnect to the mysql db server from the BMF (benchmark factory)
+: 3. you may want to control the size of memory buffer pool of mysql db server
+
+
+
+
+== 20121107_013343 ==
+
+=== 'some_db_user'@'%' Vs. 'some_db_user'@'localhost' ===
+
+* It is very important to add both of 'tpcc_user'@'%' and 'tpcc_user'@'localhost' as the following
+:- 'tpcc_user'@'%' to allow remote access to this host's mysql
+:- 'tpcc_user'@'localhost' to allow local login into this host's mysql
+
+* It also seems important to include 'WITH GRANT OPTION' statement while 'GRANT' command processing
+
+ <pre>
+mysql> CREATE USER 'tpcc_user'@'localhost' IDENTIFIED BY 'some_pass';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'tpcc_user'@'localhost'
+    ->     WITH GRANT OPTION;
+mysql> CREATE USER 'tpcc_user'@'%' IDENTIFIED BY 'some_pass';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'tpcc_user'@'%'
+    ->     WITH GRANT OPTION;
+</pre>
+
+
+
+
+== 20121212_225051 ==
+
+=== Create mysql user and configure the privilege ===
+
+ <pre>
 $ mysql -u root -p;
 
 mysql> select * from mysql.user;
@@ -19,12 +98,12 @@ mysql> grant all on *.* to goodgirl;
 mysql> grant all privileges on *.* to goodgirl;
 mysql> show grants for goodgirl;
 mysql> grant reload, process on *.* to goodgirl;
+</pre>
 
+* Reference
+: [http://dev.mysql.com/doc/refman/5.5/en//adding-users.html MySQL Adding Users]
 
-
-
-## http://dev.mysql.com/doc/refman/5.5/en//adding-users.html
-
+ <pre>
 mysql> CREATE USER 'monty'@'localhost' IDENTIFIED BY 'some_pass';
 mysql> GRANT ALL PRIVILEGES ON *.* TO 'monty'@'localhost'
     ->     WITH GRANT OPTION;
@@ -56,56 +135,8 @@ mysql> INSERT INTO user SET Host='localhost',User='admin',
 mysql> INSERT INTO user (Host,User,Password)
     ->     VALUES('localhost','dummy','');
 mysql> FLUSH PRIVILEGES;
+</pre>
 
 
 
 
-## 20121107_013343
-##
-## It is very important to add both of 'tpcc_user'@'%' and 'tpcc_user'@'localhost' as the following
-## 'tpcc_user'@'%' to allow remote access to this host's mysql
-## 'tpcc_user'@'localhost' to allow local login into this host's mysql
-##
-## It also seems important to include 'WITH GRANT OPTION' statement while 'GRANT' command processing
-
-mysql> CREATE USER 'tpcc_user'@'localhost' IDENTIFIED BY 'some_pass';
-mysql> GRANT ALL PRIVILEGES ON *.* TO 'tpcc_user'@'localhost'
-    ->     WITH GRANT OPTION;
-mysql> CREATE USER 'tpcc_user'@'%' IDENTIFIED BY 'some_pass';
-mysql> GRANT ALL PRIVILEGES ON *.* TO 'tpcc_user'@'%'
-    ->     WITH GRANT OPTION;
-
-
-
-
-##_ver=20121212_225118
-
-@ when you get the following error message at BMF mysql connection test
-[MySQL][ODBC 3.51 driver] Can't Connect to mysql server on 'b07' (10061)
-
-
-1. please make sure that the mysql bind address is set to '0.0.0.0' not '127.0.0.1'
-
-	foo@bar$ vi /etc/mysql/my.cnf
-		bind-address	= 0.0.0.0
-	foo@bar$ /etc/init.d/mysql restart
-
-2. and then reconnect to the mysql db server from the BMF (benchmark factor)
-
-3. you may want to control the size of memory buffer pool of mysql db server
-
-
-
-
-##{ _ver=20130108_133330
-# migration mysql db from this to that machine
-# (http://stackoverflow.com/questions/328922/transfer-mysql-database-to-another-computer)
-mysqldump -u username -p wikidb > wikidb.sql;
-	# basic essential minimal command.
-	# 'wikiuser' was the name for 'wikidb', but
-	# you may have to use 'root' username.
-mysqldump -u username --opt --compress --all-databases > alldb.sql;
-	# benefit of this way is: you will not lose user privilege settings.
-
-
-##} _ver=20130108_133330
