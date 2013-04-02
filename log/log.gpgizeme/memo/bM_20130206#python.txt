@@ -1,5 +1,21 @@
 == python ==
 
+
+
+=== 20130402_135813 ===
+
+==== string character-by-character replacement ====
+
+* using maketrans() and translate()
+ <pre>
+mystr = "p0 ( 2004)"
+from string import maketrans
+transtab = maketrans(" ()", "   ")
+tok = mystr.translate(transtab).strip().split()
+newname = tok[0] + "_" + tok[1]
+
+</pre>
+
 === 20130226_171426 ===
 
 
