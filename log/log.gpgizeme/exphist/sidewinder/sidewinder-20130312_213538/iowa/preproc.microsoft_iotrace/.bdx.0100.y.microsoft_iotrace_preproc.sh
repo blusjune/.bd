@@ -58,7 +58,7 @@ _func_t011()
 import os, sys
 from string import maketrans
 trtab_1 = maketrans(" ()", "   ")
-trtab_2 = maketrans(":\\", "__")
+trtab_2 = maketrans(":\\\\", "__")
 
 lasttime_default = 0
 lasttime_in_prevfile = int(os.getenv('LASTTIME_IN_PREVFILE', lasttime_default))
