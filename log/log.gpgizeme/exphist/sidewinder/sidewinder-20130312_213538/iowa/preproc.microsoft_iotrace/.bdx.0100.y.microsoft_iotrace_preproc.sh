@@ -6,6 +6,7 @@
 ##_ver=20130401_212704
 ##_ver=20130402_173426
 ##_ver=20130402_205507
+##_ver=20130404_001551
 
 
 
@@ -56,24 +57,25 @@ _func_t011()
 #!/usr/bin/env python
 import os, sys
 from string import maketrans
-trtab = maketrans(" ()", "   ")
+trtab_1 = maketrans(" ()", "   ")
+trtab_2 = maketrans(":\\", "__")
 
 lasttime_default = 0
 lasttime_in_prevfile = int(os.getenv('LASTTIME_IN_PREVFILE', lasttime_default))
 for line in sys.stdin:
 	li = line.strip().split(',')
 	li[1] = int(li[1]) + lasttime_in_prevfile
-	lasttime = li[1]
-	tkn = li[2].translate(trtab).strip().split()	# li[2] -> prid
+	fld_lasttime = li[1]
+	tkn = li[2].translate(trtab_1).strip().split()	# li[2] -> fld_prid
 	if tkn.__len__() == 2:
-		prid = tkn[0] + "_" + tkn[1]
+		fld_prid = tkn[0] + "_" + tkn[1]
 	else:
 		print "[T011] ERROR in processing _prid_ -- EXIT"
 		sys.exit(1)
-#	print str(li[0]) + ' , ' + str(li[1]) + ' , ' + str(li[2]) + ' , ' + str(li[3]) + ' , ' + str(li[4]) + ' , ' + str(li[5]) + ' , ' + str(li[6]) + ' , ' + str(li[7])
-	print "_iorw_ " + str(li[0]) + ' , ' + "_time_ " + str(li[1]) + ' , ' + "_prid_ " + str(prid) + ' , ' + "_thid_ " + str(li[3]) + ' , ' + "_addr_ " + str(li[4]) + ' , ' + "_iosz_ " + str(li[5]) + ' , ' + "_fobj_ " + str(li[6]) + ' , ' + "_path_ " + str(li[7])
+	fld_path = li[7].translate(trtab_2).strip()	# li[7] -> fld_path
+	print "_iorw_ " + str(li[0]) + ' , ' + "_time_ " + str(li[1]) + ' , ' + "_prid_ " + str(fld_prid) + ' , ' + "_thid_ " + str(li[3]) + ' , ' + "_addr_ " + str(li[4]) + ' , ' + "_iosz_ " + str(li[5]) + ' , ' + "_fobj_ " + str(li[6]) + ' , ' + "_path_ " + str(fld_path)
 f = open('$_t011_lasttime_file', 'w')
-f.write(str(lasttime))
+f.write(str(fld_lasttime))
 f.close()
 EOF
 	chmod 755 $_t011_timestamp_processing;
@@ -244,7 +246,7 @@ _func_t032()
 _func_t033()
 {
 	_tasknum="033"; _tid="T${_tasknum}";
-	_infile=${_outfile_011};
+	_infile="../${_outfile_011}";
 	_outfile_prefix_033="${_tid}.${_basename}.discovery";
 	export _outfile_prefix_033;
 	_outfile_prefix_033_4plot="${_tid}.${_basename}.discovery_4plot";
@@ -284,12 +286,15 @@ EOF
 	chmod 755 $_t033_subfunc;
 
 
-	_field_name_list="process_id thread_id address file_obj full_path";
+#	_field_name_list="process_id thread_id address file_obj full_path";
+	_field_name_list="process_id thread_id file_obj full_path";
 	for _field_name in $_field_name_list; do
 		export _field_name;
 		_inconf=${_outfile_prefix_032}.${_field_name}.out;
 		echo "[$_tid] processing $_field_name with $_inconf ...";
-		cat $_inconf | ./$_t033_subfunc;
+		_discovery_dir="${_tid}.discovery.${_field_name}";
+		mkdir $_discovery_dir;
+		(cd $_discovery_dir; cat ../$_inconf | ../$_t033_subfunc;)
 	done
 
 
