@@ -4,7 +4,7 @@
 
 
 
-set title "MSN FileServer I/O Trace (Top 10 Hot file_obj)";
+set title "MSN FileServer I/O Trace (Top 10 Hot file objects)";
 set xlabel "time (microseconds)";
 set ylabel "address (LBA)";
 set yr [0:3e+11];

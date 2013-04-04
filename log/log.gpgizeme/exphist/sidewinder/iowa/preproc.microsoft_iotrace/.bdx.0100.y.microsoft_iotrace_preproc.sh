@@ -7,6 +7,7 @@
 ##_ver=20130402_173426
 ##_ver=20130402_205507
 ##_ver=20130404_001551
+##_ver=20130404_113547
 
 
 
@@ -58,7 +59,7 @@ _func_t011()
 import os, sys
 from string import maketrans
 trtab_1 = maketrans(" ()", "   ")
-trtab_2 = maketrans(":\\\\", "__")
+trtab_2 = maketrans(":\\"\\\\", "___")
 
 lasttime_default = 0
 lasttime_in_prevfile = int(os.getenv('LASTTIME_IN_PREVFILE', lasttime_default))
@@ -105,7 +106,7 @@ EOF
 
 
 _func_t020()
-{
+{	# no need to execute this (20130404_113200) - we decided to include all the fields 1,2,3,...,8
 	_tasknum="020"; _tid="T${_tasknum}";
 	_infile=$_outfile_011;
 	_outfile="${_tid}.${_basename}.A.out";
@@ -133,7 +134,8 @@ _func_t021()
 	echo "[$_tid] '$_outfile' file will be generated";
 	
 	_ts_1=$(tstamp-e);
-	cat $_infile | grep -e '\<DiskRead\>' | cut -d ',' -f 2,3,4,5,6,7,8 > $_outfile; # extract timestamp, pid, tid, offset, size, file_id, path
+#	cat $_infile | grep -e '\<DiskRead\>' | cut -d ',' -f 2,3,4,5,6,7,8 > $_outfile; # extract timestamp, pid, tid, offset, size, file_id, path
+	cat $_infile | grep -e '\<DiskRead\>' > $_outfile; # only for Read I/O
 	_ts_2=$(tstamp-e);
 	echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
 } # _func_t021()
@@ -151,7 +153,8 @@ _func_t022()
 	echo "[$_tid] '$_outfile' file will be generated";
 	
 	_ts_1=$(tstamp-e);
-	cat $_infile | grep -e '\<DiskWrite\>' | cut -d ',' -f 2,3,4,5,6,7,8 > $_outfile; # extract timestamp, pid, tid, offset, size, file_id, path
+#	cat $_infile | grep -e '\<DiskWrite\>' | cut -d ',' -f 2,3,4,5,6,7,8 > $_outfile; # extract timestamp, pid, tid, offset, size, file_id, path
+	cat $_infile | grep -e '\<DiskWrite\>' > $_outfile; # only for Write I/O
 	_ts_2=$(tstamp-e);
 	echo "[$_tid] Elapsed time: $(expr $_ts_2 - $_ts_1) seconds";
 } # _func_t022()
@@ -339,13 +342,13 @@ _ts_whole_1=$(tstamp-e);
 #_func_fake_init;
 _func_t010;
 _func_t011;
-_func_t020;
+#_func_t020;
 _func_t021;
 _func_t022;
 _func_t031;
 _func_t032;
 _func_t033;
-_func_clear_workspace;
+#_func_clear_workspace;
 
 
 tstamp;

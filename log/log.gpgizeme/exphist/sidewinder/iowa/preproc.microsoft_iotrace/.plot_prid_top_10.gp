@@ -2,9 +2,9 @@
 
 
 clear
-set xlabel "time (microsec)"
+set title "MSN FileServer I/O Trace (Top 10 Processes)"
+set xlabel "time (microseconds)"
 set ylabel "address (LBA)"
-set title "MSN FileServer 6h Trace (Top 10 Processes, Dot & Point)"
 
 
 plot \
