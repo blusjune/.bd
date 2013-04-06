@@ -289,9 +289,9 @@ EOF
 	chmod 755 $_t033_subfunc;
 
 
-#	_field_name_list="process_id thread_id address file_obj full_path";
-	_field_name_list="process_id thread_id file_obj full_path";
-	for _field_name in $_field_name_list; do
+#	_t033_field_name_list="process_id thread_id file_obj full_path address";
+	_t033_field_name_list="process_id thread_id file_obj full_path";
+	for _field_name in $_t033_field_name_list; do
 		export _field_name;
 		_inconf=${_outfile_prefix_032}.${_field_name}.out;
 		echo "[$_tid] processing $_field_name with $_inconf ...";
