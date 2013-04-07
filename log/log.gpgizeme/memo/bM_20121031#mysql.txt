@@ -1,6 +1,26 @@
 ##_ver=20121031_014752
 ##_ver=20121212_225051
-##_ver=20130402_015830
+##_ver=20130407_224842
+
+
+
+
+== 20130407_224536 ==
+
+=== extract information using SELECT ===
+
+* extract user_name (column) from mw_user (table) of wikidb (database)
+ <pre>
+mysql> select user_name from wikidb.mw_user;
++-----------+
+| user_name |
++-----------+
+| Admin     |
+| Blusjune  |
++-----------+
+2 rows in set (0.00 sec)
+
+</pre>
 
 
 
