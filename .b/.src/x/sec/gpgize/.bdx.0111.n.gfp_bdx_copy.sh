@@ -1,5 +1,5 @@
-##.bdx.0110.n.gfp_bdx_copy.sh
-##gfp: gpgized file processing
+#!/bin/sh
+##.bdx.0111.n.gfp_bdx_copy.sh
 ##_ver=20121219_234356
 
 
@@ -39,3 +39,5 @@ cp -pr .bdx ~/.b/.src/bdx;
 
 
 bpk.pack;
+
+
