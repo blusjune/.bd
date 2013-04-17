@@ -5,6 +5,51 @@
 
 
 
+== 20130418_015723 ==
+
+=== create database and table, insert data, select records ranging from a to b ===
+
+* create database and table
+ <pre>
+$ mysql -p -u root
+
+mysql>
+mysql> CREATE DATABASE books;
+mysql> USE books;
+mysql> CREATE TABLE authors (id INT, name VARCHAR(30), email VARCHAR(50));
+mysql> SHOW TABLES;
+mysql>
+</pre>
+
+* insert data
+ <pre>
+$ mysql -p -u root
+
+mysql>
+mysql> USE books;
+mysql> INSERT INTO authors (id, name, email) VALUES(1, "apple", "bvidz.apple@gmail.com");
+mysql> INSERT INTO authors (id, name, email) VALUES(2, "banana", "bvidz.banana@gmail.com");
+mysql> INSERT INTO authors (id, name, email) VALUES(3, "cherry", "bvidz.cherry@gmail.com");
+mysql> INSERT INTO authors (id, name, email) VALUES(4, "durian", "bvidz.durian@gmail.com");
+mysql> INSERT INTO authors (id, name, email) VALUES(5, "elderberry", "bvidz.elderberry@gmail.com");
+mysql> SELECT * FROM authors;
+mysql>
+</pre>
+
+* select records ranging from a to b
+ <pre>
+$ mysql -p -u root
+mysql>
+mysql> USE books;
+mysql> SELECT name FROM authors WHERE id BETWEEN 2 AND 3;
+mysql>
+
+$ mysql -p -u root --batch --silent -e 'use books; select name from authors where id between 2 and 3;' 
+</pre>
+
+
+
+
 == 20130407_224536 ==
 
 === extract information using SELECT ===
