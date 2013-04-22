@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-## bsc.iowa.lsp.sim.iox.py # Simulator/IOXceleration
-## LSP: Line-by-line Stream Processing
+##bsc.iowa.lsp.anal_s0010.py
+##	LSP: Line-by-line Stream Processing
 ##
-## _ver=20130208_151133
-## _ver=20130221_154549
-## _ver=20130305_035930
-## _ver=20130305_042344
-## _ver=20130313_161428
+##_ver=20130208_151133
+##_ver=20130221_154549
+##_ver=20130305_035930
+##_ver=20130305_042344
+##_ver=20130313_161428
+##_ver=20130422_234813
 
 
 
@@ -23,17 +24,17 @@ _this_prog = os.path.basename(sys.argv[0])
 ## processing input parameters
 ##
 _ioc_percent = None # IO contribution (IOC) percent
-_iow_size = None # IO window (IOW) size
+_iomw_size = None # IO measurement window (IOMW) size (in microseconds)
 _prd_t1 = None # periodicity t1 value
 _prd_t2 = None # periodicity t2 value (currently this is dummy variable - actually t2 may be set as _ioc_total)
 
 def print_help_n_exit(_retval):
-	print "Usage", _this_prog, "[-h|--help] -c|--ioc-percent=<_ioc_percent> -w|--iow-size=<_iow_size> -p|--periodicity-t1=<_prd_t1> -q|--periodicity-t2=<_prd_t2>"
+	print "Usage", _this_prog, "[-h|--help] -c|--ioc-percent=<_ioc_percent> -w|--iomw-size=<_iomw_size> -p|--periodicity-t1=<_prd_t1> -q|--periodicity-t2=<_prd_t2>"
 	sys.exit(int(_retval))
 
 ## main getopt processing with exception handling
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hc:w:p:q:", ["help", "ioc-percent=", "iow-size=", "periodicity-t1=", "periodicity-t2="])
+	opts, args = getopt.getopt(sys.argv[1:], "hc:w:p:q:", ["help", "ioc-percent=", "iomw-size=", "periodicity-t1=", "periodicity-t2="])
 except getopt.GetoptError:
 	print_help_n_exit(1)
 for opt, arg in opts:
@@ -41,23 +42,25 @@ for opt, arg in opts:
 		print_help_n_exit(0)
 	elif opt in ("-c", "--ioc-percent"):
 		_ioc_percent = int(arg)
-	elif opt in ("-w", "--iow-size"):
-		_iow_size = int(arg)
+	elif opt in ("-w", "--iomw-size"):
+		_iomw_size = int(arg)
 	elif opt in ("-p", "--periodicity-t1"):
 		_prd_t1 = int(arg)
-	elif opt in ("-p", "--periodicity-t2"):
+	elif opt in ("-q", "--periodicity-t2"):
 		_prd_t2 = int(arg)
 
 ## sanity check
 if _ioc_percent is None:
 	print "#>> ERROR: _ioc_percent is not set"
 	print_help_n_exit(2)
-if _iow_size is None:
-	print "#>> ERROR: _iow_size is not set"
+if _iomw_size is None:
+	print "#>> ERROR: _iomw_size is not set"
 	print_help_n_exit(2)
 if _prd_t1 is None:
 	print "#>> ERROR: _prd_t1 is not set"
 	print_help_n_exit(2)
+if _prd_t2 is None:
+	_prd_t2 = _iomw_size
 
 
 ##
@@ -112,6 +115,10 @@ def pmkvl_print(kvlbase, t1, t2):
 		print "__list__periodicity_metric__t1_" + str(t1) + "__t2_" + str(t2) + "__ " + str(kv_key) + " : " + str(kv_val[0]) + " : " + str(float(kv_val[0]) / (float(t2)/float(t1)))
 
 
+def get_iomw_id(t_curr, t_init, t_wnsz):
+	return int((t_curr - t_init) / t_wnsz)
+
+
 
 
 ###############################################################################################################################
@@ -124,51 +131,79 @@ def pmkvl_print(kvlbase, t1, t2):
 ## processing_loop_10
 ##	- count: number of hits for each address
 ##	- collect: hit timestamps for each address
-##	- collect: per-IO window statistics
+##	- collect: per IO measurement window statistics
 ##
 _kv_cdst__hits_per_addr = defaultdict(int)
 _kv_list__addr_hit_tstamp = {}
-_kv_list__iow_list = {} # IOW(IO Window) list
+_kv_list__iomw_whole_list_of_addr_acsd = {} # IOMW(IO Measurement Window) statistics: list of addresses accessed during measurement window
+_kv_list__iomw_acs_cnt_per_addr = {} # IOMW(IO Measurement Window) statistics: access count of the address during measurement window
 _kv_list__periodicity_metric = {} # periodicity metrics accumulated (t1=variable, t2=positive_infinite)
 _kv_list__periodicity_metric[_prd_t1] = {} # t1=_prd_t1, t2=positive_infinite(_ioc_total)
-#_kv_list__periodicity_metric[20000] = {} # t1=20000, t2=positive_infinite(_ioc_total)
-#_kv_list__periodicity_metric[30000] = {} # t1=30000, t2=positive_infinite(_ioc_total)
-#_kv_list__periodicity_metric[50000] = {} # t1=50000, t2=positive_infinite(_ioc_total)
-#_kv_list__periodicity_metric[70000] = {} # t1=70000, t2=positive_infinite(_ioc_total)
 linecount_L10 = 0	# line count is used as a virtual time (not 'real' time) of which value is increased by stream line count
-iow_index = 0
+iomw_id = 0
+#iomw_index_for_all_addr = 0
+_iomw_init_time = -1 # initial time value to calculate IOMW ID
 for line in sys.stdin:
+
 	line_items = line.strip().split(',')
 	if line_items.__len__() == 1:
-		addr_L10 = int(line_items[0]) # case A: single item per line (addr)
+		# case A: single item per line (addr)
+		time_L10 = linecount_L10 # this is not recommended, but simple work-around for non-timestamp case
+		addr_L10 = int(line_items[0].strip())
+	elif line_items.__len__() == 2:
+		# case B: two items per line (timestamp, addr)
+		time_L10 = int(line_items[0].strip())
+		addr_L10 = int(line_items[1].strip())
+	elif line_items.__len__() >= 4:
+		# case C: more than four items per line (timestamp, addr, iosize, rwflag, ...)
+		time_L10 = int(line_items[0].strip())
+		addr_L10 = int(line_items[1].strip())
+		iosz_L10 = int(line_items[2].strip())
+		rwid_L10 = int(line_items[3].strip())
 	else:
-		addr_L10 = int(line_items[1]) # case B: more than two items per line (timestamp, addr, iosize, fileobjid, dirpath)
+		# case D: erroneous case
+		sys.exit(1)
+	
+	if linecount_L10 == 0:
+		_iomw_init_time = time_L10
+	iomw_id = get_iomw_id(time_L10, _iomw_init_time, _iomw_size)
+
 	## count: address hits
 	_kv_cdst__hits_per_addr[addr_L10] += 1
+
 	## collect: address hit timestamp
 	if addr_L10 not in _kv_list__addr_hit_tstamp:
-		_kv_list__addr_hit_tstamp[addr_L10] = [linecount_L10]
+		_kv_list__addr_hit_tstamp[addr_L10] = [time_L10]
 	else:
-		_kv_list__addr_hit_tstamp[addr_L10].append(linecount_L10)
-	## collect: IOW list (for future statistical processing per IO Window)
-	if iow_index not in _kv_list__iow_list:
-		_kv_list__iow_list[iow_index] = [addr_L10]
+		_kv_list__addr_hit_tstamp[addr_L10].append(time_L10)
+
+	## collect: IOMW statistics
+	if iomw_id not in _kv_list__iomw_whole_list_of_addr_acsd:
+		_kv_list__iomw_whole_list_of_addr_acsd[iomw_id] = [addr_L10]
 	else:
-		_kv_list__iow_list[iow_index].append(addr_L10)
+		_kv_list__iomw_whole_list_of_addr_acsd[iomw_id].append(addr_L10)
+	if addr_L10 not in _kv_list__iomw_acs_cnt_per_addr:
+		_kv_list__iomw_acs_cnt_per_addr[addr_L10] = {}
+		_kv_list__iomw_acs_cnt_per_addr[addr_L10][iomw_id] = 1
+	else:
+		if iomw_id not in _kv_list__iomw_acs_cnt_per_addr[addr_L10]:
+			_kv_list__iomw_acs_cnt_per_addr[addr_L10][iomw_id] = 1
+		else:
+			_kv_list__iomw_acs_cnt_per_addr[addr_L10][iomw_id] += 1
+
 	## collect: periodicity metrics
-	pmkvl_update(_kv_list__periodicity_metric[_prd_t1], _prd_t1, addr_L10, linecount_L10)
-#	pmkvl_update(_kv_list__periodicity_metric[20000], 20000, addr_L10, linecount_L10)
-#	pmkvl_update(_kv_list__periodicity_metric[30000], 30000, addr_L10, linecount_L10)
-#	pmkvl_update(_kv_list__periodicity_metric[50000], 50000, addr_L10, linecount_L10)
-#	pmkvl_update(_kv_list__periodicity_metric[70000], 70000, addr_L10, linecount_L10)
+	pmkvl_update(_kv_list__periodicity_metric[_prd_t1], _prd_t1, addr_L10, time_L10)
+
+	## sort the list items
+#	if (linecount_L10 % _iomw_size) == (_iomw_size - 1):
+#		_kv_list__iomw_whole_list_of_addr_acsd[iomw_index_for_all_addr] = [int(x) for x in _kv_list__iomw_whole_list_of_addr_acsd[iomw_index_for_all_addr]]
+#		_kv_list__iomw_whole_list_of_addr_acsd[iomw_index_for_all_addr].sort()
+#		iomw_index_for_all_addr += 1
 
 	## update loop variables
-	if (linecount_L10 % _iow_size) == (_iow_size - 1):
-		_kv_list__iow_list[iow_index] = [int(x) for x in _kv_list__iow_list[iow_index]]
-		_kv_list__iow_list[iow_index].sort()
-		iow_index += 1
 	linecount_L10 += 1
-	## End-of-for-loop
+
+	## End-of-for-loop (L10)
 
 _ioc_total = linecount_L10
 _ioc_stop_target = int((float(_ioc_percent) / float(100)) * float(_ioc_total))
@@ -179,12 +214,6 @@ for kv_key, kv_val in _kv_list__addr_hit_tstamp.items():
 for kv_key, kv_val in _kv_cdst__hits_per_addr.items():
 	print "__cdst__hits_per_addr__ " + str(kv_key) + " : " + str(kv_val)
 pmkvl_print(_kv_list__periodicity_metric, _prd_t1, _ioc_total) # __list__periodicity_metric__
-#pmkvl_print(_kv_list__periodicity_metric, 20000, _ioc_total)
-#pmkvl_print(_kv_list__periodicity_metric, 30000, _ioc_total)
-#pmkvl_print(_kv_list__periodicity_metric, 50000, _ioc_total)
-#pmkvl_print(_kv_list__periodicity_metric, 70000, _ioc_total)
-
-
 
 
 ##
@@ -268,15 +297,19 @@ for kv_key, kv_val in _kv_cdst__addr_hit_interval.items():
 
 ##
 ## processing_loop_60
-##  - statistical processing for IOW (IO Window)
-##
-_kv_list__iow_stat = {}
-for k_iow_index, v_iow_alist in _kv_list__iow_list.items():
-	_kv_list__iow_stat[k_iow_index] = meanstdv(v_iow_alist)
+##  - statistical processing for IOMW (IO Measurement Window)
+## !!!
+_kv_list__iomw_stat = {}
+for k_iomw_index, v_iomw_alist in _kv_list__iomw_whole_list_of_addr_acsd.items():
+	_kv_list__iomw_stat[k_iomw_index] = meanstdv(v_iomw_alist)
 
-for kv_key, kv_val in _kv_list__iow_stat.items():
-	print "__list__iow_stat__ " + str(kv_key) + " : " + str(kv_val[0]) + " : " + str(kv_val[1])
-	## kv_key:k_iow_index; kv_val[0]:mean; kv_val[1]:stdv;
+for kv_key, kv_val in _kv_list__iomw_stat.items():
+	print "__list__iomw_stat__ " + str(kv_key) + " : " + str(kv_val[0]) + " : " + str(kv_val[1])
+	## kv_key:k_iomw_index; kv_val[0]:mean; kv_val[1]:stdv;
+
+for i in _kv_list__iomw_acs_cnt_per_addr:
+	for j in _kv_list__iomw_acs_cnt_per_addr[i]:
+		print "__list__iomw_acs_cnt_per_addr__ " + "_addr: " + str(i) + " , " + "_timewin: " + str(j) + " , " + "_acscnt: " + str(_kv_list__iomw_acs_cnt_per_addr[i][j])
 
 
 
