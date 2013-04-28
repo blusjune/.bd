@@ -2,6 +2,46 @@
 == 20130428_233708 ==
 
 
+
+=== R (r_stat) references ===
+
+
+* manual/introduction to R
+:- [http://cran.r-project.org/doc/manuals/R-intro.pdf R introduction]
+:- [http://cran.r-project.org/web/packages/arules/vignettes/arules.pdf arules (Association Rules Mining)]
+:- [http://www.cl.cam.ac.uk/~av308/vlachos_msc_thesis.pdf using SVM]
+
+
+* '%in%' and example() function
+
+ <pre>
+On 8 May 2011 21:18, Berwin A Turlach <[hidden email]> wrote:
+> G'day Dan,
+>
+> On Sun, 8 May 2011 05:06:27 -0400
+> Dan Abner <[hidden email]> wrote:
+>
+>> Hello everyone,
+>>
+>> I am attempting to use the %in% operator with the ! to produce a NOT
+>> IN type of operation. Why does this not work? Suggestions?
+
+Alternatively,
+
+example(`%in%`)
+
+or
+
+`%ni%` = Negate(`%in%`)
+
+HTH,
+
+baptiste
+</pre>
+
+
+
+
 === applying the kmeans result to svm (as a guideline for supervising) ((B.GOOD)) ===
 
  <pre>
