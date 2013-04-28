@@ -1,4 +1,179 @@
 
+== 20130428_233708 ==
+
+
+=== applying the kmeans result to svm (as a guideline for supervising) ((B.GOOD)) ===
+
+ <pre>
+
+# combining the columns xy (time_t1, file_id) and cl4 (cluster_id)
+xy_cl4 <- cbind(xy, cl4$cluster);
+
+# assign the column names
+colnames(xy_cl4) <- c("time_t1", "file_id", "cluster_id");
+
+# prepare the x's and y for svm
+smv_x <- subset(xy_cl4, select= -cluster_id);
+smv_y <- subset(xy_cl4, select= cluster_id);
+
+# load the library 'e1071'
+library(e1071);
+
+# execute svm analysis to get model 'm'
+m <- svm(svm_x, svm_y);
+
+# predict a new value with the model 'm' and x's data
+pred <- predict(m, svm_x, decision.values = T);
+
+# check the prediction result by comparing the predicted value 'pred' with original value 'svm_y'
+table(pred, svm_y);
+
+# plot the result
+plot(cmdscale(dist(xy_cl4[, -3])), col=pred, pch=c("o", "+")[1:120 %in% m$index + 1])
+
+</pre>
+
+
+
+
+=== kmeans example ((B.GOOD)) ===
+
+ <pre>
+
+# clear all the data in memory
+rm(list=ls());
+
+# read the data from file (.csv format)
+myd <- read.csv('traces/iowa_v3.csv', header=T);
+
+# unlist() to convert 'list' type data to 'vector' type data for further numerical calculation
+myd_c1 <- unlist(myd[1]); # field: time_t0
+myd_c2 <- unlist(myd[2]); # field: time_t1
+myd_c3 <- unlist(myd[3]); # field: prog
+myd_c4 <- unlist(myd[4]); # field: file
+
+# create 2-D matrix (x-y) for 2-D kmeans analysis
+xy <- cbind(myd_c2, myd_c4); # combining columns: 'time_t1' and 'file'
+
+# assign the column names for x-label and y-label for better look of plot()
+colnames(xy) <- c("time_t1", "file_id");
+
+# load the library 'e1071'
+library(e1071);
+
+# execute kmeans analysis until we get satisfactory clustering performance value (value = between_SS / total_SS)
+# number of clusters is set to '6' huristically after plotting data xy to see the outlook
+# number of maximum iterations is set to '100' huristically after executing kmeans analysis several times
+cl1 <- kmeans(xy, 6, iter.max=100); # initial trial, the clustering performance value is ... (cannot evaluate)
+cl2 <- kmeans(xy, 6, iter.max=100); # second trial, the clustering performance value is higher than the first trial
+cl3 <- kmeans(xy, 6, iter.max=100); # third trial, the clustering performance value is higher than the second trial
+(cl4 <- kmeans(xy, 6, iter.max=100)); # fourth trial, the clustering performance value is not going higher than the last trial
+
+# 2-D plotting
+plot(xy, col=cl4$cluster);
+
+</pre>
+
+
+
+
+* most outer parentheses are used to see the result of execution
+
+ <pre>
+
+> (cl4 <- kmeans(xy, 6, iter.max=100))
+K-means clustering with 6 clusters of sizes 19, 22, 19, 15, 20, 25
+
+Cluster means:
+   time_t1    file_id
+1 10.52632 32.2105263
+2 14.40909 43.3181818
+3 18.57895 33.5263158
+4 22.00000  0.2666667
+5  6.50000 11.7000000
+6  2.00000  1.0000000
+
+Clustering vector:
+  time_t11   time_t12   time_t13   time_t14   time_t15   time_t16   time_t17 
+         6          6          6          6          5          5          5 
+  time_t18   time_t19  time_t110  time_t111  time_t112  time_t113  time_t114 
+         5          1          2          1          1          2          2 
+ time_t115  time_t116  time_t117  time_t118  time_t119  time_t120  time_t121 
+         2          2          3          3          3          3          4 
+ time_t122  time_t123  time_t124  time_t125  time_t126  time_t127  time_t128 
+         4          4          6          6          6          6          6 
+ time_t129  time_t130  time_t131  time_t132  time_t133  time_t134  time_t135 
+         5          5          5          5          1          1          1 
+ time_t136  time_t137  time_t138  time_t139  time_t140  time_t141  time_t142 
+         1          2          2          2          2          2          3 
+ time_t143  time_t144  time_t145  time_t146  time_t147  time_t148  time_t149 
+         3          3          4          4          4          6          6 
+ time_t150  time_t151  time_t152  time_t153  time_t154  time_t155  time_t156 
+         6          6          6          5          5          5          5 
+ time_t157  time_t158  time_t159  time_t160  time_t161  time_t162  time_t163 
+         1          1          1          1          2          2          2 
+ time_t164  time_t165  time_t166  time_t167  time_t168  time_t169  time_t170 
+         2          3          3          3          3          4          4 
+ time_t171  time_t172  time_t173  time_t174  time_t175  time_t176  time_t177 
+         4          6          6          6          6          6          5 
+ time_t178  time_t179  time_t180  time_t181  time_t182  time_t183  time_t184 
+         5          5          5          1          1          1          1 
+ time_t185  time_t186  time_t187  time_t188  time_t189  time_t190  time_t191 
+         2          2          2          2          3          3          3 
+ time_t192  time_t193  time_t194  time_t195  time_t196  time_t197  time_t198 
+         3          4          4          4          6          6          6 
+ time_t199 time_t1100 time_t1101 time_t1102 time_t1103 time_t1104 time_t1105 
+         6          6          5          5          5          5          1 
+time_t1106 time_t1107 time_t1108 time_t1109 time_t1110 time_t1111 time_t1112 
+         1          1          1          2          2          2          2 
+time_t1113 time_t1114 time_t1115 time_t1116 time_t1117 time_t1118 time_t1119 
+         3          3          3          3          4          4          4 
+time_t1120 
+         6 
+
+Within cluster sum of squares by cluster:
+[1]  51.89474 212.09091 117.36842  14.93333  53.20000 122.00000
+ (between_SS / total_SS =  98.6 %)
+
+Available components:
+
+[1] "cluster"      "centers"      "totss"        "withinss"     "tot.withinss"
+[6] "betweenss"    "size"        
+> 
+
+</pre>
+
+
+
+
+=== example() function in R ((B.GOOD)) ===
+
+example() function is very very very useful to grasp the quick overview of some 'concept' or 'function' in R
+
+ <pre>
+
+example(svm)
+example(kmeans)
+example('%in%')
+example(rm)
+example(plot)
+
+</pre>
+
+
+
+
+=== convert list to vector ===
+
+Note: the first line of 'iowa_v3.csv' file should be the header information line (not the empty line containing just ',')
+
+ <pre>
+x_as_list_type <- read.csv('traces/iowa_v3.csv', header=T)
+x_as_int_vector <- unlist(x_as_list_type, use.name=F)
+</pre>
+
+
+
 
 == 20130329_111903 ==
 
