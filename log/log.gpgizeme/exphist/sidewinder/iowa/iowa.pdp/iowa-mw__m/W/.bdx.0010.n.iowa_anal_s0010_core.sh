@@ -1,0 +1,1 @@
+../.bdx.0010.n.iowa_anal_s0010_core.sh

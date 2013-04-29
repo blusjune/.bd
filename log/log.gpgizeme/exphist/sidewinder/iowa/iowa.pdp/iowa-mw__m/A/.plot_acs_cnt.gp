@@ -8,4 +8,5 @@ show view
 #set view 45, 60
 set view 70, 80
 show view
-splot './f040.iomw_acs_cnt.sorted_by_acs_cnt' u 3:2:1 with points palette pointsize 2 pointtype 7
+#splot './f040.iomw_acs_cnt.sorted_by_acs_cnt' u 3:2:1 with points palette pointsize 2 pointtype 7
+splot '${_infile_for_gnuplot}' u 3:2:1 with points palette pointsize 2 pointtype 7
