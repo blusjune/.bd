@@ -1,7 +1,0 @@
-$ crontab -l
-
-MAILTO="brian.m.roses+crontab.jh@gmail.com"
-PATH=".:/home/blusjune/.b/x/sys/sh:/home/blusjune/.b/x/sys/bin/x.0001:/home/blusjune/.b/x/sys/bin/x.0002:/home/blusjune/.b/x/sys/bin/x.0003:/home/blusjune/.b/x/sys/bin/x.0004:/home/blusjune/x/bin:/sbin:/bin:/lib:/usr/sbin:/usr/bin:/usr/lib:/usr/libexec:/usr/local/sbin:/usr/local/bin:/usr/local/lib:/usr/local/libexec:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
-
-0 */2 * * * bsc.cron.bmcx
-

@@ -1,2 +1,0 @@
-#!/bin/sh
-LANG='ko_KR.eucKR' nabi &

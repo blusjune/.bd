@@ -1,8 +1,0 @@
-_TARGET_1_HOST="-z 75.2.175.83"
-_TARGET_1_USER="-u b"
-_TARGET_1="$_TARGET_1_HOST $_TARGET_1_USER"
-_TARGET=_TA
-
-
-
-rdesktop -g 1600x980 -a 16 -r sound:remote -0 -z 75.2.175.83 -u b

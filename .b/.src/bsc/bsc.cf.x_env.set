@@ -1,6 +1,0 @@
-DISPLAY=b02:0 export DISPLAY
-#xhost + a89 a88 a87
-#xclock -update 1 &
-#xterm &
-#xterm &
-

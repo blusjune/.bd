@@ -1,6 +1,0 @@
-#!/bin/sh
-
-_vncs="/usr/bin/vncserver"
-_vncs_args=":1 -geometry 1280x960 -depth 32 -name JimiHendrix"
-
-$_vncs $_vncs_args

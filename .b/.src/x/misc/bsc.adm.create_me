@@ -1,9 +1,0 @@
-#!/bin/sh
-#_this_prog=bsc.adm.create_me
-#_ver=20130127_234422
-
-
-_uid=1004
-_gid=1004
-sudo groupadd -g $_gid -r me
-sudo useradd -c "I Me Mine" -g $_gid -m -p 'kkk' -r -s /bin/bash -u $_uid me
