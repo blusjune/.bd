@@ -42,7 +42,7 @@ baptiste
 
 
 
-=== applying the kmeans result to svm (as a guideline for supervising) ((B.GOOD)) ===
+=== kmeans-svm #2 :: applying the kmeans result to svm (as a guideline for supervising) ((B.GOOD)) ===
 
  <pre>
 
@@ -69,14 +69,17 @@ pred <- predict(m, svm_x, decision.values = T);
 table(pred, svm_y);
 
 # plot the result
-plot(cmdscale(dist(xy_cl4[, -3])), col=pred, pch=c("o", "+")[1:120 %in% m$index + 1])
+plot(cmdscale(dist(xy_cl4[, -3])), col=pred, pch=c("o", "+")[1:120 %in% m$index + 1]);
+
+# write the resultant xy_cl4 table to the file(.csv)
+write.csv(xy_cl4, file="xy_cl4.csv", row.names=T, col.names=T);
 
 </pre>
 
 
 
 
-=== kmeans example ((B.GOOD)) ===
+=== kmeans-svm #1 :: kmeans example ((B.GOOD)) ===
 
  <pre>
 
