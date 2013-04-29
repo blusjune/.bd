@@ -47,7 +47,7 @@ _tag="__valu__sig__"; _postproc_iowa_output_with_tag;
 _tag="__list__hitnum_and_addrs__"; _postproc_iowa_output_with_tag;
 _tag="__list__sig_hitnum_and_addrs__"; _postproc_iowa_output_with_tag;
 _tag="__cdst__addr_hit_interval__"; _postproc_iowa_output_with_tag;
-_tag="__list__periodicity_metric__t1_" _postproc_iowa_output_with_tag;
+_tag="__list__periodicity_metric__" _postproc_iowa_output_with_tag;
 _tag="__list__iomw_acs_cnt_per_addr__"; _postproc_iowa_output_with_tag;
 
 _tag="__list__iomw_acs_cnt_per_addr__" \
