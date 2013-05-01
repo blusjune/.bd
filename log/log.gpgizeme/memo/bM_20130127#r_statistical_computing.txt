@@ -1,4 +1,48 @@
 
+
+
+
+== 20130502_032415 ==
+
+=== R script ===
+
+ <pre>
+a1mjjung@secm:[r_stat] $ cat > iowa_anal_1010.R << EOF
+#iowa_anal_1010.R
+#20130430_140506
+
+
+library(e1071);
+library(arules);
+library(scatterplot3d);
+
+
+rm(list=ls());
+
+
+myd <- read.table('r_stat_infile', col.names=c("_hitcnt_", "_addr_", "_mwid_"));
+myd_mwid <- unlist(myd[3]);
+myd_addr <- unlist(myd[2]);
+myd_hitcnt <- unlist(myd[1]);
+
+
+mymat <- cbind(myd_mwid, myd_addr, myd_hitcnt);
+colnames(mymat) <- c("_mwid_", "_addr_", "_hcnt_");
+nocl <- 22; itmax <- 100; (cl1 <- kmeans(mymat, nocl, iter.max=itmax));
+
+
+png('output_col_by_hitcnt.png', width=1024, height=2048);
+plot(myd_mwid, myd_addr, col=myd_hitcnt);
+dev.off();
+png('output_col_by_cluster.png', width=1024, height=2048);
+plot(myd_mwid, myd_addr, col=cl1$cluster);
+dev.off();
+EOF
+
+</pre>
+
+
+
 == 20130428_233708 ==
 
 
