@@ -1,0 +1,64 @@
+== 20130502_031834 ==
+
+=== iozone benchmark ===
+
+* I/O performance benchmark for random read/write cases
+ <pre>
+$ time iozone -i 2 -+W -w -s 400000 -r 4 -f /mnt/diskut/iozone_d/400m
+$ time iozone -i 2 -+R -w -s 400000 -r 4 -f /mnt/diskut/iozone_d/400m
+</pre>
+
+
+* Exemplary result
+ <pre>
+blusjune@stones:[current] $ time iozone -i 2 -+R -w -s 40000 -r 4 -f /mnt/diskut/iozone_d/400m
+	Iozone: Performance Test of File I/O
+	        Version $Revision: 3.398 $ -- blusjune 20130502_023327
+		Compiled for 6		Build: linux-AMD64 
+
+		Build: linux-AMD64 
+
+	Contributors:William Norcott, Don Capps, Isom Crawford, Kirby Collins
+	             Al Slater, Scott Rhine, Mike Wisner, Ken Goss
+	             Steve Landherr, Brad Smith, Mark Kelly, Dr. Alain CYR,
+	             Randy Dunlap, Mark Montague, Dan Million, Gavin Brebner,
+	             Jean-Marc Zucconi, Jeff Blomberg, Benny Halevy, Dave Boone,
+	             Erik Habbinga, Kris Strecker, Walter Wong, Joshua Root,
+	             Fabrice Bacchella, Zhenghua Xue, Qin Li, Darren Sawyer.
+	             Ben England.
+
+	Run began: Thu May  2 03:19:57 2013
+
+	Setting no_unlink
+	File size set to 40000 KB
+	Record Size 4 KB
+	Command line used: iozone -i 2 -+R -w -s 40000 -r 4 -f /mnt/diskut/iozone_d/400m
+	Output is in Kbytes/sec
+	Time Resolution = 0.000005 seconds.
+	Processor cache size set to 1024 Kbytes.
+	Processor cache line size set to 32 bytes.
+	File stride size set to 17 * record size.
+                                                            random  random    bkwd   record   stride                                   
+              KB  reclen   write rewrite    read    reread    read   write    read  rewrite     read   fwrite frewrite   fread  freread
+           40000       4                                     16853       0                                                                                              
+
+iozone test complete.
+
+==================================================
+blusjune performance metrics (random-read)
+==================================================
+blusjune__file_size (bytes)      : 40960000
+blusjune__record_size (bytes)    : 4096
+blusjune__time_elapsed (secs)    : 2.37338
+blusjune__num_of_ios             : 10000
+--------------------------------------------------
+blusjune__latency_per_io (usecs) : 237.338
+blusjune__iops                   : 4213
+blusjune__throughput (bytes/sec) : 17258094
+==================================================
+real	0m2.489s
+user	0m0.028s
+sys	0m0.336s
+</pre>
+
+
