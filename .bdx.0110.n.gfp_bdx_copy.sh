@@ -6,7 +6,7 @@
 ##_ver=20130429_150652
 
 
-if [ "x" = "y" ]; then  # disables this operation
+if [ "x" = "y" ]; then  # a chance to disable this operation
 #------------------------------------------------
 echo "#>> update ~/.bd/.b (with ~/.b)"
 ~/.b/.bdx.d/.bdx.0200.y.clear_pyc.sh;
