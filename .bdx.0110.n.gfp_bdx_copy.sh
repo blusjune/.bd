@@ -12,7 +12,7 @@ _conf_wikini__enpack="y"; # default: "n"
 _conf_wikini__root="${HOME}/.blib/wiki/wikini";
 _conf_wikini__target_db="wikidb";
 _conf_wikini__mediawiki_var_root="/var/lib/mediawiki";
-_conf_wikini__script_file_to_update_db="update_wikidb.sh";
+_conf_wikini__script_file_to_update_db="mysql_wikidb_update.sh";
 
 
 
@@ -66,7 +66,7 @@ if [ "#$_conf_wikini__enpack" = "#y" ]; then
 ln -s /x/t/share tmp;
 _tstamp=\$(ls -1 .tstamp.* | sed -e 's/\.tstamp\.\(.*\)/\1/g');
 _sql_wikidb="wikidb-\${_tstamp}.sql";
-cat wikini/_sql_* > tmp/\$_sql_wikidb;
+cat ${_sql_dump_dir}/_sql_* > tmp/\$_sql_wikidb;
 echo "drop database $_conf_wikini__target_db; create database $_conf_wikini__target_db;" | mysql -p -u root;
 mysql -p -u root $_conf_wikini__target_db < tmp/\$_sql_wikidb;
 EOF
