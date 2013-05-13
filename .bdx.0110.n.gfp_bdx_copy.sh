@@ -43,6 +43,9 @@ if [ "#$_conf_wikini__enpack" = "#y" ]; then
 		_var_lib_mediawiki_images_tarball="var_lib_mediawiki_images.tgz";
 		_sql_dump_dir="sql_dump";
 		_wiki_images_dir="wiki_images";
+
+		rm -f .tstamp.*;
+		touch .tstamp.$(_tstamp);
 	
 		echo "#>> execute mysqldump for '$_conf_wikini__target_db' -> $_sql_dump_file";
 		if [ ! -d $_sql_dump_dir ]; then
