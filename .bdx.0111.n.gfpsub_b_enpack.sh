@@ -20,6 +20,8 @@ if [ "X$_conf_b__enpack" = "Xy" ]; then  # a chance to disable this operation
 	cp -pr ~/.b ~/.bd/;
 	(cd ~/.bd/.b/; rm -fr ..bpk/; mkdir ..bpk)
 #------------------------------------------------
+else
+	echo "#>> NOT EXECUTED by conf";
 fi
 
 
