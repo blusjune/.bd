@@ -2,6 +2,29 @@
 
 
 
+
+
+=== 20130514_135625 ===
+
+==== class example ====
+
+ <pre>
+#!/usr/bin/env python
+
+class complex_num:
+	def __init__ (self, rpart, ipart):
+		self.r = rpart;
+		self.i = ipart;
+	def get_radius_len (self):
+		return (((self.r ** 2) + (self.i ** 2)) ** (1/float(2)));
+
+x = complex_num(3,4)
+
+print "real part      : " + str(x.r);
+print "imaginary part : " + str(x.i);
+print "radius length  : " + str(x.get_radius_len());
+</pre>
+
 === 20130402_135813 ===
 
 ==== string character-by-character replacement ====
