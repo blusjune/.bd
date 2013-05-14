@@ -1,31 +1,17 @@
-##.bdx.0110.n.gfp_bdx_copy.sh
+##.bdx.1020.n.gfpsub_wikini_enpack.sh
 ##gfp: gpgized file processing
 ##_ver=20121219_234356
-##_ver=20130207_023212
-##_ver=20130217_235424
-##_ver=20130429_150652
 ##_ver=20130511_103052; #initial use of 'if [ "#$_value" = "#y" ]; then'
+##_ver=20130514_112017
 
 
-_conf_b__enpack="n"; # default: "n"
+
+
 _conf_wikini__enpack="y"; # default: "n"
 _conf_wikini__root="${HOME}/.blib/wiki/wikini";
 _conf_wikini__target_db="wikidb";
 _conf_wikini__mediawiki_var_root="/var/lib/mediawiki";
 _conf_wikini__script_file_to_update_db="mysql_wikidb_update.sh";
-
-
-
-
-if [ "#$_conf_b__enpack" = "#y" ]; then  # a chance to disable this operation
-#------------------------------------------------
-	echo "#>> update ~/.bd/.b (with ~/.b)"
-	~/.b/.bdx.d/.bdx.0200.y.clear_pyc.sh;
-	rm -fr ~/.bd/.b;
-	cp -pr ~/.b ~/.bd/;
-	(cd ~/.bd/.b/; rm -fr ..bpk/; mkdir ..bpk)
-#------------------------------------------------
-fi
 
 
 
