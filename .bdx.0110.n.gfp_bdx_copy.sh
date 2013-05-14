@@ -51,6 +51,8 @@ if [ "#$_conf_wikini__enpack" = "#y" ]; then
 		echo "#>> execute mysqldump for '$_conf_wikini__target_db' -> $_sql_dump_file";
 		if [ ! -d $_sql_dump_dir ]; then
 			mkdir -p $_sql_dump_dir;
+		else
+			(cd $_sql_dump_dir; rm _sql_*;)
 		fi
 		(
 			cd $_sql_dump_dir;
@@ -61,6 +63,8 @@ if [ "#$_conf_wikini__enpack" = "#y" ]; then
 		echo "#>> enpack the uploaded $_conf_wikini__target_db images";
 		if [ ! -d $_wiki_images_dir ]; then
 			mkdir -p $_wiki_images_dir;
+		else
+			(cd $_wiki_images_dir; rm -f $_var_lib_mediawiki_images_tarball;)
 		fi
 		(cd $_conf_wikini__mediawiki_var_root; sudo tar cf - images) | gzip -c > ${_wiki_images_dir}/${_var_lib_mediawiki_images_tarball};
 
