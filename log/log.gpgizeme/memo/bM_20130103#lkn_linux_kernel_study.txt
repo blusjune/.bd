@@ -1,11 +1,358 @@
+== 20130516_123513 ==
+
+=== /proc/<pid>/status ===
+
+* Linux kernel /proc file system - status file
+: https://www.kernel.org/doc/Documentation/filesystems/proc.txt
+
+ <pre>
+
+Table 1-1: Process specific entries in /proc
+..............................................................................
+ File		Content
+ clear_refs	Clears page referenced bits shown in smaps output
+ cmdline	Command line arguments
+ cpu		Current and last cpu in which it was executed	(2.4)(smp)
+ cwd		Link to the current working directory
+ environ	Values of environment variables
+ exe		Link to the executable of this process
+ fd		Directory, which contains all file descriptors
+ maps		Memory maps to executables and library files	(2.4)
+ mem		Memory held by this process
+ root		Link to the root directory of this process
+ stat		Process status
+ statm		Process memory status information
+ status		Process status in human readable form
+ wchan		If CONFIG_KALLSYMS is set, a pre-decoded wchan
+ pagemap	Page table
+ stack		Report full stack trace, enable via CONFIG_STACKTRACE
+ smaps		a extension based on maps, showing the memory consumption of
+		each mapping
+..............................................................................
+
+For example, to get the status information of a process, all you have to do is
+read the file /proc/PID/status:
+
+  >cat /proc/self/status
+  Name:   cat
+  State:  R (running)
+  Tgid:   5452
+  Pid:    5452
+  PPid:   743
+  TracerPid:      0						(2.4)
+  Uid:    501     501     501     501
+  Gid:    100     100     100     100
+  FDSize: 256
+  Groups: 100 14 16
+  VmPeak:     5004 kB
+  VmSize:     5004 kB
+  VmLck:         0 kB
+  VmHWM:       476 kB
+  VmRSS:       476 kB
+  VmData:      156 kB
+  VmStk:        88 kB
+  VmExe:        68 kB
+  VmLib:      1412 kB
+  VmPTE:        20 kb
+  VmSwap:        0 kB
+  Threads:        1
+  SigQ:   0/28578
+  SigPnd: 0000000000000000
+  ShdPnd: 0000000000000000
+  SigBlk: 0000000000000000
+  SigIgn: 0000000000000000
+  SigCgt: 0000000000000000
+  CapInh: 00000000fffffeff
+  CapPrm: 0000000000000000
+  CapEff: 0000000000000000
+  CapBnd: ffffffffffffffff
+  voluntary_ctxt_switches:        0
+  nonvoluntary_ctxt_switches:     1
+
+This shows you nearly the same information you would get if you viewed it with
+the ps  command.  In  fact,  ps  uses  the  proc  file  system  to  obtain its
+information.  But you get a more detailed  view of the  process by reading the
+file /proc/PID/status. It fields are described in table 1-2.
+
+The  statm  file  contains  more  detailed  information about the process
+memory usage. Its seven fields are explained in Table 1-3.  The stat file
+contains details information about the process itself.  Its fields are
+explained in Table 1-4.
+
+(for SMP CONFIG users)
+For making accounting scalable, RSS related information are handled in
+asynchronous manner and the vaule may not be very precise. To see a precise
+snapshot of a moment, you can see /proc/<pid>/smaps file and scan page table.
+It's slow but very precise.
+
+Table 1-2: Contents of the status files (as of 2.6.30-rc7)
+..............................................................................
+ Field                       Content
+ Name                        filename of the executable
+ State                       state (R is running, S is sleeping, D is sleeping
+                             in an uninterruptible wait, Z is zombie,
+			     T is traced or stopped)
+ Tgid                        thread group ID
+ Pid                         process id
+ PPid                        process id of the parent process
+ TracerPid                   PID of process tracing this process (0 if not)
+ Uid                         Real, effective, saved set, and  file system UIDs
+ Gid                         Real, effective, saved set, and  file system GIDs
+ FDSize                      number of file descriptor slots currently allocated
+ Groups                      supplementary group list
+ VmPeak                      peak virtual memory size
+ VmSize                      total program size
+ VmLck                       locked memory size
+ VmHWM                       peak resident set size ("high water mark")
+ VmRSS                       size of memory portions
+ VmData                      size of data, stack, and text segments
+ VmStk                       size of data, stack, and text segments
+ VmExe                       size of text segment
+ VmLib                       size of shared library code
+ VmPTE                       size of page table entries
+ VmSwap                      size of swap usage (the number of referred swapents)
+ Threads                     number of threads
+ SigQ                        number of signals queued/max. number for queue
+ SigPnd                      bitmap of pending signals for the thread
+ ShdPnd                      bitmap of shared pending signals for the process
+ SigBlk                      bitmap of blocked signals
+ SigIgn                      bitmap of ignored signals
+ SigCgt                      bitmap of catched signals
+ CapInh                      bitmap of inheritable capabilities
+ CapPrm                      bitmap of permitted capabilities
+ CapEff                      bitmap of effective capabilities
+ CapBnd                      bitmap of capabilities bounding set
+ Cpus_allowed                mask of CPUs on which this process may run
+ Cpus_allowed_list           Same as previous, but in "list format"
+ Mems_allowed                mask of memory nodes allowed to this process
+ Mems_allowed_list           Same as previous, but in "list format"
+ voluntary_ctxt_switches     number of voluntary context switches
+ nonvoluntary_ctxt_switches  number of non voluntary context switches
+
+</pre>
+
+=== Real and Effective IDs ===
+
+* Real and Effective IDs 
+: http://www.lst.de/~okir/blackhats/node23.html
+
+First, in order to really understand how this works, we need to step back for a moment and talk about the Unix user ID concept.
+
+At the lowest level of the operating system, the kernel, users and groups aren't identified by names, but numbers. The kernel needs to be fast and robust, and data structures better be small, and moving around strings is anything but efficient. So, each user name and group name is mapped to a unique unsigned number, called user and group ID for short, or uid and gid. This mapping is done via the /etc/passwd and /etc/group files, respectively. The user and group ID 0 are commonly called root, but that's really just a convention.
+
+Each Unix process has a user ID and a group ID associated with it, and when trying to open a file for writing, for instance, these IDs are used to determine whether the process should be granted access or not. These IDs constitute the effective privilege of the process, because they determine what a process can do and what it cannot. Most of the time, these IDs will be referred to as the effective uid and gid.
+
+What happens when you invoke the passwd utility is that the effective uid of the process is set to 0, i.e. the uid of the root user. As a result, the program is permitted to modify the /etc/passwd file, and can thus replace the encrypted password in your account entry with the new one you just provided.
+
+If you're familiar with the passwd utility, you'll know that as a normal user, you're only allowed to modify the password of your own account; it will not let you modify the password of any other account. So this begs the question, how does it know who invoked it?
+
+That's where another pair of user and group ID comes in, called the real uid and gid, respectively. These IDs are used to track who a user really is, i.e. on what account he or she is logged in. This uid value is not changed when you invoke programs such as passwd. So the program simply needs to find out what user name corresponds to its real uid, and refuse to change any other account.
+
+Most of the time, the effective user ID of a process is just the same as the real ones, and there's no point in making a fuss of this minor distinction.
+
+Things start to get interesting when you invoke a setuid application, however. Assume you're logging into your normal user account, which has a user ID of 500. Now you invoke a setuid root application. Because it's setuid root, the operating system will set the the effective user ID of the process to that of the root user (0). The real user ID, however, remains unchanged. This allows the application to learn the identity of the user who invoked it, and to continue to access files etc with the privilege of the invoking user.
+
+If you think about a large company where employees have different levels of access to different locations, you could compare the real user ID to the name badges people wear, and the effective user ID to the set of keys they've been given.
+
+I have to confess that for the sake of simplicity, I have so far avoided to talk about an additional bunch of group IDs a process usually lugs around; these are called the supplementary gids. A user can be a member of several groups at the same time, for instance a software engineer working on project Fourtytwo may be a member of both the eng and fourtytwo groups at the same time. This set of all groups is transported in an additional group vector associated with each process, called the supplementary group ID; what we've called ``the'' gid all the time is really the primary gid in this case.
+
+In the real vs effective scheme of things we've talked about, supplementary gids are neither fish nor meat. There isn't a real and effective set of supplementary gids; there's just one single set. And on one hand, they are part of the effective privilege of a process, because they're used in determining whether e.g. a process is given access to a file. But on the other hand, invoking a setgid application doesn't alter this group vector the least.
+
+The set of supplementary gids isn't usually much of an issue for setuid applications, however.
 
 
-##_ver=20130103_093833
+== 20130515_124032 ==
+
+Context: Save the private SAVL
+
+=== block layer plug/unplug ('P', 'U' in blktrace) ===
+
+* block device plug/unplug in Linux 3.0 ((B.GOOD))
+: http://nimhaplz.egloos.com/5598614
+
+ <pre>
 
 
-{// kernel API - schedule_timeout() and wait_event()
-http://forum.falinux.com/zbxe/?document_srl=533502
-}// kernel API - schedule_timeout() and wait_event()
+</pre>
+
+
+=== block layer requeue ('R' in blktrace) ===
+
+* https://lkml.org/lkml/2011/5/5/41
+
+ <pre>
+
+Date	Thu, 5 May 2011 10:38:53 +0200
+From	Tejun Heo <>
+Subject	Re: [patch v3 2/3] block: hold queue if flush is running for non-queueable flush drive
+
+(cc'ing James, Ric, Christoph and lscsi.  Hi! Please jump to the
+bottom of the message.)
+
+Hello,
+
+On Thu, May 05, 2011 at 09:59:34AM +0800, shaohua.li@intel.com wrote:
+> In some drives, flush requests are non-queueable. When flush request is running,
+> normal read/write requests can't run. If block layer dispatches such request,
+> driver can't handle it and requeue it.
+> Tejun suggested we can hold the queue when flush is running. This can avoid
+> unnecessary requeue.
+> Also this can improve performance. For example, we have request flush1, write1,
+> flush 2. flush1 is dispatched, then queue is hold, write1 isn't inserted to
+> queue. After flush1 is finished, flush2 will be dispatched. Since disk cache
+> is already clean, flush2 will be finished very soon, so looks like flush2 is
+> folded to flush1.
+> In my test, the queue holding completely solves a regression introduced by
+> commit 53d63e6b0dfb95882ec0219ba6bbd50cde423794:
+>     block: make the flush insertion use the tail of the dispatch list
+> 
+>     It's not a preempt type request, in fact we have to insert it
+>     behind requests that do specify INSERT_FRONT.
+> which causes about 20% regression running a sysbench fileio
+> workload.
+> 
+> Signed-off-by: Shaohua Li <shaohua.li@intel.com>
+
+Acked-by: Tejun Heo <tj@kernel.org>
+
+But, I think the description and comments can use some refinements.
+First of all, new lines won't steal your first born.  Don't be too
+afraid of them both in the patch description and comments.
+
+For the patch description, I want to recomment explaining the
+regression case first - explain why the regression happened and then
+show how this patch solves the issue.  Also, more conventional way to
+refer to a commit is 53d63e6b0d (block: make the flush insertion use
+the tail of the dispatch list).
+
+>  	/*
+> -	 * Moving a request silently to empty queue_head may stall the
+> -	 * queue.  Kick the queue in those cases.  This function is called
+> -	 * from request completion path and calling directly into
+> -	 * request_fn may confuse the driver.  Always use kblockd.
+> +	 * Kick the queue to avoid stall for two cases:
+> +	 * 1. Moving a request silently to empty queue_head may stall the
+> +	 * queue.
+> +	 * 2. When flush request is running in non-queueable queue, the
+> +	 * queue is hold. Restart the queue after flush request is finished
+> +	 * to avoid stall.
+> +	 * This function is called from request completion path and calling
+> +	 * directly into request_fn may confuse the driver.  Always use
+> +	 * kblockd.
+>  	 */
+
+Yeap, pretty good but let's add a bit more whitespaces and apply
+slight adjustments.
+
+	/*
+	 * After flush sequencing, the following two cases may lead to
+	 * queue stall.
+	 *
+	 * 1. Moving a request silently to empty queue_head.
+	 *
+	 * 2. If flush request was non-queueable, request dispatching may
+	 *    have been blocked while flush was in progress.
+	 *
+	 * Make sure queue processing is restarted by kicking the queue.
+	 * As this function is called from request completion path,
+	 * calling directly into request_fn may confuse the driver.  Always
+	 * use kblockd.
+	 */
+> +		/*
+> +		 * Flush request is running and flush request isn't queueable
+> +		 * in the drive, we can hold the queue till flush request is
+> +		 * finished. Even we don't do this, driver can't dispatch next
+> +		 * requests and will requeue them. And this can improve
+> +		 * throughput too. For example, we have request flush1, write1,
+> +		 * flush 2. flush1 is dispatched, then queue is hold, write1
+> +		 * isn't inserted to queue. After flush1 is finished, flush2
+> +		 * will be dispatched. Since disk cache is already clean,
+> +		 * flush2 will be finished very soon, so looks like flush2 is
+> +		 * folded to flush1.
+> +		 * Since the queue is hold, a flag is set to indicate the queue
+> +		 * should be restarted later. Please see flush_end_io() for
+> +		 * details.
+> +		 */
+
+Similarly, I'd like to suggest something like the following.
+
+		/*
+		 * Hold dispatching of regular requests if non-queueable
+		 * flush is in progress; otherwise, the low level driver
+		 * would keep dispatching IO requests just to requeue them
+		 * until the flush finishes, which not only adds
+		 * dispatching / requeueing overhead but may also
+		 * significantly affect throughput when multiple flushes
+		 * are issued back-to-back.  Please consider the following
+		 * scenario.
+		 *
+		 * - flush1 is dispatched with write1 in the elevator.
+		 *
+		 * - Driver dispatches write1 and requeues it.
+		 *
+		 * - flush2 is issued and appended to dispatch queue after
+		 *   the requeued write1.  As write1 has been requeued
+		 *   flush2 can't be put in front of it.
+		 *
+		 * - When flush1 finishes, the driver has to process write1
+		 *   before flush2 even though there's no fundamental
+		 *   reason flush2 can't be processed first and, when two
+		 *   flushes are issued back-to-back without intervening
+		 *   writes, the second one essentially becomes noop.
+		 *
+		 * This phenomena becomes quite visible under heavy
+		 * concurrent fsync workload and holding the queue while
+		 * flush is in progress leads to significant throughput
+		 * gain.
+		 */
+And two more things that I think are worth investigating.
+
+- I wonder whether this would be useful for even devices which can
+  queue flushes (ie. native SCSI ones).  There definitely are some
+  benefits to queueing flushes in terms of hiding command dispatching
+  overhead and if the device is smart/deep enough parallelly
+  processing non-conflicting operations (ie. reads and flushing later
+  writes together if the head sweeps that way).
+
+  That said, flushes are mostly mutually exclusive w.r.t. writes and
+  even with queueable flushes, we might benefit more by holding
+  further writes until flush finishes.  Under light sync workload,
+  this doesn't matter anyway.  Under heavy, the benefit of queueing
+  the later writes together can be easily outweighted by some of
+  flushes becoming noops.
+
+  Unfortunately (or rather, fortunately), I don't have any access to
+  such fancy devices so it would be great if the upscale storage guys
+  can tinker with it a bit and see how it fares.  If it goes well, we
+  can also make things more advanced by implementing back-to-back
+  noop'ing in block layer and allowing issue of reads parallelly with
+  flushes, if the benefits they bring justify the added complexity.
+
+- This is much more minor but if block layer already knows flushes are
+  non-queueable, it might be a good idea to hold dispatching of
+  flushes if other requests are already in progress.  It will only
+  save dispatch/requeue overhead which might not matter at all, so
+  this has pretty good chance of not being worth of the added
+  complexity tho.
+
+So, is anyone from the upscale storage world interested?
+
+Thanks.
+
+-- 
+tejun
+
+</pre>
+
+
+
+
+== 20130103_093833 ==
+
+=== kernel API - schedule_timeout() and wait_event() ===
+
+* http://forum.falinux.com/zbxe/?document_srl=533502
+
 
 
 
@@ -38,5 +385,8 @@ schedule_timeout(HZ/10)
 
 
 
-{// schedule_timeout()
+schedule_timeout()
 	kernel/timer.c: time
+
+
+
