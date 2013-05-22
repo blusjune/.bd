@@ -1,3 +1,11 @@
+#.bdx.0100.y.setup_solarized_vim_stuffs.sh
+#_ver=20130522_234403
+
+if [ ! -d bundle ]; then
+	echo "mkdir bundle";
+	mkdir bundle;
+fi
+
 (cd bundle;
 
 if [ -d vim-colors-solarized ]; then

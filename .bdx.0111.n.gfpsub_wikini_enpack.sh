@@ -19,14 +19,20 @@ _conf_wikini__script_file_to_update_db="mysql_wikidb_update.sh";
 if [ "#$_conf_wikini__enpack" = "#y" ]; then
 #------------------------------------------------
 	if [ ! -d ${HOME}/.blib ]; then
-		echo "#>> '${HOME}/.blib' does not exist -- EXIT";
-		exit 0;
+		echo "#>> '${HOME}/.blib' does not exist -- escape from this task";
+		_execute_flag_1="n";
 	fi
+	if [ ! -d ${_conf_wikini__mediawiki_var_root} ]; then
+		echo "#>> '${_conf_wikini__mediawiki_var_root}' does not exist -- escape from this task";
+		_execute_flag_1="n";
+	fi
+
 	if [ ! -d $_conf_wikini__root ]; then
 		mkdir -p $_conf_wikini__root;
 	fi
 
-	(
+	if [ "X$_execute_flag_1" = "Xy" ]; then
+		(
 		cd $_conf_wikini__root;
 	
 		_sql_dump_file="${_conf_wikini__target_db}.sql";
@@ -70,7 +76,8 @@ mysql -p -u root $_conf_wikini__target_db < tmp/\$_sql_wikidb;
 EOF
 		chmod 755 $_conf_wikini__script_file_to_update_db;
 
-	)
+		)
+	fi
 #------------------------------------------------
 else
 	echo "#>> NOT EXECUTED by conf";
