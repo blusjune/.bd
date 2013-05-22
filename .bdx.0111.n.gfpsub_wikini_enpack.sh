@@ -18,6 +18,10 @@ _conf_wikini__script_file_to_update_db="mysql_wikidb_update.sh";
 
 if [ "#$_conf_wikini__enpack" = "#y" ]; then
 #------------------------------------------------
+	if [ ! -d ${HOME}/.blib ]; then
+		echo "#>> '${HOME}/.blib' does not exist -- EXIT";
+		exit 0;
+	fi
 	if [ ! -d $_conf_wikini__root ]; then
 		mkdir -p $_conf_wikini__root;
 	fi
