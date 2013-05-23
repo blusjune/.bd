@@ -7,7 +7,7 @@
 
 
 
-_conf_wikini__enpack="y"; # default: "n"
+_conf_wikini__enpack="n"; # default: "n"
 _conf_wikini__root="${HOME}/.blib/wiki/wikini";
 _conf_wikini__target_db="wikidb";
 _conf_wikini__mediawiki_var_root="/var/lib/mediawiki";
@@ -68,7 +68,9 @@ if [ "#$_conf_wikini__enpack" = "#y" ]; then
 		echo "#>> create a script file to update mysql database '$_conf_wikini__target_db' with the latest version";
 		cat > $_conf_wikini__script_file_to_update_db << EOF
 #!/bin/sh
-ln -s /x/t/share tmp;
+if [ ! -d tmp ]; then
+	ln -s /x/t/share tmp;
+fi
 _tstamp=\$(ls -1 .tstamp.* | sed -e 's/\.tstamp\.\(.*\)/\1/g');
 _sql_wikidb="wikidb-\${_tstamp}.sql";
 cat ${_sql_dump_dir}/_sql_* > tmp/\$_sql_wikidb;
