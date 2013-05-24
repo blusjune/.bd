@@ -8,8 +8,25 @@
 _iowa_anal_cmd="bsc.iowa.lsp.anal_s0010";
 _anal_code="anal_s0010";
 _sigio_ratio="$_sig_ioc_percentage";
-_iomw_sz="$(expr 60000000 \* $_iomw_sz_in_minute)";
-_prd_t1="$(expr 60000000 \* $_prd_t1_in_minute)";
+
+
+if [ "X$_iomw_sz_in_minute" != "X" ]; then
+	_iomw_sz="$(expr 60000000 \* $_iomw_sz_in_minute)";
+elif [ "X$_iomw_sz_in_usec" != "X" ]; then
+	_iomw_sz="$(expr 1 \* $_iomw_sz_in_usec)";
+else
+	_iomw_sz="1000000"; # by default, 1000 msec (1 sec)
+fi
+
+if [ "X$_prd_t1_in_minute" != "X" ]; then
+	_prd_t1="$(expr 60000000 \* $_prd_t1_in_minute)";
+elif [ "X$_prd_t1_in_usec" != "X" ]; then
+	_prd_t1="$(expr 1 \* $_prd_t1_in_usec)";
+else
+	_prd_t1="10000"; # by default, 10 msec
+fi
+
+
 
 
 _tstamp="$(tstamp)";
@@ -24,6 +41,7 @@ _file_010="$_infile";
 _file_020="${_outdir}/f020.${_target}.${_anal_code}.in";
 _file_030="${_outdir}/f030.${_target}.${_anal_code}.out";
 #_file_040="${_outdir}/f040.${_target}.${_anal_code}.${_tag}.out";
+
 
 _postproc_iowa_output_with_tag()
 {

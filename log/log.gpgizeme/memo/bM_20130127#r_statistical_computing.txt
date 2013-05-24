@@ -2,6 +2,233 @@
 
 
 
+== 20130524_103604 ==
+
+
+=== source() ===
+
+ <pre>
+source('data_set.R');
+</pre>
+
+=== arules eclat() algorithm for association rules mining ===
+
+ <pre>
+library(arules);
+data <- list(
+			 c("_addr_1187", "_addr_23813", "_addr_319275"),
+			 c("_addr_1187", "_addr_23813"),
+			 c("_addr_1187", "_addr_23813", "_addr_4489275"),
+			 c("_addr_23813", "_addr_51276758"),
+			 c("_addr_23813", "_addr_319275", "_addr_51276758"),
+			 c("_addr_1187", "_addr_4489275", "_addr_51276758"),
+			 c("_addr_51276758", "_addr_319275"),
+			 c("_addr_1187", "_addr_23813", "_addr_4489275"),
+			 c("_addr_319275", "_addr_51276758"),
+			 c("_addr_1187", "_addr_23813", "_addr_4489275", "_addr_51276758"),
+			 c("_addr_1187", "_addr_23813", "_addr_319275"),
+			 c("_addr_51276758", "_addr_23813", "_addr_319275"),
+			 c("_addr_1187", "_addr_4489275", "_addr_319275"),
+			 c("_addr_4489275", "_addr_23813", "_addr_319275"),
+			 c("_addr_4489275", "_addr_1187", "_addr_23813", "_addr_319275"),
+			 c("_addr_319275", "_addr_23813", "_addr_51276758"),
+			 c("_addr_23813", "_addr_4489275", "_addr_319275", "_addr_51276758"),
+			 c("_addr_1187", "_addr_319275", "_addr_51276758"),
+			 c("_addr_4489275", "_addr_23813", "_addr_51276758"),
+			 c("_addr_319275", "_addr_51276758")
+			 );
+
+t <- as(data, "transactions");
+f <- eclat(data, parameter=list(tidLists=T, support=0.25))
+dim(tidLists(f))
+as(tidLists(f), "list")
+image(tidLists(f))
+inspect(f)
+</pre>
+
+
+
+
+=== read.table(), write.table(), unlist() ===
+
+ <pre>
+blusjune@jimi-hendrix:[basics] $ cat filein.L20 
+
+248425 , 100276969472
+248772 , 78847959040
+249197 , 139913195520
+251828 , 75536334848
+253182 , 76534030336
+254083 , 143595069440
+254961 , 143598755840
+255185 , 150857949184
+255393 , 118433374208
+255755 , 100324941824
+256025 , 85407301632
+258666 , 95264866304
+259078 , 142196629504
+261133 , 88597774336
+263287 , 97312505856
+264135 , 112585678848
+267323 , 96259047424
+267351 , 140665122816
+267634 , 139540049920
+268982 , 117314224128
+</pre>
+
+ <pre>
+> datain;
+
+   timestamp      address
+   1     248425 100276969472
+   2     248772  78847959040
+   3     249197 139913195520
+   4     251828  75536334848
+   5     253182  76534030336
+   6     254083 143595069440
+   7     254961 143598755840
+   8     255185 150857949184
+   9     255393 118433374208
+   10    255755 100324941824
+   11    256025  85407301632
+   12    258666  95264866304
+   13    259078 142196629504
+   14    261133  88597774336
+   15    263287  97312505856
+   16    264135 112585678848
+   17    267323  96259047424
+   18    267351 140665122816
+   19    267634 139540049920
+   20    268982 117314224128
+</pre>
+
+ <pre>
+datain <- read.table('filein.L20', col.names=c("timestamp", "address"), sep=",", header=F);
+dataout <- datain %% 10;
+dataout_ul <- unlist(dataout, use.names=F)
+write.table(dataout, file="fileout.L20", append=F, quote=T, sep=" , ", row.names=F, col.names=T);
+</pre>
+
+
+
+
+=== scan() ===
+
+ <pre>
+datain_double <- scan(file="d010", what=double(), sep="", strip.white=T);
+datain_char <- scan(file="d010", what="character", sep="\n", strip.white=T);
+datain_char <- scan(file="d010", what="char", sep=";", strip.white=T);
+</pre>
+
+
+
+
+* Case 1: 'd010' - data file of wrong format
+
+ <pre>
+blusjune@jimi-hendrix:[basics] $ cat d010
+8 4 0 5 7;
+11 5 8;
+8 6 3 5 1;
+2 11 1;
+4 6 3 12 4;
+6 7 0 10 4 7;
+7 6 3;
+3 10 7 6 7 6;
+7 10;
+11 10
+</pre>
+
+ </pre>
+> scan(file='d010', what="numeric", sep=";\n", strip.white=T)
+Error in scan(file = "d010", what = "numeric", sep = ";\n", strip.white = T) : 
+  invalid 'sep' value: must be one byte
+
+> scan(file='d010', what="numeric", sep="\n", strip.white=T)
+Read 10 items
+ [1] "8 4 0 5 7;"    "11 5 8;"       "8 6 3 5 1;"    "2 11 1;"      
+ [5] "4 6 3 12 4;"   "6 7 0 10 4 7;" "7 6 3;"        "3 10 7 6 7 6;"
+ [9] "7 10;"         "11 10"        
+
+> scan(file='d010', what="numeric", sep=";", strip.white=T)
+Read 19 items
+ [1] "8 4 0 5 7"    ""             "11 5 8"       ""             "8 6 3 5 1"   
+ [6] ""             "2 11 1"       ""             "4 6 3 12 4"   ""            
+[11] "6 7 0 10 4 7" ""             "7 6 3"        ""             "3 10 7 6 7 6"
+[16] ""             "7 10"         ""             "11 10"       
+
+> scan(file='d010', what="numeric", sep="", strip.white=T)
+Read 40 items
+ [1] "8"   "4"   "0"   "5"   "7;"  "11"  "5"   "8;"  "8"   "6"   "3"   "5"  
+[13] "1;"  "2"   "11"  "1;"  "4"   "6"   "3"   "12"  "4;"  "6"   "7"   "0"  
+[25] "10"  "4"   "7;"  "7"   "6"   "3;"  "3"   "10"  "7"   "6"   "7"   "6;" 
+[37] "7"   "10;" "11"  "10" 
+
+</pre>
+
+
+
+
+* Case 2: 'd020' - data file of good format
+
+ <pre>
+blusjune@jimi-hendrix:[basics] $ cat d020
+8 4 0 5 7; 11 5 8; 8 6 3 5 1; 2 11 1; 4 6 3 12 4; 6 7 0 10 4 7; 7 6 3; 3 10 7 6 7 6; 7 10; 11 10
+</pre>
+
+ <pre>
+> scan(file='d020', what="numeric", sep="", strip.white=T)
+Read 40 items
+ [1] "8"   "4"   "0"   "5"   "7;"  "11"  "5"   "8;"  "8"   "6"   "3"   "5"  
+[13] "1;"  "2"   "11"  "1;"  "4"   "6"   "3"   "12"  "4;"  "6"   "7"   "0"  
+[25] "10"  "4"   "7;"  "7"   "6"   "3;"  "3"   "10"  "7"   "6"   "7"   "6;" 
+[37] "7"   "10;" "11"  "10" 
+
+> scan(file='d020', what="numeric", sep=";", strip.white=T)
+Read 10 items
+ [1] "8 4 0 5 7"    "11 5 8"       "8 6 3 5 1"    "2 11 1"       "4 6 3 12 4"  
+ [6] "6 7 0 10 4 7" "7 6 3"        "3 10 7 6 7 6" "7 10"         "11 10"     
+</pre>
+
+
+
+
+* Case 3: 'd030' - data file of good format
+
+ <pre>
+8 4 0 5 7
+11 5 8
+8 6 3 5 1
+2 11 1
+4 6 3 12 4
+6 7 0 10 4 7
+7 6 3
+3 10 7 6 7 6
+7 10
+11 10
+</pre>
+
+ <pre>
+> scan(file='d030', what='numeric', sep="", strip.white=T)
+Read 40 items
+ [1] "8"  "4"  "0"  "5"  "7"  "11" "5"  "8"  "8"  "6"  "3"  "5"  "1"  "2"  "11"
+[16] "1"  "4"  "6"  "3"  "12" "4"  "6"  "7"  "0"  "10" "4"  "7"  "7"  "6"  "3" 
+[31] "3"  "10" "7"  "6"  "7"  "6"  "7"  "10" "11" "10"
+
+> scan(file='d030', what='numeric', sep=";", strip.white=T)
+Read 10 items
+ [1] "8 4 0 5 7"    "11 5 8"       "8 6 3 5 1"    "2 11 1"       "4 6 3 12 4"  
+ [6] "6 7 0 10 4 7" "7 6 3"        "3 10 7 6 7 6" "7 10"         "11 10"       
+
+> scan(file='d030', what='numeric', sep="\n", strip.white=T)
+Read 10 items
+ [1] "8 4 0 5 7"    "11 5 8"       "8 6 3 5 1"    "2 11 1"       "4 6 3 12 4"  
+ [6] "6 7 0 10 4 7" "7 6 3"        "3 10 7 6 7 6" "7 10"         "11 10"  
+</pre>
+
+
+
+
 == 20130502_032415 ==
 
 === R script ===

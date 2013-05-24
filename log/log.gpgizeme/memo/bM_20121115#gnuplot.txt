@@ -1,33 +1,80 @@
 
-== 20130401_202220 ==
 
-=== set xrange, yrange ===
 
+== 20130524_102158 ==
+
+=== set palette model and color map legend; calculation inside plot command  ===
  <pre>
-     Create a title:                  > set title "Force-Deflection Data" 
-     Put a label on the x-axis:       > set xlabel "Deflection (meters)"
-     Put a label on the y-axis:       > set ylabel "Force (kN)"
-     Change the x-axis range:         > set xrange [0.001:0.005]
-     Change the y-axis range:         > set yrange [20:500]
-     Have Gnuplot determine ranges:   > set autoscale
-     Move the key:                    > set key 0.01,100
-     Delete the key:                  > unset key
-     Put a label on the plot:         > set label "yield point" at 0.003, 260 
-     Remove all labels:               > unset label
-     Plot using log-axes:             > set logscale
-     Plot using log-axes on y-axis:   > unset logscale; set logscale y 
-     Change the tic-marks:            > set xtics (0.002,0.004,0.006,0.008)
-     Return to the default tics:      > unset xtics; set xtics auto
+set palette model RGB defined (0 "red", 1 "blue")
+plot "./timediff.log" u 1 w impulses, "./cpu_id.log" u (1000 * $1) w p pt 2 palette;
+
+set palette model RGB defined (0 "red", 1 "violet", 2 "blue")
+plot "./timediff.log" u 1 w impulses, "./cpu_id.log" u (1000 * $1) w p pt 2 palette;
 </pre>
 
 
 
-##tstamp: 20121115_004913
 
+== 20130502_202615 ==
+
+=== using splot (3D plot) ===
+ <pre>
+set title "I/O intensiveness per measurement window (10-min)";
+set xlabel "time (10-minute)";
+set ylabel "address (LBA)";
+set zlabel "hit count per addr";
+show view;
+#set view 45, 60;
+#set view 70, 80;
+set view 0, 0;
+show view;
+splot '../data.out/20130502_134226--f010.T021.msnfs.R.out--iowa_anal_s0010.sio_25.mw_600000000.t1_60000000/\
+f040.msnfs.anal_s0010.__list__iomw_acs_cnt_per_addr__.out.for_gnuplot' \
+u 3:2:1 with points palette pointsize 2 pointtype 7;
+</pre>
+
+
+
+
+== 20130401_202220 ==
+
+=== set xrange, yrange ===
+ <pre>
+Create a title:                  > set title "Force-Deflection Data" 
+Put a label on the x-axis:       > set xlabel "Deflection (meters)"
+Put a label on the y-axis:       > set ylabel "Force (kN)"
+Change the x-axis range:         > set xrange [0.001:0.005]
+Change the y-axis range:         > set yrange [20:500]
+Have Gnuplot determine ranges:   > set autoscale
+Move the key:                    > set key 0.01,100
+Delete the key:                  > unset key
+Put a label on the plot:         > set label "yield point" at 0.003, 260 
+Remove all labels:               > unset label
+Plot using log-axes:             > set logscale
+Plot using log-axes on y-axis:   > unset logscale; set logscale y 
+Change the tic-marks:            > set xtics (0.002,0.004,0.006,0.008)
+Return to the default tics:      > unset xtics; set xtics auto
+</pre>
+
+
+
+
+== 20121115_004913 ==
+=== set xrange, yrange inside plot command ===
+ <pre>
 set title "[ Address Access Pattern ]"
 plot [-1000:1000] [0:2000]  "./ifreq__seek_d2d_c.log" using 1:3 with points;
+</pre>
 
 
-##_ver=20130227_221739
-## overlay two graphs in a single plot
+
+
+== 20130227_221739 ==
+=== overlay two graphs in a single plot ===
+ <pre>
 plot "./tracelog.fileserver.R.addr" u 2 w points, "./tracelog.fileserver.W.addr" u 2 w points;
+</pre>
+
+
+
+
