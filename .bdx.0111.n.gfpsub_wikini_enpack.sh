@@ -68,13 +68,22 @@ if [ "#$_conf_wikini__enpack" = "#y" ]; then
 		echo "#>> create a script file to update mysql database '$_conf_wikini__target_db' with the latest version";
 		cat > $_conf_wikini__script_file_to_update_db << EOF
 #!/bin/sh
+#_ver=$_tstamp;
+
 if [ ! -d tmp ]; then
-	ln -s /x/t/share tmp;
+	if [ -d /x/t/share ]; then
+		ln -s /x/t/share tmp;
+	else
+		mkdir tmp;
+	fi
 fi
-_tstamp=\$(ls -1 .tstamp.* | sed -e 's/\.tstamp\.\(.*\)/\1/g');
-_sql_wikidb="wikidb-\${_tstamp}.sql";
+_tstamp_file=\$(ls -1 .tstamp.* | sed -e 's/\.tstamp\.\(.*\)/\1/g');
+_sql_wikidb="wikidb-\${_tstamp_file}.sql";
+echo "#>> merging DB ...";
 cat ${_sql_dump_dir}/_sql_* > tmp/\$_sql_wikidb;
+echo "#>> drop and re-create $_conf_wikini__target_db ...";
 echo "drop database $_conf_wikini__target_db; create database $_conf_wikini__target_db;" | mysql -p -u root;
+echo "#>> import $_conf_wikini__target_db from \$_sql_wikidb ...";
 mysql -p -u root $_conf_wikini__target_db < tmp/\$_sql_wikidb;
 EOF
 		chmod 755 $_conf_wikini__script_file_to_update_db;
