@@ -9,7 +9,7 @@
 
 _conf_wikini__enpack="y"; # default: "n"
 _conf_wikini__root="${HOME}/.blib/wiki/wikini";
-_conf_wikini__target_db="wikidb";
+_conf_wikini__target_db="wikidb_radiohead";
 _conf_wikini__mediawiki_var_root="/var/lib/mediawiki";
 _conf_wikini__script_file_to_update_db="mysql_wikidb_update.sh";
 
