@@ -1,0 +1,1 @@
+../.tools/.bdx.0100.y.do_anal_s0020.sh

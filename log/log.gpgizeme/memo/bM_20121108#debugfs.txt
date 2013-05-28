@@ -1,6 +1,52 @@
-## debugfs - ext{2/3/4} file system debugger
+: debugfs - ext{2/3/4} file system debugger
 
-##tstamp: 20121108_221028
+
+
+
+== 20130528_103536 ==
+
+=== check which file is corresponding to certain LBA ===
+
+ <pre>
+
+root@jimi-hendrix:[apt] # l /var/cache/apt/pkgcache.bin
+-rw-r--r-- 1 root root 39656472 May 28 07:37 /var/cache/apt/pkgcache.bin
+
+root@jimi-hendrix:[apt] # df -h /var/cache/apt/pkgcache.bin
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdb2       1.9T  194G  1.6T  11% /var
+
+root@jimi-hendrix:[apt] # debugfs /dev/sdb2
+debugfs 1.42 (29-Nov-2011)
+debugfs:
+debugfs:  ex cache/apt/pkgcache.bin
+Level Entries       Logical              Physical Length Flags
+ 0/ 1   1/  1     0 -  9681 283148318               9682
+ 1/ 1   1/  8     0 -     9  48609280 -  48609289     10
+ 1/ 1   2/  8    14 -  2047  48609294 -  48611327   2034
+ 1/ 1   3/  8  2048 -  4095  48625664 -  48627711   2048
+ 1/ 1   4/  8  4096 -  6143  48613376 -  48615423   2048
+ 1/ 1   5/  8  6144 -  9457  48594944 -  48598257   3314
+ 1/ 1   6/  8  9460 -  9530  48598260 -  48598330     71
+ 1/ 1   7/  8  9533 -  9649  48598333 -  48598449    117
+ 1/ 1   8/  8  9652 -  9681  48598452 -  48598481     30
+(END)
+debugfs:
+debugfs:  icheck 48609280
+Block   Inode number
+48609280        70778909
+debugfs:
+debugfs:  ncheck 70778909
+Inode   Pathname
+70778909        /cache/apt/pkgcache.bin
+debugfs:
+
+</pre>
+
+
+
+
+== 20121108_221028 ==
 
 
 ## URL (http://stackoverflow.com/questions/3444844/finding-what-hard-drive-sectors-occupy-a-file)

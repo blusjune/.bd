@@ -1,0 +1,6 @@
+== 20130528_150226 ==
+
+change directory to 'whole/'
+(or to 'split/' if smaller datain is needed,
+ and execute .bdx.0090.*.sh to split the big file)
+and then execute _BDX.

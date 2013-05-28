@@ -1,4 +1,44 @@
 
+== 20130528_213910 ==
+
+=== suppress the command output in R ===
+
+* use sink() function, please!
+ <pre>
+sink(file="arm_inspect.650k-support_0.012-225x488.log") # enabling sink operation 
+# (to redirect all the stdout to the file specified)
+
+inspect(f_650k_0012)
+
+sink() # disabling sink operation
+# (after this command, you can see the output message to stdout)
+</pre>
+
+
+
+
+=== defining function in R ===
+
+* use allocation operator '<-' to define my custom function
+ <pre>
+iowa_arm_f <- function (opt_dsrc, opt_support) {
+	print(">> IOWA ARM: started");
+	sink(file="/dev/null");
+	t <- as(opt_dsrc, "transactions");
+	f <- eclat(opt_dsrc, parameter=list(support=opt_support, tidLists=T));
+	sink();
+	print(">> IOWA ARM: finished");
+	dim(tidLists(f));
+	return(f);
+}
+</pre>
+
+* use the function as usual
+ <pre>
+f <- iowa_arm_f(ciop_d010, 0.012);
+dim(tidLists(f));
+</pre>
+
 
 
 

@@ -1,12 +1,26 @@
-== python ==
+== 20130528_215501 ==
+
+=== empty line indented ===
+
+* use 'pass' token
+ <pre>
+if orange == 0:
+	print "orange is zero"
+else:
+#	print "orange is not zero"
+	pass
+if apple == 1:
+	print "apple is one"
+else:
+	print "apple is not one"
+</pre>
 
 
 
 
+== 20130514_135625 ==
 
-=== 20130514_135625 ===
-
-==== class example ====
+=== class example ===
 
  <pre>
 #!/usr/bin/env python
@@ -25,9 +39,9 @@ print "imaginary part : " + str(x.i);
 print "radius length  : " + str(x.get_radius_len());
 </pre>
 
-=== 20130402_135813 ===
+== 20130402_135813 ==
 
-==== string character-by-character replacement ====
+=== string character-by-character replacement ===
 
 * using maketrans() and translate()
  <pre>
@@ -39,10 +53,10 @@ newname = tok[0] + "_" + tok[1]
 
 </pre>
 
-=== 20130226_171426 ===
+== 20130226_171426 ==
 
 
-==== mlpy (machine learning in python) ====
+=== mlpy (machine learning in python) ===
 
 * [http://sourceforge.net/projects/mlpy/files/ mlpy download]
 
@@ -62,14 +76,14 @@ Rpy2 (http://rpy.sourceforge.net/): Python wrapper for R
 
 
 
-==== token split in python ====
+=== token split in python ===
 
 mystring = "ok, good   i love      you"
 tokens = mystring.strip().split()
 print tokens[0], tokens[1], tokens[2], tokens[3], tokens[4]
 
 
-==== print out to stderr in python ====
+=== print out to stderr in python ===
 
  <pre>
 import sys
@@ -84,7 +98,7 @@ sys.stderr.write(errmsg)
 <br/>
 ----
 
-==== using shell environment variable in python ====
+=== using shell environment variable in python ===
 
  <pre>
 _cmd__print_seekdist=".tmp.print_seekdist.py";
@@ -111,9 +125,9 @@ chmod 755 $_cmd__print_seekdist
 <br/>
 ----
 
-=== 20130206_013644 ===
+== 20130206_013644 ==
 
-==== import modules ====
+=== import modules ===
 
  <pre>
 
