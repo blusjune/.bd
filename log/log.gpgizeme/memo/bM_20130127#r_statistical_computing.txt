@@ -1,4 +1,17 @@
 
+
+
+
+== 20130530_144254 ==
+
+=== Introductory Articles to R Statistical Computing Software ===
+
+* http://www.cran.r-project.org/doc/manuals/R-intro.pdf
+: An Introduction to R -- Notes on R: A Programming Environment for Data Analysis and Graphics (Version 3.0.1 (2013-05-16))
+
+
+
+
 == 20130528_213910 ==
 
 === suppress the command output in R ===
@@ -15,9 +28,18 @@ sink() # disabling sink operation
 </pre>
 
 
+* References
+
+:* https://stat.ethz.ch/pipermail/r-help/2007-August/138070.html
+:: R sink behavior (stat.ethz.ch)
+
+:* http://stat.ethz.ch/R-manual/R-patched/library/base/html/sink.html
+:: Send R Output to a File
 
 
-=== defining function in R ===
+
+
+=== defining function in R (user-defined function in R) ===
 
 * use allocation operator '<-' to define my custom function
  <pre>
@@ -39,6 +61,10 @@ f <- iowa_arm_f(ciop_d010, 0.012);
 dim(tidLists(f));
 </pre>
 
+* References
+
+:* http://www.statmethods.net/management/userfunctions.html
+:: User-written Functions -- Quick-R ((B.GOOD))
 
 
 

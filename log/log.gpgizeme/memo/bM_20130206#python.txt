@@ -3,6 +3,8 @@
 === empty line indented ===
 
 * use 'pass' token
+: http://stackoverflow.com/questions/1528903/how-to-write-an-empty-indentation-block-in-python
+
  <pre>
 if orange == 0:
 	print "orange is zero"
