@@ -1,0 +1,168 @@
+== R Package (HMM) ==
+
+* _ver=20130603_014942
+* http://cran.r-project.org/web/packages/HMM/HMM.pdf
+* February 15, 2013
+* Maintainer: Lin Himmelmann <hmm@linhi.com>
+* Depends: R (>= 2.0.0)
+* Description: easy to use library to setup, apply and make inference with discrete time and discrete space Hidden Markov Models
+
+=== backward ===
+: computes the backward probabilities.
+
+* The backward probability for state X and observation at time k is defined as the probability of observing the sequence of observations e_k+1, ..., e_n under the condition that the state at time k is X.
+: b[X,k] := Prob(E_k+1 = e_k+1, ..., E_n = e_n | X_k = X)
+: , where E_k+1 ... E_n = e_k+1 ... e_n is the sequence of observed emissions and X_k is a random variable that represents the state at time k.
+
+* Usage
+: backward(hmm, observation)
+::- hmm
+::: A Hidden Markov Model
+::- observation
+::: A sequence of observations
+::- return value
+::: A matrix containing the backward probabilities. The probabilities are given on a logarithmic scale (natural logarithm). The first dimension refers to the state and the second dimension to time.
+
+ <pre>
+# Initialise HMM
+hmm = initHMM(c("A","B"), c("L","R"), transProbs=matrix(c(.8,.2,.2,.8),2), emissionProbs=matrix(c(.6,.4,.4,.6),2))
+print(hmm)
+
+# Sequence of observations
+observations = c("L","L","R","R")
+
+# Calculate backward probablities
+logBackwardProbabilities = backward(hmm,observations)
+print(exp(logBackwardProbabilities))
+</pre>
+
+=== baumWelch ===
+
+
+ <pre>
+# Initial HMM
+hmm = initHMM(c("A","B"),c("L","R"), transProbs=matrix(c(.9,.1,.1,.9),2), emissionProbs=matrix(c(.5,.51,.5,.49),2))
+print(hmm)
+
+# Sequence of observation
+a = sample(c(rep("L",100),rep("R",300)))
+b = sample(c(rep("L",300),rep("R",100)))
+observation = c(a,b)
+
+# Baum-Welch
+bw = baumWelch(hmm,observation,10)
+print(bw$hmm)
+</pre>
+
+=== dishonestCasino ===
+
+ <pre>
+dishonestCasino()
+</pre>
+
+=== forward ===
+: computes the forward probabilities.
+
+* The forward probability for state X up to observation at time k is defined as the probability of observing the sequence of observations e_1, e_2, ..., e_k and that the state at time k is X.
+: f[X,k] : = Prob(E_1 = e_1, ..., E_k = e_k, X_k = X)
+: , where E_1 ... E_n = e_1 ... e_n is the sequence of observed emissions and X_k is a random variable that represents the state at time k.
+
+* Usage
+: forward(hmm, observation)
+::- hmm
+::: A Hidden Markov Model
+::- observation
+::: A sequence of observations
+::- return value
+::: A matrix containing the forward probabilities. The probabilities are given on a logarithmic scale (natural logarithm). The first dimension refers to the state and the second dimension to time.
+
+ <pre>
+# Initialise HMM
+hmm = initHMM(c("A","B"), c("L","R"), transProbs=matrix(c(.8,.2,.2,.8),2), emissionProbs=matrix(c(.6,.4,.4,.6),2))
+print(hmm)
+
+# Sequence of observations
+observations = c("L","L","R","R")
+
+# Calculate forward probablities
+logForwardProbabilities = forward(hmm,observations)
+print(exp(logForwardProbabilities))
+</pre>
+
+=== HMM ===
+
+ <pre>
+
+</pre>
+
+=== initHMM ===
+
+ <pre>
+
+</pre>
+
+=== posterior ===
+: computes the posterior probabilities of being in state X at time k for a given sequence of observations and a given Hidden Markov Model.
+
+ <pre>
+# Initialise HMM
+hmm = initHMM(c("A","B"), c("L","R"), transProbs=matrix(c(.8,.2,.2,.8),2), emissionProbs=matrix(c(.6,.4,.4,.6),2))
+print(hmm)
+
+# Sequence of observations
+observations = c("L","L","R","R")
+
+# Calculate posterior probablities of the states
+posterior = posterior(hmm,observations)
+print(posterior)
+</pre>
+
+=== simHMM ===
+
+ <pre>
+# Initialise HMM
+hmm = initHMM(c("X","Y"),c("a","b","c"))
+
+# Simulate from the HMM
+simHMM(hmm, 100)
+</pre>
+
+=== viterbi ===
+
+* The Viterbi-algorithm computes the most probable path of states for a sequence of observations for a given Hidden Markov Model.
+
+ <pre>
+# Initialise HMM
+hmm = initHMM(c("A","B"), c("L","R"), transProbs=matrix(c(.6,.4,.4,.6),2), emissionProbs=matrix(c(.6,.4,.4,.6),2))
+print(hmm)
+
+# Sequence of observations
+observations = c("L","L","R","R")
+
+# Calculate Viterbi path
+viterbi = viterbi(hmm,observations)
+print(viterbi)
+</pre>
+
+=== viterbiTraining ===
+
+: For an initial Hidden Markov Model (HMM) and a given sequence of observations, the Viterbitraining algorithm infers optimal parameters to the HMM. Viterbi-training usually converges much faster than the Baum-Welch algorithm, but the underlying algorithm is theoretically less justified.  Be careful: The algorithm converges to a local solution which might not be the optimum.
+
+ <pre>
+# Initial HMM
+hmm = initHMM(c("A","B"),c("L","R"), transProbs=matrix(c(.9,.1,.1,.9),2), emissionProbs=matrix(c(.5,.51,.5,.49),2))
+print(hmm)
+
+# Sequence of observation
+a = sample(c(rep("L",100),rep("R",300)))
+b = sample(c(rep("L",300),rep("R",100)))
+observation = c(a,b)
+
+# Viterbi-training
+vt = viterbiTraining(hmm,observation,10)
+print(vt$hmm)
+</pre>
+
+
+
+
