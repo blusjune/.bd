@@ -13,7 +13,7 @@ _filein=".datain.whole";
 
 _mwid_maxval=21719 # 21719
 _mw_step=1000
-_mwgid_maxval=$(echo "($_mwid_maxval / $_mw_step) + 1" | bc)    # '22' for '21719' and '1000'
+_mwgid_maxval=$(echo "($_mwid_maxval / $_mw_step) + 1" | bc)    # number of split files: '22' for '21719' and '1000'
 
 _mwgid=0
 _mwid_range_start=$(expr $_mwgid \* $_mw_step)
