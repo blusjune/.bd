@@ -1,6 +1,12 @@
-## iptables
-##tstamp: 20121027_161731
 
+
+
+
+== iptables ==
+: tstamp: 20130605_191215
+: tstamp: 20121027_161731
+
+ <pre>
 iptables -S ## show current iptables
 
 iptables -F ## flush all the rules
@@ -9,3 +15,19 @@ iptables -t nat -A POSTROUTING -s 10.0.0.0/8 -o eth0 -j MASQUERADE ## \
 ## enable this node to work as an NAT gateway \
 ## which forward 10.0.0.0/8 inner network traffic \
 ## to the outer network/Internet (via eth0, facing outside network)
+
+iptables -A INPUT -s 11.22.33.44 -j DROP # to enable 'block an IP address (11.22.33.44) with iptables'
+iptables -D INPUT -s 11.22.33.44 -j DROP # to disable 'block an IP address (11.22.33.44) with iptables'
+
+</pre>
+
+
+
+
+== /etc/hosts.deny ==
+
+: To deny all service to 11.22.33.44 and i.am.an.example.org
+ <pre>
+ALL: 11.22.33.44
+ALL: i.am.an.example.org
+</pre>
