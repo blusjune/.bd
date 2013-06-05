@@ -1,6 +1,6 @@
 #!/bin/sh
 #.bdx.0100.y.iowa_split_into_mwgrp.sh
-# : to make smaller split files for iowa.anal_s0020 (ARM - Association Rules Mining)
+# : to make smaller split files for iowa.anal_s0020 (FIM/ARM)
 #_ver=20130528_133737
 #_ver=20130528_144831
 
