@@ -1,0 +1,10 @@
+== I/O Tracing on Microsoft Windows (using xperf) ==
+
+
+ <pre>
+xperf -on DISK_IO+DISK_IO_INIT+FILE_IO+FILE_IO_INIT+FILENAME
+xperf -d iotrace.etl
+xperf -i iotrace.etl -o iotrace.log -a diskio -detail
+</pre>
+
+
