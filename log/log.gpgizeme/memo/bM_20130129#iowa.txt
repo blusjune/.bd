@@ -1,5 +1,69 @@
+== 20130607_202807 ==
 
-#_ver=20130129_164020
+=== Frequent Item Set Mining ===
+
+ <pre>
+> fi_s3 <- eclat(ciop_data, parameter=list(supp=0.3, maxlen=15, minlen=1, tidLists=T))
+
+parameter specification:
+ tidLists support minlen maxlen            target   ext
+     TRUE     0.3      1     15 frequent itemsets FALSE
+
+algorithmic control:
+ sparse sort verbose
+      7   -2    TRUE
+
+eclat - find frequent item sets with the eclat algorithm
+version 2.6 (2004.08.16)         (c) 2002-2004   Christian Borgelt
+create itemset ... 
+set transactions ...[1146629 item(s), 100 transaction(s)] done [1.31s].
+sorting and recoding items ... [21 item(s)] done [0.12s].
+creating bit matrix ... [21 row(s), 100 column(s)] done [0.00s].
+writing  ... [28761 set(s)] done [0.01s].
+Creating S4 object  ... done [0.25s].
+
+
+
+
+> summary(fi_s3) 
+set of 28761 itemsets
+
+most frequent items:
+  22159360   22155264 1504849920 3170566144 4086710272    (Other) 
+     14372      14370      14336      14336      14336     123094 
+
+element (itemset/transaction) length distribution:sizes
+   1    2    3    4    5    6    7    8    9   10   11   12   13 
+  21  168  696 1951 3933 5808 6336 5115 3025 1276  364   63    5 
+
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   6.000   7.000   6.775   8.000  13.000 
+
+summary of quality measures:
+    support     
+ Min.   :0.300  
+ 1st Qu.:0.330  
+ Median :0.340  
+ Mean   :0.388  
+ 3rd Qu.:0.430  
+ Max.   :0.920  
+
+includes transaction ID lists: TRUE 
+
+mining info:
+      data ntransactions support
+ ciop_data           100     0.3
+> dim(tidLists(fi_s3))
+[1] 28761   100
+
+</pre>
+
+
+
+
+
+
+== 20130129_164020 ==
 
 * Amazing!  Only 3 minutes are elapsed, when runs on SSD
 
