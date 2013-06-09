@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE a1, HINSTANCE a2, LPSTR a3, int a4)
 	else /* answer == IDNO */
 	{
 #if 1
-		MessageBox(0, "Nothing happened, Bye.", THIS_PROG_NAME, MB_OK);
+		MessageBox(0, "Nothing happened.\n\nMany Thanks,\nBrian", THIS_PROG_NAME, MB_OK);
 #else
 //		run_cmd("\"c:\\windows\\system32\\calc.exe\"");
 //		WinExec("c:\\windows\\system32\\calc.exe", SW_HIDE);

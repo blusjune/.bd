@@ -37,7 +37,7 @@ void run_cmd(LPTSTR cmd)
 int WINAPI WinMain(HINSTANCE a1, HINSTANCE a2, LPSTR a3, int a4)
 {
 	int answer = 0;
-	answer = MessageBox(0, "Ready to exec WinTrace?\n\n--\nPrerequisites:\n(1) 'Microsoft Windows SDK'\n(2) 'Windows Performance Toolkit'\n\n--\nIf you are not sure, please click 'No'", THIS_PROG_NAME, MB_YESNO);
+	answer = MessageBox(0, "Ready to exec WinTrace? (then click 'Yes')\nIf you're not sure, please click 'No'\n\n--\n[Prerequisites to exec WinTrace]\n(1) 'Microsoft Windows SDK'\n(2) 'Microsoft Windows Performance Toolkit'\n\nIf your system does not have these two\n(or if you don't know what these are)\nplease click 'No' to go to the download & install page", THIS_PROG_NAME, MB_YESNO);
 	if (answer == IDYES)
 	{
 
@@ -65,7 +65,7 @@ int WINAPI WinMain(HINSTANCE a1, HINSTANCE a2, LPSTR a3, int a4)
 		}
 		else
 		{
-			MessageBox(0, "See you soon, again!\n\nMany Thanks,\nBrian", THIS_PROG_NAME, MB_OK);
+			MessageBox(0, "Nothing happened.\n\nMany Thanks,\nBrian", THIS_PROG_NAME, MB_OK);
 		}
 #else
 //		run_cmd("\"c:\\windows\\system32\\calc.exe\"");

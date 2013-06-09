@@ -37,24 +37,30 @@ void run_cmd(LPTSTR cmd)
 int WINAPI WinMain(HINSTANCE a1, HINSTANCE a2, LPSTR a3, int a4)
 {
 	int answer = 0;
-	answer = MessageBox(0, "This will install 'Windows Performance Toolkit' on your system\n\nIs your OS Windows 7 32-bit? then click 'Yes'\nIf not (64-bit), click 'No'", THIS_PROG_NAME, MB_YESNO);
+	answer = MessageBox(0, "This will install 'Windows Performance Toolkit' on your system\n\nIs your OS 32-bit? then click 'Yes'\nOtherwise, click 'No' for 64-bit version", THIS_PROG_NAME, MB_YESNO);
 	if (answer == IDYES)
 	{ /* 32-bit */
-#if 0
-		run_cmd(TRACE_CMD__INSTALL_WPT_X86);
-#else
-//		WinExec(TRACE_CMD__INSTALL_WPT_X86, SW_HIDE);
-		system(TRACE_CMD__INSTALL_WPT_X86);
-#endif
+		answer = MessageBox(0, "[Windows Performance Toolkit - INSTALLATION]\n--\nYou selected 32-bit version.\n\nClick 'Yes' to proceed.\nOr click 'No' to cancel this operation.", THIS_PROG_NAME, MB_YESNO);
+		if (answer == IDYES)
+		{
+			system(TRACE_CMD__INSTALL_WPT_X86);
+		}
+		else
+		{
+			MessageBox(0, "Nothing happened.\n\nMany Thanks,\nBrian", THIS_PROG_NAME, MB_OK);
+		}
 	}
 	else
 	{ /* 64-bit */
-#if 0
-		run_cmd(TRACE_CMD__INSTALL_WPT_X64);
-#else
-//		WinExec(TRACE_CMD__INSTALL_WPT_X64, SW_HIDE);
-		system(TRACE_CMD__INSTALL_WPT_X64);
-#endif
+		answer = MessageBox(0, "[Windows Performance Toolkit - INSTALLATION]\n--\nYou selected 64-bit version.\n\nClick 'Yes' to proceed.\nOr click 'No' to cancel this operation.", THIS_PROG_NAME, MB_YESNO);
+		if (answer == IDYES)
+		{
+			system(TRACE_CMD__INSTALL_WPT_X64);
+		}
+		else
+		{
+			MessageBox(0, "Nothing happened.\n\nMany Thanks,\nBrian", THIS_PROG_NAME, MB_OK);
+		}
 	}
 	return 0;
 }
