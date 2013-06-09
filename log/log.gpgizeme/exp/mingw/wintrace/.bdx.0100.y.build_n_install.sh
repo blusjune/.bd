@@ -1,4 +1,6 @@
 #!/bin/sh
+##_ver=20130607_153641
+
 
 _compiler="i686-w64-mingw32-gcc";
 _target_dir="/x/t/share/swpkg/wintrace";

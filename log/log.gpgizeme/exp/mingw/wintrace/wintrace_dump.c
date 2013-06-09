@@ -43,6 +43,9 @@ int WINAPI WinMain(HINSTANCE a1, HINSTANCE a2, LPSTR a3, int a4)
 
 #if 1
 		run_cmd(TRACE_CMD__DUMP);
+		/* seek and destroy the files called 'kernel.etl'
+		 * on the first depth of directory of corresponding disk,
+		 * for example, 'F:\kernel.etl' */
 //		run_cmd(TRACE_CMD__TRANSFORM);
 #else
 		WinExec(TRACE_CMD__START, SW_HIDE);
@@ -54,7 +57,7 @@ int WINAPI WinMain(HINSTANCE a1, HINSTANCE a2, LPSTR a3, int a4)
 	else /* answer == IDNO */
 	{
 #if 1
-		MessageBox(0, "Nothing happened", THIS_PROG_NAME, MB_OK);
+		MessageBox(0, "Nothing happened, Bye.", THIS_PROG_NAME, MB_OK);
 #else
 //		run_cmd("\"c:\\windows\\system32\\calc.exe\"");
 //		WinExec("c:\\windows\\system32\\calc.exe", SW_HIDE);
