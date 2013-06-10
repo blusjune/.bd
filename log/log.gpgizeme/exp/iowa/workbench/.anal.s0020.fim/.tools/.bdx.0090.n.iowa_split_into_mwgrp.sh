@@ -20,7 +20,7 @@ _mwid_range_start=$(expr $_mwgid \* $_mw_step)
 _mwid_range_stop=$(expr $_mwid_range_start + $_mw_step)
 while [ $_mwgid -lt $_mwgid_maxval ]; do
         _mwid=$_mwid_range_start;
-        _fileout=$(printf "datain.%04d.log" $_mwgid);
+        _fileout=$(printf ".datain.split.%04d.log" $_mwgid);
         echo "$_fileout <- [ $_mwid_range_start ~ $_mwid_range_stop )";
         while [ $_mwid -lt $_mwid_range_stop -a $_mwid -le $_mwid_maxval ]; do
                 echo "[MW: $_mwid / $_mwid_maxval]";
