@@ -49,12 +49,12 @@ if [ "#$_conf_wikini__enpack" = "#y" ]; then
 		if [ ! -d $_sql_dump_dir ]; then
 			mkdir -p $_sql_dump_dir;
 		else
-			(cd $_sql_dump_dir; rm _sql_*;)
+			(cd $_sql_dump_dir; rm -f _sql_*;)
 		fi
 		(
 			cd $_sql_dump_dir;
 			mysqldump -p -u root $_conf_wikini__target_db > $_sql_dump_file;
-			split -a 5 -l 10 -d $_sql_dump_file _sql_; sync; sleep 2; rm $_sql_dump_file;
+			split -a 5 -l 10 -d $_sql_dump_file _sql_; sync; sleep 2; rm -f $_sql_dump_file;
 		)
 	
 		echo "#>> enpack the uploaded $_conf_wikini__target_db images";
