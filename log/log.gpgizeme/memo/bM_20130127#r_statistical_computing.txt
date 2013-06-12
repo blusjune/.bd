@@ -1,3 +1,37 @@
+== 20130612_195019 ==
+
+=== R and GPGPU computing ===
+
+* http://cran.r-project.org/web/packages/gputools/
+: gputools - a few GPU enabled functions // CRAN Packages
+: This package provides R interfaces to a handful of common functions implemented using the Nvidia CUDA toolkit. Some of the functions require at least GPU Compute Capability 1.3. Thanks to Craig Stark at UC Irvine for donating time on his lab's Mac.
+: 0.28 (R >= 3.0.0)
+
+
+* http://www.rinfinance.com/agenda/2010/MarkSeligman_Tutorial.pdf
+: GPU Programming with R // Slides for introduction to gputools // 2010-04-15
+
+
+* http://cran.r-project.org/web/views/HighPerformanceComputing.html
+: Article // CRAN Task View: High-performance and Parallel Computing with R
+: Maintainer: Dirk Eddelbuettel // 2013-05-21
+
+
+* http://www.r-tutor.com/gpu-computing
+: GPU Computing with R
+
+
+==== Parallel Computing in R: GPUs ====
+
+* gputools (http://cran.r-project.org/web/packages/gputools/index.html)
+* cudaBayesreg (http://cran.r-project.org/web/packages/cudaBayesreg/index.html)
+* rgpu (https://trac.nbic.nl/rgpu)
+* magma (http://cran.r-project.org/web/packages/magma/index.html)
+* gcbd (http://cran.r-project.org/web/packages/gcbd/index.html)
+* OpenCL (http://cran.r-project.org/web/packages/OpenCL/index.html)
+* WideLM (http://cran.r-project.org/web/packages/WideLM/index.html)
+* HiPLARM (http://cran.r-project.org/web/packages/HiPLARM/index.html)
+* permGPU (http://cran.r-project.org/web/packages/permGPU/index.html)
 
 
 
