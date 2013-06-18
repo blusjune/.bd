@@ -1,0 +1,29 @@
+== 20130619_004011 ==
+
+=== one-dimentional indexed and associative array in /bin/bash (not in /bin/sh) ===
+
+ <pre>
+#!/bin/bash
+
+declare -A _ioptn_fld;
+
+# _ioptn_fld=( [pname]="7" [fname]="10" [iotype]="2,3" [ioaddr]="4" [iosize]="6" [pname_fname]="7,10" [pname_iotype]="7,2,3" [fnam
+e_iotype]="10,2,3" [iotype_iosize]="2,3,6" [pname_iosize]="7,6" [fname_iosize]="10,6" );
+
+_ioptn_fld=(
+[pname]="7" \
+[fname]="10" \
+[iotype]="2,3" \
+[ioaddr]="4" \
+[iosize]="6" \
+[pname_fname]="7,10" \
+[pname_iotype]="7,2,3" \
+[fname_iotype]="10,2,3" \
+[iotype_iosize]="2,3,6" \
+[pname_iosize]="7,6" \
+[fname_iosize]="10,6" \
+);
+
+</pre>
+
+
