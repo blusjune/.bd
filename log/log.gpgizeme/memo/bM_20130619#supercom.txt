@@ -1,0 +1,19 @@
+== 20130619_162658 ==
+
+=== SAN connection ===
+
+* iSCSI uses TCP (usually TCP ports 860 and 3260).
+* iSCSI simply allows two hosts to negotiate and then exchange SCSI commands using IP networks.
+* Unlike some SAN protocols, iSCSI requires no dedicated cabling; as a result, iSCSI is often seen as a low-cost alternative to Fibre Channel, which requires dedicated infrastructure except in its FCoE (Fibre Channel over Ehternet) form.
+* However, the performance of an iSCSI SAN deployment can be severely degraded if not operated on a dedicated network or subnet.
+
+ <pre>
+a1mjjung@secm:[anal.s0020.fim] $ netstat -an | grep '\<860\>'
+tcp        0      0 202.20.183.10:6883          202.20.201.123:860          ESTABLISHED 
+tcp        0      0 202.20.183.10:6883          202.20.204.141:860          ESTABLISHED 
+
+a1mjjung@secm:[anal.s0020.fim] $ cat /etc/hosts | grep 202.20.204.141
+202.20.204.141	gaura241											
+a1mjjung@secm:[anal.s0020.fim] $ cat /etc/hosts | grep 202.20.201.123
+202.20.201.123	faura323
+</pre>
