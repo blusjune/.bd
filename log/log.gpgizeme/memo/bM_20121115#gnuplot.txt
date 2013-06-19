@@ -1,3 +1,32 @@
+== 20130619_220331 ==
+
+=== label x-axis with strings from data file ===
+
+* http://www.linuxquestions.org/questions/linux-software-2/gnuplot-how-to-label-x-axis-with-strings-from-data-file-462635/
+: ((B.GOOD))
+ <pre>
+$ cat myfile.txt
+dogs 3
+cats 2
+monkeys 10
+
+gnuplot> plot "./myfile.txt" u 2:xticlabels(1)
+</pre>
+
+
+* http://objectmix.com/graphics/140196-gnuplot-string-data.html 
+: ((B.GOOD))
+ <pre>
+# columns 1,2,3 contain x coord, y coord, string
+plot 'file' using 1:2:3 with labels
+
+# implicit x coord, y in column 2, string in column 3
+plot 'file' using 0:2:3 with labels
+
+# implicit x coord, y in column 1, string in column 2
+plot 'file' using 0:1:2 with labels
+</pre>
+
 
 
 
