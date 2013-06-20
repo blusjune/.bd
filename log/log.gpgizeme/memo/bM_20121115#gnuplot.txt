@@ -1,9 +1,19 @@
 == 20130619_220331 ==
 
+=== Saving gnuplot history to a file ===
+
+ <pre>
+gnuplot> history
+gnuplot> history ".gnuplot.hist"
+</pre>
+
+
+
+
 === label x-axis with strings from data file ===
 
 * http://www.linuxquestions.org/questions/linux-software-2/gnuplot-how-to-label-x-axis-with-strings-from-data-file-462635/
-: ((B.GOOD))
+: First approach ((B.GOOD))
  <pre>
 $ cat myfile.txt
 dogs 3
@@ -15,7 +25,7 @@ gnuplot> plot "./myfile.txt" u 2:xticlabels(1)
 
 
 * http://objectmix.com/graphics/140196-gnuplot-string-data.html 
-: ((B.GOOD))
+: Second approach ((B.GOOD))
  <pre>
 # columns 1,2,3 contain x coord, y coord, string
 plot 'file' using 1:2:3 with labels
