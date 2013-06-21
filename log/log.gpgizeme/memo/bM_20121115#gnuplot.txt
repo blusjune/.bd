@@ -1,3 +1,23 @@
+
+
+
+
+== 20130621_180550 ==
+
+=== Set grid lines ===
+
+* http://www.gnuplotting.org/tag/grid/
+
+ <pre>
+set mxtics; set mytics; 
+set style line 12 lc rgb '#ff4400' lt 1 lw 1.5;
+set style line 13 lc rgb '#00ccff' lt 1 lw 0.5;
+set grid xtics mxtics ytics mytics back ls 12, ls 13
+</pre>
+
+
+
+
 == 20130619_220331 ==
 
 === Saving gnuplot history to a file ===

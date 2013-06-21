@@ -1,0 +1,245 @@
+== 20130621_113906 ==
+
+
+
+
+=== Paper: "Exploiting Memory Access Patterns to Improve Memory Performance in Data-Parallel Architectures" ===
+
+* http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5473222
+: Exploiting Memory Access Patterns to Improve Memory Performance in Data-Parallel Architectures
+: IEEE TRANSACTIONS ON PARALLEL AND DISTRIBUTED SYSTEMS, VOL. 22, NO. 1, JANUARY 2011
+
+
+ <pre>
+The introduction of General-Purpose computation on GPUs (GPGPUs)
+	has changed the landscape for the future of parallel computing.
+	
+At the core of this phenomenon are 
+massively multithreaded, data-parallel architectures 
+	possessing impressive acceleration ratings,
+	offering low-cost supercomputing together with attractive power budgets.
+
+Even given the numerous benefits provided by GPGPUs,
+there remain a number of barriers
+	that delay wider adoption of these architectures.
+	
+One major issue is
+the heterogeneous and distributed nature of the memory subsystem
+	commonly found on data-parallel architectures.
+	
+Application acceleration is 
+highly dependent on being able to utilize the memory subsystem effectively
+so that all execution units remain busy.
+
+In this paper, we present techniques for
+enhancing the memory efficiency of applications
+on data-parallel architectures,
+based on the analysis and characterization
+of memory access patterns in loop bodies;
+
+we target
+vectorization via data transformation
+	to benefit vector-based architectures (e.g., AMD GPUs)
+and algorithmic memory selection
+	for scalar-based architectures (e.g., NVIDIA GPUs).
+
+We demonstrate the effectiveness of our proposed methods
+with kernels from a wide range of benchmark suites.
+
+For the benchmark kernels studied,
+we achieve consistent and significant performance improvements
+(up to 11.4x and 13.5x over baseline GPU implementations on each platform, respectively)
+by applying our proposed methodology.
+</pre>
+
+
+
+
+=== Vectorization ===
+
+ <pre>
+Vectorization, in parallel computing,
+	is a special case of parallelization, in which
+	software programs that by default perform one operation at a time on a single thread
+	are modified
+	to perform multiple operations simultaneously.
+
+Vectorization is the more limited process of
+converting a computer program
+	from a scalar implementation,
+		which processes a single pair of operands at a time,
+	to a vector implementation
+		which processes one operation on multiple pairs of operands at once.
+		
+The term comes from the convention of
+putting operands into vectors or arrays.
+
+Vector processing is
+a major feature of both conventional computers
+and modern supercomputers.
+
+Automatic vectorization is major research topic in computer science;
+seeking methods that would allow a compiler to convert
+scalar programs into vectorized programs without human assistance.
+</pre>
+
+
+
+
+=== Scalar processors ===
+
+ <pre>
+Scalar processors represent a class of computer processors.
+
+A scalar processor processes one datum at a time
+(typical data items being integers or floating point numbers).
+
+a scalar processor is classified as a SISD processor (Single Instructions, Single Data).
+
+In a vector processor, by contrast,
+a single instruction operates simultaneously on multiple data items.
+(called "SIMD" in Flynn's taxonomy)
+
+The difference is analogous to the difference
+between scalar and vector arithmetic.
+
+A superscalar processor, on the other hand,
+executes more than one instruction during a clock cycle
+by simultaneously dispatching multiple instructions
+to redundant functional units on the processor.
+
+Each functional unit is not a separate CPU core
+but an execution resource within a single CPU
+such as an arithmetic logic unit, a bit shifter, or a multiplier.
+</pre>
+
+
+
+
+=== Superscalar prococessor ===
+
+ <pre>
+A superscalar CPU architecture implements
+a form of parallelism called instruction level parallelism
+within a single processor.
+
+It therefore allows faster CPU throughput
+than would otherwise be possible at a given clock rate.
+
+A superscalar processor executes more than one instruction
+during a clock cycle by simultaneously dispatching multiple instructions
+to redundant functional units on the processor.
+
+Each functional unit is not a separate CPU core
+but an execution resource
+within a single CPU
+such as an arithmetic logic unit, a bit shifter, or a multiplier.
+
+In Flynn's taxonomy,
+a single-core superscalar processor is classified
+as an SISD processor (Single Instructions, Single Data),
+while a multi-core superscalar processor is classified
+as an MIMD processor (Multiple Instructions, Multiple Data).
+
+While a superscalar CPU is typically also pipelined,
+pipelining and superscalar architecture are considered
+different performance enhancement techniques.
+
+The superscalar technique is traditionally associated with
+several identifying characteristics (within a given CPU core):
+- Instructions are issued from a sequential instruction stream
+- CPU hardware dynamically checks for data dependencies between instructions at run time (versus software checking at compile time)
+- The CPU accepts multiple instructions per clock cycle
+</pre>
+
+
+
+
+=== Vector processor ===
+
+ <pre>
+A vector processor, or array processor,
+is a central processing unit (CPU)
+that implements an instruction set
+	containing instructions that operate on
+	one-dimensional arrays of data called vectors.
+
+This is in contrast to a scalar processor,
+     	whose instructions operate on single data items.
+	
+Vector processors can greatly improve
+performance on certain workloads,
+notably numerical simulation and similar tasks.
+
+Vector machines appeared in the early 1970s
+and dominated supercomputer design
+through the 1970s into the 90s,
+notably the various Cray platforms.
+
+The rapid rise in the price-to-performance ratio of
+conventional microprocessor designs
+led to the vector supercomputer's demise in the later 1990s.
+
+Today, most commodity CPUs implement architectures
+	that feature instructions for
+	a form vector processing on multiple (vectorized) data sets,
+	typically known as SIMD (Single Instruction, Multiple Data).
+
+Common examples include
+VIS, MMX, SSE, AltiVec and AVX.
+
+Vector processing techniques are also found
+in video game console hardware and graphics accelerators.
+
+In 2000, IBM, Toshiba and Sony collaborated
+to create the Cell processor, consisting of
+	one scalar processor
+	and eight vector processors,
+	which found use in the Sony PlayStation 3 among other applications.
+
+Other CPU designs may include
+some multiple instructions for vector processing
+on multiple (vectorised) data sets,
+typically known as MIMD (Multiple Instruction, Multiple Data)
+and realized with VLIW.
+
+Such designs are usually
+dedicated to a particular application
+and not commonly marketed for general purpose computing.
+
+In the Fujitsu FR-V VLIW/vector processor both technologies are combined.
+</pre>
+
+
+
+
+=== Why scalar processor, by NVIDIA ===
+
+
+* https://devtalk.nvidia.com/default/topic/412609/why-scalar-processors-/
+: Posted 06/23/2009 11:01 AM
+
+ <pre>
+I am wondering why NVIDIA replaced the vector processor by Scalar Processor (SP) in each MP? SP's can operate on a single component at a time while Vector Processor could work simultaneously on many components; there by increasing the speed by many folds. 
+
+Since I am not that expert in parallel programming I am unable to digest this fact 
+
+Any pointers in this direction??
+</pre>
+
+ <pre>
+It is a question of chip area. If all you were doing was manipulating 3 or 4-component vectors, then a special vector arithmetic unit would speed things up. The problem is that the vector arithmetic unit takes up more space than a scalar unit, and the vector unit might not be fully used if your code is not operating on vectors. (In addition, vector instructions increase the complexity of the instruction set, requiring more chip area for the instruction decoder.)
+NVIDIA decided when creating CUDA that would be a better tradeoff for general purpose computing to eliminate the special vector hardware, and put more scalar processors on the chip instead.
+</pre>
+
+ <pre>
+The problem with increases Chip area and simplicity in the instruction set is fine.
+But do you think these were the only driving forces while making the choice of SPs.
+I have seen nVIDIAs QuadraoPlex solutions that are shipped with large sized box PC. How is then size an extremely important parameter in making this decision. Also probably I would be convinced if you could give me an idea of the scale up in the area that might result if Vector Processors are used instead of SPs. (For example if the scale up in the area while using Vector processor is twice then I don't think that Vector Processors are the bad idea since the speed gain will be twice as well )
+</pre>
+
+ <pre>
+I can't say why NVIDIA made the decision. But for me as an application developer working on compute only applications, scalar processors are the only thing that make sense. Some (maybe even most) general purpose compute applications are nearly impossible to write so that all vector elements are being used all the time. And if it is even possible, the time spent packing/unpacking memory can overwhelm the savings.
+
+CUDA's breaking up the "vector" elements into independent threads in a warp is just such a natural environment in which to program. One has to assume that this ease of programming was at least one of the considerations that were made by the design team. It has certainly played a big role in the widespread adoption of CUDA with many scientists (who are not hardware experts) getting great speedups for their calculations using CUDA.
+</pre>
