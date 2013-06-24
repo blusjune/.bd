@@ -5,24 +5,66 @@
  <pre>
 #!/bin/bash
 
+
+#__________________________________________________________________________________________________________
+# 0    | 1  | 2   | 3    | 4           | 5           | 6    | 7         | 8    | 9      | 10
+#__________________________________________________________________________________________________________
+# time |mwid| R/W | RnSq | ioaddr      | seekdist    | iosz | pname     | pid  | diskid | fname
+#__________________________________________________________________________________________________________
+# 1847 | 0  |  Rd | Rand | 42399211520 | 42399211520 | 4096 | xperf.exe | 6856 | 0      | C_/pagefile.sys
+#
+
 declare -A _ioptn_fld;
-
-# _ioptn_fld=( [pname]="7" [fname]="10" [iotype]="2,3" [ioaddr]="4" [iosize]="6" [pname_fname]="7,10" [pname_iotype]="7,2,3" [fnam
-e_iotype]="10,2,3" [iotype_iosize]="2,3,6" [pname_iosize]="7,6" [fname_iosize]="10,6" );
-
 _ioptn_fld=(
 [pname]="7" \
 [fname]="10" \
 [iotype]="2,3" \
+[iorw]="2" \
+[iornsq]="3" \
 [ioaddr]="4" \
 [iosize]="6" \
+[iotype_iosize]="2,3,6" \
 [pname_fname]="7,10" \
 [pname_iotype]="7,2,3" \
-[fname_iotype]="10,2,3" \
-[iotype_iosize]="2,3,6" \
 [pname_iosize]="7,6" \
+[pname_iotype_iosize]="7,2,3,6" \
+[fname_iotype]="10,2,3" \
 [fname_iosize]="10,6" \
+[fname_iotype_iosize]="10,2,3,6" \
+[pname_fname_iotype_iosize]="7,10,2,3,6" \
 );
+
+
+_gen_tseries()
+{
+        # '_target' variable SHOULD be set properly
+        if [ "X$_target" != "X" ]; then
+                _fld=${_ioptn_fld[$_target]};
+                _fo=${_ioptn_tseries}.${_target};
+                echo "#>> generating time-series data: $_target";
+                cat $_iotrc_pp_log | bsc.iowa.lsp.anal_s20130618v01 -f $_fld > $_fo;
+        else
+                echo "ERROR: '_target' variable SHOULD be set properly -- EXIT";
+        fi
+}
+
+_target="pname"; _gen_tseries;
+_target="fname"; _gen_tseries;
+_target="iotype"; _gen_tseries;
+_target="iorw"; _gen_tseries;
+_target="iornsq"; _gen_tseries;
+_target="ioaddr"; _gen_tseries;
+_target="iosize"; _gen_tseries;
+_target="iotype_iosize"; _gen_tseries;
+_target="pname_fname"; _gen_tseries;
+_target="pname_iotype"; _gen_tseries;
+_target="pname_iosize"; _gen_tseries;
+_target="pname_iotype_iosize"; _gen_tseries;
+_target="fname_iotype"; _gen_tseries;
+_target="fname_iosize"; _gen_tseries;
+_target="fname_iotype_iosize"; _gen_tseries;
+_target="pname_fname_iotype_iosize"; _gen_tseries;
+
 
 </pre>
 
