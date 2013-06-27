@@ -16,7 +16,8 @@ _conf_wikini__script_file_to_update_db="mysql_wikidb_update.sh";
 
 
 
-_execute_flag_1="y";
+#_execute_flag_1="y";
+_execute_flag_1="n";
 if [ "#$_conf_wikini__enpack" = "#y" ]; then
 #------------------------------------------------
 	if [ ! -d ${HOME}/.blib ]; then
