@@ -1,13 +1,15 @@
 ##.bdx.1020.n.gfpsub_wikini_enpack.sh
 ##gfp: gpgized file processing
-##_ver=20121219_234356
+##_ver=20121219_234356;
 ##_ver=20130511_103052; #initial use of 'if [ "#$_value" = "#y" ]; then'
-##_ver=20130514_112017
+##_ver=20130514_112017;
+##_ver=20130628_025524; #return to no use of 'if [ "#$_value" = "#y" ]; then'
 
 
 
 
-_conf_wikini__enpack="y"; # default: "n"
+#_conf_wikini__enpack="y"; # default: "n"
+_conf_wikini__enpack="n"; # default: "n"
 _conf_wikini__root="${HOME}/.blib/wiki/wikini";
 _conf_wikini__target_db="wikidb_radiohead";
 _conf_wikini__mediawiki_var_root="/var/lib/mediawiki";
@@ -16,9 +18,8 @@ _conf_wikini__script_file_to_update_db="mysql_wikidb_update.sh";
 
 
 
-#_execute_flag_1="y";
-_execute_flag_1="n";
-if [ "#$_conf_wikini__enpack" = "#y" ]; then
+_execute_flag_1="y";
+if [ "X$_conf_wikini__enpack" = "Xy" ]; then
 #------------------------------------------------
 	if [ ! -d ${HOME}/.blib ]; then
 		echo "#>> '${HOME}/.blib' does not exist -- escape from this task";
