@@ -1,0 +1,4 @@
+wintrace_lib.c
+wintrace_010_install_sdk_wpt.c
+wintrace_020_start.c
+wintrace_030_stop.c
