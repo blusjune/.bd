@@ -4,11 +4,16 @@
 ##_ver=20130511_103052; #initial use of 'if [ "#$_value" = "#y" ]; then'
 ##_ver=20130514_112017;
 ##_ver=20130628_025524; #return to no use of 'if [ "#$_value" = "#y" ]; then'
+##_ver=20130701_015219; #introduce /tmp/bdxcf.wikini.enpack first time
 
 
 
 
-_conf_wikini__enpack="n"; # default: "n"
+if [ -f /tmp/bdxcf.wikini.enpack ]; then
+	_conf_wikini__enpack="y"; # default: "n"
+else
+	_conf_wikini__enpack="n"; # default: "n"
+fi
 _conf_wikini__root="${HOME}/.blib/wiki/wikini";
 _conf_wikini__target_db="wikidb_radiohead";
 _conf_wikini__mediawiki_var_root="/var/lib/mediawiki";
