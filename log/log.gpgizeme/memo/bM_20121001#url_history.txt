@@ -1,0 +1,48 @@
+
+== 20130703_004812 ==
+
+* http://www.openafs.org/
+: OpenAFS
+: AFS is a distributed filesystem product, pioneered at Carnegie Mellon University and supported and developed as a product by Transarc Corporation (now IBM Pittsburgh Labs). It offers a client-server architecture for federated file sharing and replicated read-only content distribution, providing location independence, scalability, security, and transparent migration capabilities. AFS is available for a broad range of heterogeneous systems including UNIX, Linux,  MacOS X, and Microsoft Windows
+: IBM branched the source of the AFS product, and made a copy of the source available for community development and maintenance. They called the release OpenAFS.
+
+* http://hekafs.org/index.php/2013/01/ceph-notes/
+: Ceph notes (Ceph vs. GlusterFS)
+
+* http://www.coverjunkie.com/blog/sexiest-covers/page-2
+: Magazine cover
+
+
+
+
+== 20130104_000000 ==
+* http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en//university/relations/facultysummit2010/storage_architecture_and_challenges.pdf
+: storage architecture and challenges
+
+
+
+
+== 20121001_000000 ==
+
+* http://javplus.us/asian-girls/korean-couples-sex-in-the-car/
+
+ <pre>
+mkdir ko_couples_car6.v2
+pavuk -mode mirror -fnrules F '*.jpg' '/%e/%n' http://javplus.us/asian-girls/korean-couples-sex-in-the-car/
+
+mkdir ko_couples_car6.v3
+pavuk -mode mirror -fnrules F '*' '/%e/%n' http://javplus.us/asian-girls/korean-couples-sex-in-the-car/
+</pre>
+
+
+
+
+== 20121031_000000 ==
+	                                     
+* http://www.westnet.com/~gsmith/content/linux-pdflush.htm
+: The Linux Page Cache and pdflush:
+: Theory of Operation and Tuning for Write-heavy Loads
+
+
+
+
