@@ -1,5 +1,193 @@
+== 20130704_000204 ==
+
+=== Mathematical transformation === 
+
+* http://en.wikipedia.org/wiki/Linear_transformation
+: In mathematics, a linear map is a function between two modules (including vector spaces) that preserves the operations of module (or vector) addition and scalar multiplication.
+: rotation, reflection, scaling, horizontal, ...
+
+* http://en.wikipedia.org/wiki/Infinitesimal_transformation
+: Infinitesimal transformation
+
+* http://en.wikipedia.org/wiki/Data_transformation_(statistics)
+: Data transformation (statistics)
+
+* http://en.wikipedia.org/wiki/Bijection
+: Bijection (or bijective function or one-to-one correspondence) is a function giving an exact pairing of the elements of two sets
+
+* http://en.wikipedia.org/wiki/Category:Functions_and_mappings
+: Category: Functions and mappings
+
+* http://en.wikipedia.org/wiki/List_of_unsolved_problems_in_mathematics
+: List of unsolved problems in mathematics
+
+
+=== String metric / similarity ===
+
+* http://en.wikipedia.org/wiki/String_metric
+: String metric
+: In mathematics and computer science, a string metric (also known as a string similarity metric or string distance function) is a metric that measures similarity or dissimilarity (distance) between two text strings for approximate string matching or comparison and in fuzzy string searching.
+: A string metric provides a number indicating an algorithm-specific indication of similarity.
+
+
+* http://en.wikipedia.org/wiki/Locality_sensitive_hashing
+: Locality-sensitive hashing
+
+* http://en.wikipedia.org/wiki/Hunt%E2%80%93McIlroy_algorithm
+: Hunt-Mcllroy algorithm is a solution to the longest common subsequence problem.
+: It was one of the first non-heuristic algorithms used in diff.
+
+* http://en.wikipedia.org/wiki/Jaccard_index
+: Jaccard index
+
+* http://en.wikipedia.org/wiki/Optimal_matching
+: Optimal matching
+
+
+
+
+=== Time window: Slice and Range ===
+
+* http://horicky.blogspot.kr/2010/11/map-reduce-and-stream-processing.html
+: Landmark window, jumping window, sliding window
+: http://1.bp.blogspot.com/_j6mB7TMmJJY/TNWilIApI8I/AAAAAAAAAiI/G3OfFShCqTU/s400/p1.png
+
+
+
+
+=== Frequent itemset mining ===
+
+* http://link.springer.com/article/10.1023%2FA%3A1025824629047
+: Sequential association rule mining with time lags
+
+* http://link.springer.com/chapter/10.1007%2F11425274_35
+: Discovering partial periodic sequential assocation rules with time lag in multiple sequences for prediction
+
+* http://water.columbia.edu/files/2011/11/Kumar2009DataMining1.pdf
+: Data mining for evolution of association rules for droughts and floods in India using climate inputs
+
+* http://www.isprs.org/proceedings/XXXVI/2-W25/source/Temporal_Association_Rule_Mining_Based_on_T-Apriori_Algorithm.pdf
+: Temporal assocation rule mining based on T-apriori algorithm and its typical application
+
+* http://ceph.com/docs/master/rados/
+: A survey on algorithms for mining frequent itemsets over data streams
+
+* https://www.siam.org/proceedings/datamining/2005/dm05_07linc.pdf
+: Mining frequent itemsets from data streams with a time-sensitive sliding window
+
+* http://www.cs.uiuc.edu/~hanj/pdf/dami04_fptree.pdf
+: Mining frequent patterns without candidate generation: a frequent-pattern tree approach (FP-tree)
+
+
+
+
+=== Security & privacy ===
+
+* http://simson.net/page/Main_Page
+: Simson Garfinkel
+
+* http://simson.net/ref/2013/2013-02-20_AAFS.pdf
+: Bulk data analysis with optimistic decompression and sector hashing
+
+* http://www.meetup.com/dc-acm/events/88009552/?action=detail&eventId=88009552
+: Digital forensics innovation: Searching a terabyte of data in 10 minutes
+
+* http://www.technologyreview.com/review/425141/a-cloud-over-ownership/
+: A cloud over ownership
+
+* http://www.forbes.com/sites/joemckendrick/2013/06/05/google-glass-is-only-the-beginning-of-cloud-powered-wearable-technology-survey-suggests/
+: Google glass is only the beginning of cloud-powered wearable technology, survey suggests
+
+* http://belfercenter.ksg.harvard.edu/files/mohan-dp-mar-1-2012-02.pdf
+: Cloud and mobile privacy: the electronic communications privacy act
+
+* http://www.computerweekly.com/news/2240180087/Six-security-issues-to-tackle-before-encrypting-cloud-data
+: Six security issues to tackle before encrypting cloud data
+
+* http://www-03.ibm.com/security/solution/intelligence-big-data/index.html
+: IBM security intelligence with big data
+
+* http://www.technologyreview.com/review/425141/a-cloud-over-ownership/
+: A cloud over ownership
+
+* http://appft.uspto.gov/netacgi/nph-Parser?Sect1=PTO2&Sect2=HITOFF&u=%2Fnetahtml%2FPTO%2Fsearch-adv.html&r=1&f=G&l=50&d=PG01&p=1&S1=20130159436&OS=20130159436&RS=20130159436
+: this patent so so
+
+* http://cir.ca/story/atts-self-destructing-email
+: AT&T wants to patent self-destructing email
+
+
+
+
+
+=== FPGA based Frequent itemset mining ===
+
+* http://people.inf.ethz.ch/jteubner/publications/frequent-item/frequent-item-icde2010-slides.pdf
+: Jens Teubner, ... ETH Zurich, Systems Groups
+
+
+* http://people.inf.ethz.ch/jteubner/publications/frequent-item/
+: FPGA Acceleration for the Frequent Item Problem
+
+
+
+
+=== Ceph ===
+
+* http://ceph.com/docs/master/rados/
+: Ceph storage cluster
+
+* http://www.ibm.com/developerworks/library/l-ceph/
+: Ceph: A Linux petabyte-scale distributed file system
+
+
+
+
+
+
+
+
+
+
+
+
+
+=== n-gram ===
+
+* http://en.wikipedia.org/wiki/N-gram
+: n-gram
+: In the fields of computational linguistics and probability, an n-gram is a contiguous sequence of n items from a given sequence of text or speech. 
+: An n-gram of size 1 is referred to as a "unigram"; size 2 is a "bigram" (or, less commonly, a "digram"); size 3 is a "trigram". Larger sizes are sometimes referred to by the value of n, e.g., "four-gram", "five-gram", and so on.
+
+{| class="wikitable" style="font-size:85%;"
+|+ Figure 1 ''n''-gram examples from various disciplines
+! Field !! Unit !!Sample sequence !! 1-gram sequence !! 2-gram sequence !! 3-gram sequence 
+|-
+! Vernacular name      !!      !!           !! unigram      !!  bigram      !! trigram        
+|-
+! Order of resulting [[Markov model]]  !!      !!           !! 0     !!  1      !!   2        
+|-
+| [[Protein sequencing]] || [[amino acid]] || ... Cys-Gly-Leu-Ser-Trp ... || ..., Cys, Gly, Leu, Ser, Trp, ... || ..., Cys-Gly, Gly-Leu, Leu-Ser, Ser-Trp, ... || ..., Cys-Gly-Leu, Gly-Leu-Ser, Leu-Ser-Trp, ...
+|-
+| [[DNA sequencing]]|| [[base pair]] || ...AGCTTCGA... || ..., A, G, C, T, T, C, G, A, ... || ..., AG, GC, CT, TT, TC, CG, GA, ... || ..., AGC, GCT, CTT, TTC, TCG, CGA, ...
+|-
+| [[Computational linguistics]] || [[Character (computing)|character]] ||  ...to_be_or_not_to_be... || ..., t, o, _, b, e, _, o, r, _, n, o, t, _, t, o, _, b, e, ... || ..., to, o_, _b, be, e_, _o, or, r_, _n, no, ot, t_, _t, to, o_, _b, be, ... || ..., to_, o_b, _be, be_, e_o, _or, or_, r_n, _no, not, ot_, t_t, _to, to_, o_b, _be, ...
+|-
+| [[Computational linguistics]] ||[[word]] ||  ... to be or not to be ... ||  ..., to, be, or, not, to, be, ... ||  ..., to be, be or, or not, not to, to be, ... || ..., to be or, be or not, or not to, not to be, ...
+|}
+
+
+
+
+
+
+
+
+
 
 == 20130703_004812 ==
+
+=== Distributed File System ===
 
 * http://www.openafs.org/
 : OpenAFS
@@ -16,6 +204,9 @@
 
 
 == 20130104_000000 ==
+
+=== Storage architecture and challenges ===
+
 * http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en//university/relations/facultysummit2010/storage_architecture_and_challenges.pdf
 : storage architecture and challenges
 
