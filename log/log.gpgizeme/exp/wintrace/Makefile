@@ -78,8 +78,8 @@ install:
 	(cd tools/; ./afterproc.sh;)
 
 clean:
-	rm -f $(ODIR)/*
-	rm -f $(BDIR)/*
+	rm -f $(ODIR)/*.o
+	rm -f $(BDIR)/*.exe
 
 showdir:
 	ls -alF $(ODIR) $(BDIR) $(LDIR) $(IDIR) $(INSTALL_DESTINATION_DIR)/

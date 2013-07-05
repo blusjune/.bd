@@ -22,6 +22,8 @@
 : List of unsolved problems in mathematics
 
 
+
+
 === String metric / similarity ===
 
 * http://en.wikipedia.org/wiki/String_metric
@@ -119,7 +121,6 @@
 
 
 
-
 === FPGA based Frequent itemset mining ===
 
 * http://people.inf.ethz.ch/jteubner/publications/frequent-item/frequent-item-icde2010-slides.pdf
@@ -139,15 +140,6 @@
 
 * http://www.ibm.com/developerworks/library/l-ceph/
 : Ceph: A Linux petabyte-scale distributed file system
-
-
-
-
-
-
-
-
-
 
 
 
@@ -175,12 +167,6 @@
 |-
 | [[Computational linguistics]] ||[[word]] ||  ... to be or not to be ... ||  ..., to, be, or, not, to, be, ... ||  ..., to be, be or, or not, not to, to be, ... || ..., to be or, be or not, or not to, not to be, ...
 |}
-
-
-
-
-
-
 
 
 
