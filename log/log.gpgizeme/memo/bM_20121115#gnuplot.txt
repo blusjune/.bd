@@ -1,6 +1,87 @@
 
 
 
+== 20130709_022648 ==
+
+
+
+=== good reference URL ===
+
+* http://gnuplot.sourceforge.net/demo/histograms.html
+: gnuplot demo script: histograms.dem ((B.GOOD))
+
+
+
+
+=== conditional coloring ===
+
+* http://stackoverflow.com/questions/14993538/using-gnuplot-to-plot-point-colors-conditionally
+: Using Gnuplot to plot point colors conditionally
+
+ <pre>
+#!/usr/bin/env gnuplot
+
+set terminal png set output 'test.png';
+
+bigx = 16; bigy = 400; bigz = 65;
+
+isbig(x,y,z) = (x > bigx || y > bigy || z > bigz) ? 1 : 0;
+
+set palette defined (0 0.5 0.5 0.5, 1 1 0 0) # (grey, red);
+
+unset colorbox;
+set xrange [0:20]; set yrange [0:500]; set zrange [0:100];
+
+splot 'data.dat' using 2:1:3:(isbig($2,$1,$3)) with points pt 7 palette notitle, \
+      '' using (1e6):1:1 with points pt 7 lc rgb '#888888' title 'in box', \
+      '' using (1e6):1:1 with points pt 7 lc rgb 'red' title 'not in box';
+
+</pre>
+
+
+
+
+=== rotate xtics by -90 degree ===
+
+ <pre>
+gnuplot>
+	set xtics rotate by -90;
+	plot "< tail -10 ./cdist.iotype_iosz" u 1:xticlabels(2) w hist;
+
+gnuplot>
+	set autoscale;
+	set xtics rotate by -40;
+	plot '< tail -20 ./cdist.iotype_iosz' u (log10($1)):xticlabels(2) w hist;
+	plot '< tail -20 ./cdist.iotype_iosz' u (($1)):xticlabels(2) w hist;
+
+</pre>
+
+
+
+
+=== plot using only part of a file ===
+
+: I have data in some text file which has let's say 10000 rows and 2 columns. I know that I can plot it easily by plot "filename.txt" using 1:2 with lines . What I want is however just plotting let's say the rows from 1000 to 2000 or any other reasonable selection. Is it possible to do that easily?
+
+ <pre>
+plot "<(sed -n '1000,2000p' filename.txt)" using 1:2 with lines
+</pre>
+
+
+=== simple function or calculation in 'plot' command ===
+
+* outermost '(' and ')' should exist to use calculation or function in 'plot' command!
+
+ <pre>
+gnuplot>
+	max = 2082;
+	set autoscale;
+	set title "IO intensity (system IO)";
+	plot './cdist.hitc_mwid' u 2:(log10($1/max)/log10(max)) w p ps .5 pt 1;
+</pre>
+
+
+
 
 == 20130621_180550 ==
 
