@@ -1,0 +1,59 @@
+
+
+
+
+== 20130709_164004 ==
+
+=== awk conditional action ===
+
+ <pre>
+head -10000 tseries.pname | awk '{ if ($5 == "9") { print $5, $7 } }' 
+</pre>
+
+ <pre>
+cat iotrc.pp.mw1000000us.out | awk '{ if ( $27 > 0 ) { print $27, "  (", $23, " - ",  $25, ")  ", $5, $7, "  ", $15, "  ", $21 } }'
+</pre>
+
+
+
+
+== 20130709_023751 ==
+
+
+=== conditional substitution ===
+
+* cat somefile | sed '/^linehead/!s/str1/str2/g'
+: change 'str1' to 'str2' only if the line does not start with 'linehead'
+
+* cat somefile | sed '/^linehead/s/str1/str2/g'
+: change 'str1' to 'str2' only if the line starts with 'linehead'
+
+* change '202.20' to '10.123' only if the line starts with '202'
+ <pre>
+cat /etc/hosts | sed '/^202/s/202\.20/10.123/g'
+</pre>
+
+* change 'beee network' to 'brian network' only if the line does not start with '202'
+ <pre>
+cat /etc/hosts | sed '/^202/!s/beee network/brian network/g'
+</pre>
+
+
+=== print part of file ===
+
+* print part of file '/etc/hosts' from line 10 to line 20 (inclusively)
+
+ <pre>
+cat /etc/hosts | sed -n '10,20p'
+</pre>
+
+
+
+
+== 20130709_023648 ==
+
+=== beginning of this file ===
+
+
+
+
