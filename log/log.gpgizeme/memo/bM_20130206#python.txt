@@ -1,3 +1,18 @@
+
+
+
+
+== 20130710_013518 ==
+
+* execute python script given by the command line argument
+ <pre>
+blusjune@ROSES:[test] $ python -c 'import numpy as np; print np.std([8,9,10,11,12]);'
+1.41421356237
+</pre>
+
+
+
+
 == 20130528_215501 ==
 
 === empty line indented ===

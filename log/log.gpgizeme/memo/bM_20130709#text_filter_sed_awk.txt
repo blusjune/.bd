@@ -6,12 +6,48 @@
 
 === awk conditional action ===
 
+* It works!
  <pre>
 head -10000 tseries.pname | awk '{ if ($5 == "9") { print $5, $7 } }' 
 </pre>
 
+
+* It works!
  <pre>
-cat iotrc.pp.mw1000000us.out | awk '{ if ( $27 > 0 ) { print $27, "  (", $23, " - ",  $25, ")  ", $5, $7, "  ", $15, "  ", $21 } }'
+cat iotrc.pp.mw1000000us.out | awk '{ if ( $31 > 0.5 ) { print $31, "  (", $23, " - ",  $25, ")  ", $5"+"$7, "  ", $15, "  ", $21 } }'
+cat iotrc.pp.mw1000000us.out | awk '{ if ( $31 > 0.5 ) { print $31, "  ("$23"-"$25")  ", $5"+"$7, "  ", $15, "  ", $21 } }'
+cat iotrc.pp.mw1000000us.out | awk '{ if ($29 > 788.417594787) { print $29, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' 
+cat iotrc.pp.mw1000000us.out | awk '{ if ($27 > 93.7939377632) { print $27, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' 
+</pre>
+
+
+* This case does not work! (SHOULD use proper method to pass shell variables to awk)
+ <pre>
+_pdih_avg="`cat iotrc.pp.*.out | awk '{ print $27 }' | bsc.lsp.avg_sd | grep RESULT__AVERAGE | awk '{ print $2 }'`"
+_pdid_avg="`cat iotrc.pp.*.out | awk '{ print $29 }' | bsc.lsp.avg_sd | grep RESULT__AVERAGE | awk '{ print $2 }'`"
+cat iotrc.pp.mw1000000us.out | awk '{ if ($27 > $_pdih_avg) { print $27, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' 
+cat iotrc.pp.mw1000000us.out | awk '{ if ($29 > $_pdid_avg) { print $29, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' 
+</pre>
+
+
+* This case works! (used '-v awkvar=$SHELLVAR' argument to pass shell variables to awk)
+ <pre>
+_pdih_stat="`cat iotrc.pp.*.out | awk '{ print $27 }' | bsc.lsp.avg_sd`";
+_pdid_stat="`cat iotrc.pp.*.out | awk '{ print $29 }' | bsc.lsp.avg_sd`";
+_pdih_avg="`echo $_pdih_stat | grep RESULT__AVERAGE | awk '{ print $2 }'`";
+_pdid_avg="`echo $_pdid_stat | grep RESULT__AVERAGE | awk '{ print $2 }'`";
+_pdih_sd="`echo $_pdih_stat | grep RESULT__STDDEV | awk '{ print $4 }'`";
+_pdid_sd="`echo $_pdid_stat | grep RESULT__STDDEV | awk '{ print $4 }'`";
+
+_fileout_anal_pd_host="anal_pd_host.avg_${_pdih_avg}__sd_${_pdih_sd}.log";
+_fileout_anal_pd_dev="anal_pd_dev.avg_${_pdid_avg}__sd_${_pdid_sd}.log";
+_fileout_anal_br_host="anal_br_host.log";
+_fileout_anal_br_dev="anal_br_dev.log";
+
+cat iotrc.pp.*.out | awk -v pdih_avg=$_pdih_avg '{ if ($27 > pdih_avg) { print $1, "   ", $27, "   ", $31, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' > $_fileout_anal_pd_host;
+cat iotrc.pp.*.out | awk -v pdid_avg=$_pdid_avg '{ if ($29 > pdid_avg) { print $1, "   ", $29, "   ", $31, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' > $_fileout_anal_pd_dev;
+cat iotrc.pp.*.out | awk -v pdih_avg=$_pdih_avg '{ if ($27 > pdih_avg && $31 > 0.5) { print $1, "   ", $27, "   ", $31, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' > $_fileout_anal_br_host;
+cat iotrc.pp.*.out | awk -v pdid_avg=$_pdid_avg '{ if ($29 > pdid_avg && $31 < 0.5) { print $1, "   ", $29, "   ", $31, "   ", $15, "   ", $5"+"$7, "   ", $21, "   ", $9"+"$13; } }' > $_fileout_anal_br_dev;
 </pre>
 
 
