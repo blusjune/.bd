@@ -1,8 +1,10 @@
 #!/bin/sh
 
-## .bdx.0100.y.collect_sys_info.sh
-##_ver=20121006_211639
-##_ver=20130608_223338
+
+#.bdx.0100.y.collect_sys_info.sh
+#_ver=20121006_211639
+#_ver=20130608_223338
+#_ver=20130715_235648
 
 
 #--------------------------------------------------------------------------------
@@ -22,6 +24,7 @@ sudo mount > mount.log
 sudo route -n > route-n.log
 sudo cp -p /var/lib/mediawiki/LocalSettings.php .
 sudo cp -p /var/www/index.html .
+sudo cp -p /boot/grub/grub.cfg .
 #--------------------------------------------------------------------------------
 
 

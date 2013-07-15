@@ -1,4 +1,66 @@
 
+== 20130716_003459 ==
+
+=== start my new branch 'bsos-v0.0.1' from existing 'v3.9.9' version ===
+
+ <pre>
+  # list all the tags
+$ git tag -l 
+...
+v3.8.6
+v3.8.7
+v3.8.8
+v3.8.9
+v3.9
+v3.9-rc1
+v3.9-rc2
+v3.9-rc3
+v3.9-rc4
+v3.9-rc5
+v3.9-rc6
+v3.9-rc7
+v3.9-rc8
+v3.9.1
+v3.9.10
+v3.9.2
+v3.9.3
+v3.9.4
+v3.9.5
+v3.9.6
+v3.9.7
+v3.9.8
+v3.9.9
+
+$ git branch
+* master
+$ git branch --list
+* master
+
+  # create a new branch 'bsos-v0.0.1'
+  # from 'v3.9.9' as a starting point
+$ git branch bsos-v0.0.1 v3.9.9
+
+  # check the branch status
+$ git branch --list
+  bsos-v0.0.1
+* master
+
+  # change branch 
+$ git checkout bsos-v0.0.1 
+Switched to branch 'bsos-v0.0.1'
+
+  # check the branch status
+$ git branch --list
+* bsos-v0.0.1
+  master
+
+  # create a new file, add, and commit
+$ tstamp > README.bsos-v0.0.1
+$ git add -A
+$ git commit -a
+
+</pre>
+
 
 
 

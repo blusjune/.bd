@@ -1,0 +1,275 @@
+== 20130716_011458 ==
+
+
+=== btier-1.0.2/kernel/btier/btier.h ===
+
+
+ <pre>
+#define BLKSIZE 1048576		// 1048576 = 2^20
+
+
+#define WD 1	// write disk
+#define WC 2	// write cache
+#define WA 3	// All: cache and disk
+
+// how to handle these two different types of I/O properly?
+#define NORMAL_IO	1
+#define MIGRATION_IO	2
+
+#define TIERMAXAGE 86400
+	/* when a chunk has not been used TIERMAXAGE
+	   it will migrate to a slower tier (86400 secs = 1 day) */
+
+#define TIERHITCOLLECTTIME 43200
+	/* I'm not sure what this means */
+	/* 43200 secs = 12 hours */
+
+#define MIGRATE_INTERVAL 14400
+	/* check every 4 hours */
+	/* 14400 secs = 4 hours */
+
+/* MAX_STAT_COUNT 10000000 will allow devices up to 
+ * 1.7 Zettabyte before statistics can overflow.
+ * Max size of unsigned long long = 18446744073709551615
+ * With a 1 MB chunksize this we have 1073741824 blocks per PB
+ * So with 10000000 hits per block this is 
+ * 1073741824*10000000=10737418240000000 hits per PB
+ * 18446744073709551615/10737418240000000=1717 PB before counters can overflow.
+ */
+#define MAX_STAT_COUNT 10000000
+	/* We count max 10 million hits, hits are reset upon migration */
+#define MAX_STAT_DECAY 500000
+	/* Loose 5% hits per walk when we have reached the max */
+
+
+
+
+struct data_policy {
+        unsigned int max_age;
+        unsigned int hit_collecttime;
+        unsigned int sequential_landing;	/* how to use this field? */
+        int migration_disabled;
+        u64 migration_interval;
+};
+
+struct blockinfo {
+        unsigned int device;
+        u64 offset;
+        time_t lastused;
+        unsigned int readcount;
+        unsigned int writecount;
+} __attribute__ ((packed));
+
+struct devicemagic {
+        unsigned int magic;
+        unsigned int device;
+        unsigned int clean;
+        u64 blocknr_journal;
+        struct blockinfo binfo_journal_new;
+        struct blockinfo binfo_journal_old;
+        unsigned int average_reads;	/* what purpose of this field? */
+        unsigned int average_writes;	/* what purpose of this field? */
+        u64 total_reads;		/* what purpose of this field? */
+        u64 total_writes;		/* what purpose of this field? */
+        time_t average_age;
+        u64 devicesize;
+        u64 total_device_size;  /* Only valid for tier 0 */
+        u64 total_bitlist_size; /* Only valid for tier 0 */
+        u64 bitlistsize;
+        u64 blocklistsize;
+        u64 startofbitlist;
+        u64 startofblocklist;
+        char fullpathname[1025];
+        struct data_policy dtapolicy;
+} __attribute__ ((packed));
+
+
+#ifdef __KERNEL__
+
+typedef struct {
+        struct file *fp;
+        mm_segment_t fs; 
+} file_info_t;
+
+struct backing_device {
+        struct file *fds;
+        u64 bitlistsize;
+        u64 devicesize;
+        u64 startofdata;
+        u64 endofdata;
+        u64 startofbitlist;
+        u64 startofblocklist;
+        u64 bitbufoffset;
+        u64 free_offset;
+        u64 usedoffset;
+        unsigned int dirty;
+        struct devicemagic *devmagic;
+        struct kobject *ex_kobj;
+        struct blockinfo **blocklist;
+        u8 *bitlist;
+        unsigned int ra_pages;
+};
+
+struct tier_stats {
+        u64 seq_reads;
+        u64 rand_reads;
+        u64 seq_writes;
+        u64 rand_writes;
+};
+
+struct migrate_direct {
+        u64 blocknr;
+        int newdevice;
+        atomic_t direct;
+};
+
+struct tier_device {
+        struct list_head list;
+        int major_num;
+        int tier_device_number;
+        int active;
+        int attached_devices;
+        int (*ioctl) (struct tier_device *, int cmd, u64 arg);
+        u64 nsectors;
+        unsigned int logical_block_size;
+        struct backing_device **backdev;
+        struct block_device *tier_device;
+        struct mutex tier_ctl_mutex;
+        u64 size;
+        u64 blocklistsize;
+        spinlock_t lock;
+        spinlock_t statlock;
+        spinlock_t usage_lock;
+        struct gendisk *gd;
+        struct workqueue_struct *migration_queue; /* Data migration */
+        struct workqueue_struct *aio_queue; /* Async IO */
+        struct task_struct *tier_thread;
+        struct bio_list tier_bio_list;
+        struct request_queue *rqueue;
+        char *devname;
+        char *managername;
+        char *aioname;
+        atomic_t migrate;
+        atomic_t aio_pending;
+        atomic_t wqlock;
+        atomic_t commit;
+        atomic_t curfd;
+        unsigned int commit_interval;
+        int barrier;
+        int stop;
+/*Holds the type of IO random or sequential*/
+        int iotype;
+/*Last blocknr written or read*/
+        u64 lastblocknr;
+        u64 resumeblockwalk;
+/*Incremented if current blocknr == lastblocknr -1 or +1 */
+        unsigned int insequence;
+        u64 cacheentries;
+        struct mutex qlock;
+        wait_queue_head_t tier_event;
+        wait_queue_head_t migrate_event;
+        wait_queue_head_t aio_event;
+        struct timer_list migrate_timer;
+        struct tier_stats stats;
+        struct migrate_direct mgdirect;
+        int migrate_verbose;
+        int ptsync;
+        int writethrough;
+/* Where do we initially store sequential IO */
+        int inerror;
+/* The blocknr that the user can retrieve info for via sysfs*/
+        u64 user_selected_blockinfo;
+        int user_selected_ispaged;
+        unsigned int users;
+}; /* tier_device */
+
+typedef struct {
+        struct work_struct work;
+        struct tier_device *device;
+} tier_worker_t;
+
+typedef struct {
+        struct work_struct work;
+        struct tier_device *dev;
+        u64 offset;
+        int device;
+        char *buf;
+        int size;
+        struct page *bv_page;
+} aio_work_t;
+
+
+#endif
+
+
+</pre>
+
+
+=== btier-1.0.2/kernel/btier/btier_main.c ===
+
+tier_make_request(); /* very important function */
+
+data_migrator(); /* migration */
+
+migrate_up_ifneeded();
+migrate_down_ifneeded();
+
+
+/* When a block is migrated to a different tier
+ * the readcount and writecount are reset to 0.
+ * The block now has hit_collecttime seconds to
+ * collect enough hits. After which it is compared
+ * to the average hits that blocks have had on this
+ * device. Should the block score less then average
+ * hits - hysteresis then it will be migrated to an 
+ * even lower tier.
+
+ * Although reads and writes are counted seperately
+ * for now they are threated equally.
+
+ * We can in the future differentiate between SLC
+ * and MLC SSD's and store chunks with high read and
+ * low write frequency on MLC SSD. And chunks that
+ * are often re-written on SLC SSD.
+ */
+static int copyblock(struct tier_device *dev, struct blockinfo *newdevice,
+                     struct blockinfo *olddevice, u64 curblock);
+
+tier_wait_bio();
+
+tier_handle_bio()
+{
+	tier_do_bio();
+}
+
+tier_do_bio();
+
+tier_get_bio(); /* grab the first pending buffer */
+
+
+/* When write_blocklist is called with write_policy set to
+ * WD(isk) the data is written to disk without updating the cache
+ * WC(ache) only updates the cache. This is used for statistics only
+ * since this data is not critical.
+ * WA(ll) writes to all, cache and disk.
+ */
+write_blocklist()
+
+/* Delayed metadata update routine */
+update_blocklist();
+
+
+read_tiered();
+write_tiered();
+
+
+tier_file_write();
+
+
+
+
+=== btier-1.0.2/kernel/btier/btier_common.c ===
+
+=== btier-1.0.2/kernel/btier/btier_sysfs.c ===
+
+
