@@ -1,5 +1,31 @@
 
 
+== 20130716_093042 ==
+
+=== how to check whether a file exists or not ===
+
+
+* Using 'os.path.exists()'
+ <pre>
+import os
+print os.path.exists('/etc/hosts') # check the return value
+
+if os.path.exists('/etc/hosts') is True:
+	print 'yes, exists'
+else:
+	print 'no, does not exist'
+</pre>
+
+
+* Using 'try - except' exception handler
+ <pre>
+try:
+	with open('filename'): pass
+except IOError:
+	print 'Oh dear.'
+</pre>
+
+
 
 
 == 20130710_013518 ==

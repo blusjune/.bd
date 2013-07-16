@@ -1,3 +1,28 @@
+== 20130716_101850 ==
+
+=== A Comparison of Ext2, Ext3 and Ext4 Performance ===
+
+: http://en.community.dell.com/techcenter/high-performance-computing/w/wiki/2290.aspx
+
+ $ sudo blockdev --getra /dev/sda
+ $ sudo blockdev --setra 65536 /dev/sda
+
+
+
+
+=== S4 classes and methods ===
+
+: http://www.r-project.org/conferences/useR-2004/Keynotes/Leisch.pdf
+
+
+
+
+=== Setting harddisk 'read ahead' values in Ubuntu ===
+: http://forum.notebookreview.com/linux-compatibility-software/423182-setting-harddisk-read-ahead-values-ubuntu.html
+
+
+
+
 == 20130704_000204 ==
 
 === Mathematical transformation === 

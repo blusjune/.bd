@@ -1,6 +1,40 @@
 == 20130716_011458 ==
 
 
+=== Readme - Build Btier ===
+
+linux-stable/drivers/block/Makefile
+
+ <pre>
+
+2#[linux-stable]$ git diff
+diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+index b81ddfe..5801da7 100644
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@ -541,4 +541,6 @@ config BLK_DEV_RSXX
+          To compile this driver as a module, choose M here: the
+          module will be called rsxx.
+ 
++source "drivers/block/btier/Kconfig"
++
+ endif # BLK_DEV
+diff --git a/drivers/block/Makefile b/drivers/block/Makefile
+index a3b4023..68086f3 100644
+--- a/drivers/block/Makefile
++++ b/drivers/block/Makefile
+@@ -43,3 +43,5 @@ obj-$(CONFIG_BLK_DEV_PCIESSD_MTIP32XX)        += mtip32xx/
+ obj-$(CONFIG_BLK_DEV_RSXX) += rsxx/
+ 
+ swim_mod-y     := swim.o swim_asm.o
++
++obj-$(CONFIG_BTIER)    += btier/
+
+</pre>
+
+
+
+
 === btier-1.0.2/kernel/btier/btier.h ===
 
 
