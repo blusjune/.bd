@@ -1,0 +1,7 @@
+
+== 20130723_002034 ==
+
+-bsos.v0.1.0-cache_n_tier
+
+enabled by setting bits in /sys/modules/fscache/parameter/debug.   
+See Documentation/filesystems/caching/fscache.txt for more information.   
