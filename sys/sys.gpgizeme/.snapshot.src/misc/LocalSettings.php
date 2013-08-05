@@ -30,6 +30,7 @@ $wgScriptPath = "/wikini";
 $wgScriptExtension = ".php";
 
 ## The protocol and server name to use in fully-qualified URLs
+#$wgServer = "http://localhost";
 $wgServer = "http://kandinsky";
 
 ## The relative URL path to the skins directory
@@ -99,11 +100,11 @@ $wgShellLocale = "en_US.utf8";
 # Site language code, should be one of the list in ./languages/Names.php
 $wgLanguageCode = "en";
 
-$wgSecretKey = "c9fabd5803d8d4aaf40cfadd7caa1fa68709477b110d59a664688355b5bb7176";
+$wgSecretKey = "c9955abfcce1ff8bfce3efeed95f42f75b476ae14a7ac0f0b6186d16e2036894";
 
 # Site upgrade key. Must be set to a string (default provided) to turn on the
 # web installer while LocalSettings.php is in place
-$wgUpgradeKey = "9007dc17cf7e759e";
+$wgUpgradeKey = "34eee5b71b5c1a16";
 
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
@@ -155,4 +156,3 @@ require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
 # End of automatically generated settings.
 # Add more configuration options below.
 
-#$wgAllowExternalImages = true
