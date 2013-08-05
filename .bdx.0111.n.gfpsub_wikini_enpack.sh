@@ -4,12 +4,12 @@
 ##_ver=20130511_103052; #initial use of 'if [ "#$_value" = "#y" ]; then'
 ##_ver=20130514_112017;
 ##_ver=20130628_025524; #return to no use of 'if [ "#$_value" = "#y" ]; then'
-##_ver=20130701_015219; #introduce /tmp/bdxcf.wikini.enpack first time
+##_ver=20130701_015219; #introduce /tmp/.bdxcf.wikini.enpack first time
 
 
 
 
-if [ -f /tmp/bdxcf.wikini.enpack ]; then
+if [ -f /tmp/.bdxcf.wikini.enpack ]; then
 	_conf_wikini__enpack="y"; # default: "n"
 else
 	_conf_wikini__enpack="n"; # default: "n"

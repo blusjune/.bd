@@ -1,0 +1,34 @@
+
+GRUB 2 is the default boot loader and manager for Ubuntu since version 9.10 (Karmic Koala). As the computer starts, GRUB 2 either presents a menu and awaits user input or automatically transfers control to an operating system kernel. GRUB 2 is a descendant of GRUB (GRand Unified Bootloader). It has been completely rewritten to provide the user significantly increased flexibility and performance. GRUB 2 is Free Software.
+
+In this guide, GRUB 2 is version 1.98 or later. GRUB legacy (version 0.97) will be referred to as GRUB. To determine your version, use grub-install -v. Grub version 1.99 became the default on Ubuntu 11.04 (Natty Narwhal) and introduced some major changes in the Grub file contents. This guide covers the use of Grub 1.98, the Grub release found in Ubuntu 10.04 LTS (Lucid Lynx). and Grub 1.99, packaged with Ubuntu 12.04 LTS (Precise Pangolin). Content reflecting other versions of Grub 2 will be noted in the appropriate entry.
+
+
+== Introduction ==
+GRUB 2 builds its menu (grub.cfg) by running scripts found in the ''/etc/grub.d/folder'' and the settings in the ''/etc/default/grub'' file. This file is recreated automatically whenever the `update-grub` command is run. This command activates scripts which by default determine the status of the current Ubuntu OS and search the system for other operating systems which, if found, are added to the GRUB 2 menu. The `update-grub` command can be invoked by a user with Administrator (root) privileges and is automatically run when GRUB 2 packages or the kernel is updated.
+
+
+== Links ==
+* [https://help.ubuntu.com/community/GrubHowto GrubHowTo]
+* [https://help.ubuntu.com/community/Grub2 Grub2]
+* [https://help.ubuntu.com/community/Grub2/Setup Grub2/Setup]
+* [https://help.ubuntu.com/community/Grub2/CustomMenus Grub2/CustomMenus]
+* [https://help.ubuntu.com/community/Grub2/Displays Grub2/Displays]
+* [https://help.ubuntu.com/community/Grub2/Installing Grub2/Installing]
+* [https://help.ubuntu.com/community/Grub2/Passwords Grub2/Passwords]
+* [https://help.ubuntu.com/community/Grub2/Submenus Grub2/Submenus]
+* [https://help.ubuntu.com/community/Grub2/Troubleshooting Grub2/Troubleshooting]
+* [https://help.ubuntu.com/community/Grub2/Upgrading Grub2/Upgrading]
+* [https://wiki.ubuntu.com/Grub2 Grub 2] (Ubuntu Wiki)
+
+
+
+== External Links ==
+ * [http://www.gnu.org/software/grub/manual GNU GRUB2 Manual]
+ * [https://launchpad.net/grub-customizer Grub Customizer (Launchpad)]
+
+
+== References ==
+
+<references/>
+
