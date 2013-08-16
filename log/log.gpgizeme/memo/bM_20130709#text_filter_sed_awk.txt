@@ -1,4 +1,13 @@
 
+== 20130816_184204 ==
+
+=== awk programming - patterns and actions ===
+
+* http://www.math.utah.edu/docs/info/gawk_9.html
+: Awk patterns and actions
+
+ <pre>
+</pre>
 
 
 
@@ -52,6 +61,74 @@ cat iotrc.pp.*.out | awk -v pdid_avg=$_pdid_avg '{ if ($29 > pdid_avg && $31 < 0
 
 
 
+== 20130709_163001 ==
+
+=== awk conditional if statements ===
+
+* http://www.thegeekstuff.com/2010/02/awk-conditional-statements/
+: Examples of awk conditional statements
+
+* Sample data
+ <pre>
+$cat student-marks
+Jones 2143 78 84 77
+Gondrol 2321 56 58 45
+RinRao 2122 38 37
+Edwin 2537 87 97 95
+Dayan 2415 30 47
+</pre>
+
+* Example 1: Check all the marks are exist
+: $3, $4, and $5 are test scores of the student. If test score is equal to empty, it throws the message.
+ <pre>
+$ awk '{
+if ($3 =="" || $4 == "" || $5 == "")
+	print "Some score for the student",$1,"is missing";'
+}' student-marks
+</pre>
+ <pre>
+
+Some score for the student RinRao is missing
+Some score for the student Dayan is missing
+</pre>
+
+* Example 2: Generate pass/fail report based on student marks in each subject
+ <pre>
+$ awk '{
+if ($3 >=35 && $4 >= 35 && $5 >= 35)
+	print $0,"=>","Pass";
+else
+	print $0,"=>","Fail";
+}' student-marks
+
+Jones 2143 78 84 77 => Pass
+Gondrol 2321 56 58 45 => Pass
+RinRao 2122 38 37 => Fail
+Edwin 2537 87 97 95 => Pass
+Dayan 2415 30 47 => Fail
+</pre>
+
+* Example 3: Find the average and grade for every student
+ <pre>
+$ cat grade.awk
+{
+total=$3+$4+$5;
+avg=total/3;
+if ( avg >= 90 ) grade="A";
+else if ( avg >= 80) grade ="B";
+else if (avg >= 70) grade ="C";
+else grade="D";
+
+print $0,"=>",grade;
+}
+
+$ awk -f grade.awk student-marks
+Jones 2143 78 84 77 => C
+Gondrol 2321 56 58 45 => D
+RinRao 2122 38 37 => D
+Edwin 2537 87 97 95 => A
+Dayan 2415 30 47 => D
+</pre>
 
 == 20130709_023751 ==
 

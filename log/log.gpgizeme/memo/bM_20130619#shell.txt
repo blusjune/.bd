@@ -1,3 +1,102 @@
+
+== 20130816_182819 ==
+
+=== Bash getopt versus getopts ===
+
+* http://blog.onetechnical.com/2012/07/16/bash-getopt-versus-getopts/
+: I recently reviewed someone's bash code, and noted their use of getopt. I had always been using getopts, so was at first confused (due to syntax), then puzzled: which one is better, getopt or getopts?
+Getopt is older, but is a separate binary. It tends to be pretty robust, and supports long options (i.e., you can use -foo instead of just single letter options like -f). Getopt will also re-arrange the parameters.
+Getopts is newer but built into the shell. Its syntax tends to be simpler to use.
+Let's see some quick examples of usage:
+
+* 'getopt' example
+ <pre>
+#!/bin/bash
+
+# getopt.sh example
+
+# Execute getopt
+ARGS=$(getopt -o a:b:c -l "ay:,bee:,cee" -n "getopt.sh" -- "$@");
+
+#Bad arguments
+if [ $? -ne 0 ];
+then
+  exit 1
+fi
+
+eval set -- "$ARGS";
+
+while true; do
+  case "$1" in
+    -a|--ay)
+      shift;
+      if [ -n "$1" ]; then
+        echo "-a used: $1";
+        shift;
+      fi
+      ;;
+    -b|--bee)
+      shift;
+      if [ -n "$1" ]; then
+        echo "-b used: $1";
+        shift;
+      fi
+      ;;
+    -c|--cee)
+      shift;
+      echo "-c used";
+      ;;
+    --)
+      shift;
+      break;
+      ;;
+  esac
+done
+</pre>
+
+* 'getopts' example
+ <pre>
+#!/bin/bash
+
+# getopts example
+
+while getopts a:b:c flag; do
+  case $flag in
+    a)
+      echo "-a used: $OPTARG";
+      ;;
+    b)
+      echo "-b used: $OPTARG";
+      ;;
+    c)
+      echo "-c used";
+      ;;
+    ?)
+      exit;
+      ;;
+  esac
+done
+
+shift $(( OPTIND - 1 ));
+</pre>
+
+* Execution results of 'getopt' version vs. 'getopts' version
+ <pre>
+
+$ ./getopt.sh -a "opt a" -b opt_b arg1
+-a used: opt a
+-b used: opt_b
+-c used
+$ ./getopts.sh -a "opt a" -b opt_b arg1
+-a used: opt a
+-b used: opt_b
+-c used
+$
+
+</pre>
+
+
+
 == 20130619_004011 ==
 
 === one-dimentional indexed and associative array in /bin/bash (not in /bin/sh) ===
