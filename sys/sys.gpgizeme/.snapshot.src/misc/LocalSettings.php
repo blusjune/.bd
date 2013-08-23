@@ -156,3 +156,13 @@ require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
 # End of automatically generated settings.
 # Add more configuration options below.
 
+
+# 20130821_135724 # blusjune
+require_once( "$IP/extensions/Math/Math.php" );
+#$wgUploadPath = "$IP/upload";
+#$wgUploadDirectory = "$IP/upload";
+$wgUseTeX = true;
+$wgMathPath = "{$wgUploadPath}/math";
+$wgMathDirectory = "{$wgUploadDirectory}/math";
+$wgTmpDirectory = "{$wgUploadDirectory}/tmp";
+
