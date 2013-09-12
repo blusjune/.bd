@@ -155,4 +155,5 @@ require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
 # End of automatically generated settings.
 # Add more configuration options below.
 
-#$wgAllowExternalImages = true
+$wgAllowExternalImages = true;
+$wgAllowImageTag = true;
