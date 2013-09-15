@@ -1,0 +1,21 @@
+[https://canyoufindit.co.uk/ Can you find it - 2013 puzzle]
+
+ <pre>
+AWVLI QIQVT QOSQO ELGCV IIQWD LCUQE EOENN WWOAO
+LTDNU QTGAW TSMDO QTLAO QSDCH PQQIQ DQQTQ OOTUD
+BNIQH BHHTD UTEET FDUEA UMORE SQEQE MLTME TIREC
+LICAI QATUN QRALT ENEIN RKG
+</pre>
+
+
+== GCHQ ==
+
+* http://www.gchq.gov.uk/challenges/pages/break-some-code-puzzle-1.aspx
+
+=== Letter frequency ===
+
+* http://en.wikipedia.org/wiki/Letter_frequency
+
+== References ==
+
+<references/>
