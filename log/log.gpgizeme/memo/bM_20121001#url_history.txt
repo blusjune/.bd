@@ -248,3 +248,23 @@ pavuk -mode mirror -fnrules F '*' '/%e/%n' http://javplus.us/asian-girls/korean-
 
 
 
+== 20131114_000000 ==
+
+=== Goodness of Fit Test ===
+
+
+* http://www.statmethods.net/interface/io.html
+
+* http://ww2.coastal.edu/kingw/statistics/R-tutorials/goodness.html
+
+* http://2.bp.blogspot.com/-SpjgitfNMb0/TteevRR_Y2I/AAAAAAAAAFQ/IZgd32z2AI8/s1600/distributions.png
+
+* http://www.amazon.com/gp/product/1584887117/ref=as_li_ss_tl?ie=UTF8&tag=chrprobboo-20&linkCode=as2&camp=217145&creative=399373&creativeASIN=1584887117
+
+* http://www.r-bloggers.com/fitting-distributions-with-r/
+
+* http://cran.r-project.org/doc/contrib/Ricci-distributions-en.pdf
+
+
+
+
