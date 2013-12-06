@@ -1,5 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =3
-let g:netrw_dirhist_1='/sys/block/sda/queue'
-let g:netrw_dirhist_2='/sys/devices/pci0000:00/0000:00:1f.2/host2/target2:0:0/2:0:0:0/block/sda/queue'
-let g:netrw_dirhist_3='/home/blusjune/.vim'
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/.bxd/home/blusjune/.bkrnl/src/bsos-kernel/drivers/block'
+let g:netrw_dirhist_2='/.bxd/home/blusjune/.bkrnl/.git'
+let g:netrw_dirhist_3='/.bxd/home/blusjune/.bsrc/data_placement/src.gpgizeme/btier/btier-1.0.2/kernel'
+let g:netrw_dirhist_4='/.bxd/home/blusjune/.bsrc/data_placement/src.gpgizeme/btier/btier-1.0.2'
+let g:netrw_dirhist_5='/.bxd/home/blusjune/.bkrnl/src/bsos-kernel/drivers/block'
+let g:netrw_dirhist_6='/.bxd/home/blusjune/.bkrnl/src/bsos-kernel/drivers/block/btier'
