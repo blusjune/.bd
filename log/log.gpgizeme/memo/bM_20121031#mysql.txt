@@ -20,7 +20,7 @@ $ chown -R mysql:mysql .
 
 $ (cd /etc; mv mysql mysql-5.5.31; mkdir mysql-5.7.3; ln -s mysql-5.7.3 mysql;)
 
-$ scripts/mysql_install_db --no-defaults --basedir=/usr/local/x/mysql --datadir=/usr/local/x/mysql/data --port=3306 --user=mysql --bind-address=0.0.0.0 --log-error=/usr/local/x/mysql/log/error.log --innodb-buffer-pool-size=256M
+$ scripts/mysql_install_db --no-defaults --basedir=/usr/local/x/mysql --datadir=/usr/local/x/mysql/data --port=3306 --user=mysql --bind-address=0.0.0.0 --log-error=/usr/local/x/mysql/log/error.log --innodb-buffer-pool-size=256M --socket=/var/run/mysqld/mysqld.sock
 
 
 $ cat > /etc/mysql/my.cnf << EOF
@@ -58,9 +58,21 @@ user = mysql
 basedir = /usr/local/x/mysql
 datadir = /usr/local/x/mysql/data
 log_error = /usr/local/x/mysql/log/error.log
+socket = /var/run/mysqld/mysqld.sock # very important
 port = 3306
 bind_address = 0.0.0.0
 innodb_buffer_pool_size = 256M
+
+
+[client]
+
+socket = /var/run/mysqld/mysqld.sock # very important
+
+
+[mysqld_safe]
+
+socket = /var/run/mysqld/mysqld.sock # very important
+
 
 EOF
 
