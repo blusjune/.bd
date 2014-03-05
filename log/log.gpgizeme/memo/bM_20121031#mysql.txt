@@ -5,6 +5,137 @@
 
 
 
+== 20140227_215526 ==
+
+=== create some user / set grant privileges / show grants ===
+
+ <pre>
+mysql> create user 'brian'@'%' identified by 'kkk';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select User,Host from mysql.user;
++-----------+--------------+
+| User      | Host         |
++-----------+--------------+
+| brian     | %            |
+| repl      | %            |
+| root      | %            |
+| tpcc_user | %            |
+| root      | 127.0.0.1    |
+| root      | ::1          |
+| root      | b02          |
+|           | jimi-hendrix |
+| root      | jimi-hendrix |
+|           | localhost    |
+| root      | localhost    |
+| tpcc_user | localhost    |
++-----------+--------------+
+12 rows in set (0.00 sec)
+
+mysql> create user 'brian'@'localhost' identified by 'kkk';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select User,Host from mysql.user;
++-----------+--------------+
+| User      | Host         |
++-----------+--------------+
+| brian     | %            |
+| repl      | %            |
+| root      | %            |
+| tpcc_user | %            |
+| root      | 127.0.0.1    |
+| root      | ::1          |
+| root      | b02          |
+|           | jimi-hendrix |
+| root      | jimi-hendrix |
+|           | localhost    |
+| brian     | localhost    |
+| root      | localhost    |
+| tpcc_user | localhost    |
++-----------+--------------+
+13 rows in set (0.00 sec)
+
+mysql> show grants;
++----------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for root@localhost                                                                                                              |
++----------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' WITH GRANT OPTION |
+| GRANT PROXY ON ''@'' TO 'root'@'localhost' WITH GRANT OPTION                                                                           |
++----------------------------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+
+mysql> show grants for 'brian'@'%';
++------------------------------------------------------------------------------------------------------+
+| Grants for brian@%                                                                                   |
++------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'brian'@'%' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' |
++------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> show grants for 'brian'@'localhost';
++--------------------------------------------------------------------------------------------------------------+
+| Grants for brian@localhost                                                                                   |
++--------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'brian'@'localhost' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' |
++--------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> show grants for 'brian';
++------------------------------------------------------------------------------------------------------+
+| Grants for brian@%                                                                                   |
++------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'brian'@'%' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' |
++------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> grant all privileges on *.* to 'brian'@'localhost' identified by 'kkk' with grant option;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> grant all privileges on *.* to 'brian'@'%' identified by 'kkk' with grant option;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show grants;
++----------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for root@localhost                                                                                                              |
++----------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' WITH GRANT OPTION |
+| GRANT PROXY ON ''@'' TO 'root'@'localhost' WITH GRANT OPTION                                                                           |
++----------------------------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+
+mysql> show grants for brian;
++---------------------------------------------------------------------------------------------------------------------------------+
+| Grants for brian@%                                                                                                              |
++---------------------------------------------------------------------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'brian'@'%' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' WITH GRANT OPTION |
++---------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> show grants for brian@%;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%' at line 1
+
+mysql> show grants for 'brian'@'%';
++---------------------------------------------------------------------------------------------------------------------------------+
+| Grants for brian@%                                                                                                              |
++---------------------------------------------------------------------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'brian'@'%' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' WITH GRANT OPTION |
++---------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> show grants for 'brian'@'localhost';
++-----------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for brian@localhost                                                                                                              |
++-----------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'brian'@'localhost' IDENTIFIED BY PASSWORD '*5F6E71BF7C725D6604BC75AA0260D2D8E43F40EE' WITH GRANT OPTION |
++-----------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+
+</pre>
+
+
+
 
 == 20140218_000051 ==
 
