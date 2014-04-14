@@ -1,0 +1,21 @@
+cd web
+ll
+cd hdwallpapers/
+ll
+wget http://download.hdwallpapers.net/get?wallpaper=abstract_0005.jpg
+ll
+w3m http://download.hdwallpapers.net/get?wallpaper=abstract_0005.jpg
+man w3m
+w3m -v http://download.hdwallpapers.net/get?wallpaper=abstract_0005.jpg
+man w3m
+w3m -dump_source http://download.hdwallpapers.net/get?wallpaper=abstract_0005.jpg
+man w3m
+w3m -dump_source http://download.hdwallpapers.net/get?wallpaper=abstract_0005.jpg > result
+ll
+file *
+gunzip result
+gunzip -c result > result.unziped
+ll
+file *
+gwenview .
+history > /x/cmdhist/w3m_hdwallpapers

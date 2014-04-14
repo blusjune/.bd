@@ -1,0 +1,10 @@
+*************************** 1. row ***************************
+Tstamp_a: 1397490194
+Tstamp_b: 20140415_004314
+innodb_buffer_pool_stats_plid	plsz	plsz_free	dbpg	dbpg_old	dbpg_mod	pg_young	pg_no_young	r_pages	c_pages	w_pages	r_pend	lru_io_tot	lru_io_cur	hit_rate
+0	8192	7840	352	0	0	0	0	352	0	1	0	0	0	0
+*************************** 1. row ***************************
+Tstamp_a: 1397490353
+Tstamp_b: 20140415_004553
+innodb_buffer_pool_stats_plid	plsz	plsz_free	dbpg	dbpg_old	dbpg_mod	pg_young	pg_no_young	r_pages	c_pages	w_pages	r_pend	lru_io_tot	lru_io_cur	hit_rate
+0	8192	7840	352	0	0	0	0	352	0	1	0	0	0	0

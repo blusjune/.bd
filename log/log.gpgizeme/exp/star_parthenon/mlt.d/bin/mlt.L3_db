@@ -6,12 +6,15 @@
 
 
 # initial (before test) and final (after test) snapshots of database status (summary metrics)
-.mlt_dbstat_01_oflm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw $_mlt_L3T1_order_by $_mlt_L3T1_limit_count 2>&1 &
+#.mlt_dbstat_01_oflm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw $_mlt_L3T1_order_by $_mlt_L3T1_limit_count 2>&1 &
+.mlt_dbstat_01_oflm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw $_mlt_L3T1_order_by $_mlt_L3T1_limit_count &
 
 
 # periodic snapshot of database status (current metrics)
-.mlt_dbstat_02_onlm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw 2>&1 &
-.mlt_dbstat_03_onlm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw 2>&1 &
+#.mlt_dbstat_02_onlm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw 2>&1 &
+.mlt_dbstat_02_onlm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw &
+#.mlt_dbstat_03_onlm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw 2>&1 &
+.mlt_dbstat_03_onlm $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw &
 
 
 

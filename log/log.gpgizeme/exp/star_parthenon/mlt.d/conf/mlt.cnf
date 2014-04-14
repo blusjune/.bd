@@ -11,12 +11,12 @@
 ## ____ Parameters: begin ____
 
 _mlt_La_trace_target_disk_list="/dev/sda /dev/sdb";    # when you want to specify multiple instances of devices, just separate them with a space
-_mlt_La_measure_duration_in_sec="4200";                # SHOULD set this value with enough margin
+_mlt_La_measure_duration_in_sec="60";                # SHOULD set this value with enough margin
 _mlt_L1_measure_interval_in_sec="10";                  # L1 measurement count will be 360 with this value, when you set measure duration as 3600
 _mlt_L2_measure_interval_in_sec="1";                   # L2 measurement count will be 3600 with this value, when you set measure duration as 3600
 _mlt_L3_measure_interval_in_sec="10";                  # L3 measurement count will be 360 with this value, when you set measure duration as 3600
 _mlt_L3_db_conf_file="/etc/mysql/my.cnf";              # full path of the main configuration file of database (typically '/etc/mysql/my.cnf' for MySQL on Ubuntu)
-_mlt_L3_db_root_pw="";              # password of mysql root user in your case
+_mlt_L3_db_root_pw="kkk";              # password of mysql root user in your case
 _mlt_L3T1_order_by="w_bytes";
 _mlt_L3T1_limit_count="1000";
 
