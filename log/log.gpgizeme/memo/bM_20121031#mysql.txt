@@ -5,6 +5,111 @@
 
 
 
+== 20140329_171122 ==
+
+* mysql>
+ <pre>
+mysql> ? log10
+Name: 'LOG10'
+Description:
+Syntax:
+LOG10(X)
+
+Returns the base-10 logarithm of X.
+
+URL: http://dev.mysql.com/doc/refman/5.6/en/mathematical-functions.html
+
+Examples:
+mysql> SELECT LOG10(2);
+        -> 0.30102999566398
+mysql> SELECT LOG10(100);
+        -> 2
+mysql> SELECT LOG10(-100);
+        -> NULL
+
+mysql> select log(10,1/10);
++---------------------+
+| log(10,1/10)        |
++---------------------+
+| -0.9999999999999998 |
++---------------------+
+1 row in set (0.00 sec)
+</pre>
+
+
+
+
+* mysql>
+ <pre>
+select file_name as fname, count_read as rcount, count_write as wcount, sum_number_of_bytes_read as rbytes, sum_number_of_bytes_write as wbytes, avg_timer_read as rtime_avg, avg_timer_write as wtime_avg, sum_timer_read as rtime_sum, sum_timer_write as wtime_sum, sum_number_of_bytes_read/count_read as riosz, sum_number_of_bytes_write/count_write as wiosz, log(10, count_read/count_write) as rwc_ratio_log10, log(10, sum_number_of_bytes_read/sum_number_of_bytes_write) as rwb_ratio_log10 from performance_schema.file_summary_by_instance order by wbytes desc limit 10;
+</pre>
+
+
+
+
+
+
+== 20140327_092139 ==
+
+* Create a table, and load file data to the table
+
+ <pre>
+blusjune$
+cat > /tmp/log << EOF
+name owner species sex birth death
+Puffball Diane hamster f 1999-03-30 NULL
+Slim Benny snake m 1996-04-29 NULL
+Chirpy Gwen bird f 1998-09-11 NULL
+Fang Benny dog m 0000-00-00 NULL
+"My Rose" "George Michael" cat m 1987-03-14 NULL
+EOF
+</pre>
+
+ <pre>
+blusjune$
+mysql -p -u root -e "
+DROP TABLE test.pet8;
+CREATE TABLE test.pet8 (name VARCHAR(256), owner VARCHAR(256), species VARCHAR(256), sex CHAR(1), birth DATE, death DATE);
+load data local
+infile '/tmp/log' into table test.pet8
+fields terminated by '\t' optionally enclosed by '\"'
+lines terminated by '\n'
+ignore 1 lines;
+select * from test.pet8
+";
+</pre>
+
+
+
+
+
+
+== 20140311_220313 ==
+
+=== Profiling of SQL activity in MySQL ===
+
+* [http://www.drdobbs.com/database/detailed-profiling-of-sql-activity-in-my/240154959 Detailed profiling of SQL activity in MySQL 5.6 // Mark Leith, June 03, 2013 // ((B.GOOD))]
+
+* To enable all instruments dynamically
+ <pre>
+UPDATE performance_schema.setup_instruments
+SET enabled = 'YES', timed = 'YES';
+</pre>
+
+* To disable all mutex instruments after enabling all (the above)
+ <pre>
+UPDATE performance_schema.setup_instruments
+SET enabled = 'NO', timed = 'NO'
+WHERE name LIKE 'wait/synch/mutex/%';
+</pre>
+
+* To see the list of instruments in performance_schema
+ <pre>
+SELECT * FROM performance_schema.setup_instruments;
+</pre>
+
+
+
 == 20140227_215526 ==
 
 === create some user / set grant privileges / show grants ===

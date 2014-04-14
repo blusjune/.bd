@@ -1,0 +1,23 @@
+## MLT (Multi-layer Tracing)
+## (C) 2014 Brian Myungjune JUNG <brian.m.jung@gmail.com>
+##
+## test.cnf example
+##
+## Please do the followings:
+## (1) RENAME this file ('test.cnf.example') to 'test.cnf',
+## (2) COMMENT OUT the following lines beginning with single '#' mark,
+## (3) CHANGE the value of each parameter properly
+##
+## [CAVEAT]
+## Please note that this configuration
+## DOES NOT affect to and IS NOT the reflection of
+## the DB configuration file (e.g., '/etc/mysql/my.cnf')
+##
+## ____ Parameters: begin ____
+
+_test_param_id="L3_C031";                  # autoextend_increment
+_test_param_seq="4_of_4";                  # 1, [8], 64, 512
+_test_param_name="autoextend_increment";
+_test_param_val="512";
+
+## ____ Parameters: end ____

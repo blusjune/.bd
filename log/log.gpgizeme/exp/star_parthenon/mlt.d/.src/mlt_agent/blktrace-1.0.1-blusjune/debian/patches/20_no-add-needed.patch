@@ -1,0 +1,15 @@
+Description: add necessary library to fix linking failure with --no-add-needed
+Author: Ilya Barygin <barygin@gmail.com>
+Bug-Debian: http://bugs.debian.org/553968
+
+--- blktrace-1.0.1.orig/btreplay/Makefile
++++ blktrace-1.0.1/btreplay/Makefile
+@@ -13,7 +13,7 @@
+ override CFLAGS += $(INCS) $(XCFLAGS) $(OCFLAGS)
+ 
+ PROGS	= btrecord btreplay
+-LIBS	= -laio -lrt
++LIBS	= -laio -lrt -lpthread
+ 
+ all: depend $(PROGS)
+ 

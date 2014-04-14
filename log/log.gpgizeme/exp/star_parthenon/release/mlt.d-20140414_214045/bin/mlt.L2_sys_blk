@@ -1,0 +1,7 @@
+#!/bin/sh
+#20140402_230635
+. ../../conf/mlt.cnf;
+for _dev_i in $_mlt_La_trace_target_disk_list; do
+	blktrace -w $_mlt_La_measure_duration_in_sec $_dev_i &
+done
+jobs -p >> mlt_pid_list.txt
