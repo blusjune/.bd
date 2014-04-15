@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #_ver=20140408_170831
 #_ver=20140409_074228
 
@@ -10,8 +10,8 @@ if [ $# != $_num_param ]; then
 	echo "#>> ERROR: check the number of parameters (should be $_num_param) -- EXIT";
 	exit 1;
 else
-	_mlt_La_measure_duration_in_sec=$1
-	_mlt_L3_measure_interval_in_sec=$2
+	_mlt_La_measure_duration_in_sec=$1;
+	_mlt_L3_measure_interval_in_sec=$2;
 	_mlt_L3_db_root_pw=$3;
 	_mlt_L3T1_order_by=$4;
 	_mlt_L3T1_limit_count=$5;

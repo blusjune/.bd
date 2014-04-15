@@ -1,5 +1,0 @@
-#!/bin/sh
-#20140402_230635
-. ../../conf/mlt.cnf;
-.mlt_iostat -xt $_mlt_L2_measure_interval_in_sec $_mlt_La_measure_duration_in_sec &
-jobs -p >> mlt_pid_list.txt

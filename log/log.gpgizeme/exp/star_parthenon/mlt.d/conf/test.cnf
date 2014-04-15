@@ -16,8 +16,8 @@
 ## ____ Parameters: begin ____
 
 _test_param_id="L3_C031";                  # autoextend_increment
-_test_param_seq="4_of_4";                  # 1, [8], 64, 512
+_test_param_seq="2_of_4";                  # 1, [8], 64, 512
 _test_param_name="autoextend_increment";
-_test_param_val="512";
+_test_param_val="8";
 
 ## ____ Parameters: end ____

@@ -1,4 +1,0 @@
-PATH=(/home/blusjune/bd/x/exp/star_parthenon/release/mlt.d-20140414_234836/bin:.:/home/blusjune/.b/x/sys/sh:/home/blusjune/.b/x/sys/bdx:/x/.bdx:/home/blusjune/.b/x/sys/bin/x.0001:/home/blusjune/.b/x/sys/bin/x.0002:/home/blusjune/.b/x/sys/bin/x.0003:/home/blusjune/.b/x/sys/bin/x.0004:/home/blusjune/.b/x/sys/bin/x.0005:/home/blusjune/.b/x/sys/bin/x.0006:/home/blusjune/.b/x/sys/bin/x.0007:/home/blusjune/.b/x/sys/bin/x.0008:/home/blusjune/.b/x/sys/bin/x.0009:/home/blusjune/.b/x/sys/bin/x.0010:/home/blusjune/.b/x/sys/bin/x.9000:/home/blusjune/x/bin:/x/t/share/bin:/x/t/share/bin.x9:/sbin:/bin:/lib:/usr/sbin:/usr/bin:/usr/lib:/usr/libexec:/usr/local/sbin:/usr/local/bin:/usr/local/lib:/usr/local/libexec:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin)
-.mlt_dbstat_02_onlm: 1: exec: ./mlt.run_trace: not found
-.mlt_dbstat_01_oflm: 1: exec: ./mlt.run_trace: not found
-.mlt_dbstat_03_onlm: 1: exec: ./mlt.run_trace: not found

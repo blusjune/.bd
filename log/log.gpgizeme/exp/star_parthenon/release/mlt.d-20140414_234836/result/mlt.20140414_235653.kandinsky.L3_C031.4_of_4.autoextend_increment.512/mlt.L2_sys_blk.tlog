@@ -1,6 +1,0 @@
-=== sda ===
-  CPU  0:                 1261 events,       60 KiB data
-  Total:                  1261 events (dropped 0),       60 KiB data
-=== sdb ===
-  CPU  0:                   18 events,        1 KiB data
-  Total:                    18 events (dropped 0),        1 KiB data
