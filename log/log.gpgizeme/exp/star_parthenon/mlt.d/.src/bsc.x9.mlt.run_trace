@@ -1,1 +1,438 @@
-/home/blusjune/.b/x/sys/bin/x.9000/bsc.x9.mlt.run_trace.sh
+#!/bin/sh
+## (C) 2014 Brian Myungjune JUNG <brian.m.jung@gmail.com>
+#_ver=20140401_164055
+#_ver=20140403_092621
+#_ver=20140407_143830
+#_ver=20140415_235925;
+#_ver=20140416_174158;
+_ver=20140423_151513;
+_this_prog="mlt.run_trace";
+
+
+
+
+_name_suffix="tlog";
+_name_prefix="mlt";
+_result_dir="result";
+_conf_dir="conf";
+_mltconf_file="mlt.cnf";
+_mltconf_file_example="${_mltconf_file}.example";
+_tconf_file="test.cnf";
+_tconf_file_example="${_tconf_file}.example";
+_mlt_tracer_L3="mlt.L3_db";
+_mlt_tracer_L3T1="mlt.L3T1_db";
+_mlt_tracer_L3T2="mlt.L3T2_db";
+_mlt_tracer_L3T3="mlt.L3T3_db";
+_mlt_tracer_L2_vmstat="mlt.L2_sys_vm";
+_mlt_tracer_L2_iostat="mlt.L2_sys_io";
+_mlt_tracer_L2_blktrace="mlt.L2_sys_blk";
+_mlt_tracer_L1="mlt.L1_ssd";
+
+
+
+
+if [ "$(id -u)" != "0" ]; then
+	echo "#MLT>> ERROR: you need to be root to execute this program -- EXIT 1"
+	exit 1;
+fi
+
+
+
+
+_tstamp=$(date +%Y%m%d_%H%M%S);
+_host=$(hostname);
+_when_where=${_tstamp}.${_host};
+
+
+
+
+echo "#MLT>> Multi-layer Tracer $_ver - (C) 2014 Brian Myungjune JUNG"
+
+
+
+
+# check pre-requisites: _target
+precheck_existence_of_prog()
+{
+	echo -n "#MLT>> checking the pre-requisite: '$_target' ... ";
+	if [ "_$(which $_target)" = "_" ]; then
+		echo "";
+		echo "#MLT>> ERROR: '$_target' does not exist, please make sure that '$_target' installed properly -- EXIT 1";
+		exit 1;
+	else
+		echo "exists (OK)";
+	fi
+}
+_target="vmstat" precheck_existence_of_prog;
+_target="iostat" precheck_existence_of_prog;
+_target="blktrace" precheck_existence_of_prog;
+_target="mysql" precheck_existence_of_prog;
+_target="smartctl" precheck_existence_of_prog;
+# OK to reach here
+
+
+
+
+# collect system information: _target, _sysinf_log
+get_sysinf()
+{
+	if [ "_$(which $_target)" != "_" ]; then
+		echo "
+
+
+		" >> $_sysinf_log;
+		echo "==== $_target ====" >> $_sysinf_log;
+		echo " <pre>" >> $_sysinf_log;
+		$_target >> $_sysinf_log;
+		echo "</pre>" >> $_sysinf_log;
+	fi
+}
+
+
+
+
+# collect system configuration file: _target_fpath, _sysinf_log
+get_conffile()
+{
+	if [ -r "${_target_fpath}" ]; then
+		echo "
+
+
+		" >> $_sysinf_log;
+		echo "==== $_target_fpath ====" >> $_sysinf_log;
+		echo " <pre>" >> $_sysinf_log;
+		cat $_target_fpath >> $_sysinf_log;
+		echo "</pre>" >> $_sysinf_log;
+	fi
+}
+
+
+
+
+if [ ! -f ${_conf_dir}/${_mltconf_file} ]; then
+	cat > ${_conf_dir}/${_mltconf_file_example} << EOF_01
+## MLT (Multi-layer Tracing)
+## (C) 2014 Brian Myungjune JUNG <brian.m.jung@gmail.com>
+##
+## ${_mltconf_file} example
+##
+## Please do the followings:
+## (1) RENAME this file ('${_mltconf_file_example}') to '${_mltconf_file}',
+## (2) COMMENT OUT the following lines beginning with single '#' mark,
+## (3) CHANGE the value of each parameter properly
+##
+## ____ Parameters: begin ____
+
+#_mlt_La_trace_target_disk_list="/dev/sda /dev/sdb";    # when you want to specify multiple instances of devices, just separate them with a space
+#_mlt_La_measure_duration_in_sec="60";                  # SHOULD set this value with enough margin (4200 = 300 + 3600 + 300) ('60' for initial quick test)
+#_mlt_L1_measure_interval_in_sec="10";                  # L1 measurement count will be 360 with this value, when you set measure duration as 3600
+#_mlt_L2_measure_interval_in_sec="1";                   # L2 measurement count will be 3600 with this value, when you set measure duration as 3600
+#_mlt_L3_measure_interval_in_sec="10";                  # L3 measurement count will be 360 with this value, when you set measure duration as 3600
+#_mlt_L3_db_conf_file="/etc/mysql/my.cnf";              # full path of the main configuration file of database (typically '/etc/mysql/my.cnf' for MySQL on Ubuntu)
+#_mlt_L3_db_root_pw="";                                 # password of mysql root user in your case
+#_mlt_L3T1_order_by="w_bytes";
+#_mlt_L3T1_limit_count="1000";
+
+## ____ Parameters: end ____
+EOF_01
+	echo "#MLT>> ERROR: configuration file '${_conf_dir}/${_mltconf_file}' does not exist";
+	echo "      We created '${_conf_dir}/${_mltconf_file_example}' for your convenience";
+	echo "      Check the instructions in this file and retry please";
+	_ready_to_run_trace="n";
+else
+	. ${_conf_dir}/${_mltconf_file};
+	echo "#MLT>> configuration loaded successfully: ${_conf_dir}/${_mltconf_file}";
+	_ready_to_run_trace="y";
+fi
+
+
+
+
+if [ ! -f ${_conf_dir}/${_tconf_file} ]; then
+	cat > ${_conf_dir}/${_tconf_file_example} << EOF_02
+## MLT (Multi-layer Tracing)
+## (C) 2014 Brian Myungjune JUNG <brian.m.jung@gmail.com>
+##
+## ${_tconf_file} example
+##
+## Please do the followings:
+## (1) RENAME this file ('${_tconf_file_example}') to '${_tconf_file}',
+## (2) COMMENT OUT the following lines beginning with single '#' mark,
+## (3) CHANGE the value of each parameter properly
+##
+## [CAVEAT]
+## Please note that this configuration
+## DOES NOT affect to and IS NOT the reflection of
+## the DB configuration file (e.g., '/etc/mysql/my.cnf')
+##
+## ____ Parameters: begin ____
+
+#_test_param_id="L3_C031";                  # autoextend_increment
+#_test_param_seq="2_of_4";                  # 1, [8], 64, 512
+#_test_param_name="autoextend_increment";
+#_test_param_val="8";
+
+## ____ Parameters: end ____
+EOF_02
+	echo "#MLT>> ERROR: configuration file '${_conf_dir}/${_tconf_file}' does not exist";
+	echo "      We created '${_conf_dir}/${_tconf_file_example}' for your convenience";
+	echo "      Check the instructions in this file and retry please";
+	_ready_to_run_trace="n";
+else
+	. ${_conf_dir}/${_tconf_file};
+	echo "#MLT>> configuration loaded successfully: ${_conf_dir}/${_tconf_file}";
+	_ready_to_run_trace="y";
+fi
+
+
+
+
+if [ "X$_ready_to_run_trace" != "Xy" ]; then
+	echo "#MLT>> ERROR: still not ready to run the trace, please check your configuration files -- EXIT";
+	exit 0;
+fi
+_tconf="${_test_param_id}.${_test_param_seq}.${_test_param_name}.${_test_param_val}";
+_tsession="${_name_prefix}.${_when_where}.${_tconf}";
+_mlt_bindir=$(pwd)/bin; _MLT_PATH=$_mlt_bindir:$PATH;
+
+
+
+
+if [ -f conf/mlt.cnf ]; then
+	. conf/mlt.cnf;
+	if [ "X$_mlt_L3_db_root_pw" != "X" ]; then
+		# DB root password is not empty
+		mysql -p$_mlt_L3_db_root_pw -u root -e "show databases;" > /dev/null 2>&1;
+		if [ "X$?" != "X0" ]; then
+			echo "#MLT>> ERROR: could not access DBMS with the current password ($_mlt_L3_db_root_pw) -- EXIT 1";
+			exit 1;
+		fi
+		# OK to reach here
+		_mysql_cmd="mysql -p$_mlt_L3_db_root_pw -u root"; # for non-empty password case
+	else
+		# DB root password is empty
+		mysql -u root -e "show databases;" > /dev/null;
+		if [ "X$?" != "X0" ]; then
+			echo "#MLT>> ERROR: could not access DBMS with an empty password -- EXIT 1";
+			exit 1;
+		fi
+		# OK to reach here
+		_mysql_cmd="mysql -u root"; # for empty password case
+	fi
+else
+	echo "#MLT>> ERROR: conf/mlt.cnf does not exist -- EXIT 1";
+	exit 1;
+fi
+
+
+
+
+# oflm
+mlt_L3_dbstat_01()
+{
+	. ../../conf/mlt.cnf;
+	_sqlstmt__get__oflm__perfile_io_summary="
+	SELECT UNIX_TIMESTAMP() as 'Tstamp_a', DATE_FORMAT(CURTIME(), '%Y%m%d_%H%i%S') as 'Tstamp_b'\G;
+	USE performance_schema;
+	SELECT file_name as perfile_io_summary_fname,
+		count_star as a_count,
+		count_read as r_count,
+		count_write as w_count,
+		sum_number_of_bytes_read as r_bytes,
+		sum_number_of_bytes_write as w_bytes,
+		sum_timer_read as r_wait_sum, avg_timer_read as r_wait_avg, max_timer_read as r_wait_max, min_timer_read as r_wait_min,
+		sum_timer_write as w_wait_sum, avg_timer_write as w_wait_avg, max_timer_write as w_wait_max, min_timer_write as w_wait_min
+	FROM performance_schema.file_summary_by_instance
+	WHERE file_name NOT LIKE '%performance_schema%'
+	ORDER BY $_mlt_L3T1_order_by DESC
+	LIMIT $_mlt_L3T1_limit_count
+	;
+	";
+	_mlt_tracelog_file="mlt.L3_db_01_oflm.tlog";
+	touch $_mlt_tracelog_file;
+	$_mysql_cmd -e "$_sqlstmt__get__oflm__perfile_io_summary" >> $_mlt_tracelog_file;
+	sleep $_mlt_La_measure_duration_in_sec;
+	$_mysql_cmd -e "$_sqlstmt__get__oflm__perfile_io_summary" >> $_mlt_tracelog_file;
+}
+
+
+
+
+# onlm
+mlt_L3_dbstat_02()
+{
+	. ../../conf/mlt.cnf;
+	_sqlstmt__get__onlm__innodb_buffer_pool_stats="
+	SELECT UNIX_TIMESTAMP() as 'Tstamp_a', DATE_FORMAT(CURTIME(), '%Y%m%d_%H%i%S') as 'Tstamp_b'\G;
+	USE information_schema;
+	SELECT pool_id as innodb_buffer_pool_stats_plid,
+		pool_size as plsz,
+		free_buffers as plsz_free,
+		database_pages as dbpg,
+		old_database_pages as dbpg_old,
+		modified_database_pages as dbpg_mod,
+		pages_made_young as pg_young,
+		pages_not_made_young as pg_no_young,
+		number_pages_read as r_pages,
+		number_pages_created as c_pages,
+		number_pages_written as w_pages,
+		pending_reads as r_pend,
+		lru_io_total as lru_io_tot,
+		lru_io_current as lru_io_cur,
+		hit_rate
+	FROM information_schema.innodb_buffer_pool_stats
+	;
+	";
+	_mlt_tracelog_file="mlt.L3_db_02_onlm.tlog";
+	touch $_mlt_tracelog_file;
+	_count=0;
+	_countlimit=$(expr $_mlt_La_measure_duration_in_sec \/ $_mlt_L3_measure_interval_in_sec);
+	while [ $_count -lt $_countlimit ]; do
+		$_mysql_cmd -e "$_sqlstmt__get__onlm__innodb_buffer_pool_stats" >> $_mlt_tracelog_file;
+		sleep $_mlt_L3_measure_interval_in_sec;
+		_count=$(expr $_count + 1);
+	done
+}
+
+
+
+
+# onlm
+mlt_L3_dbstat_03()
+{
+	. ../../conf/mlt.cnf;
+	_sqlstmt__get__onlm__innodb_metrics="
+	SELECT UNIX_TIMESTAMP() as 'Tstamp_a', DATE_FORMAT(CURTIME(), '%Y%m%d_%H%i%S') as 'Tstamp_b'\G;
+	USE information_schema;
+	SELECT name as innodb_metrics_name,
+		subsystem,
+		type,
+		count,
+		max_count,
+		avg_count
+	FROM information_schema.innodb_metrics
+	WHERE status = 'enabled'
+	ORDER BY name DESC
+	;
+	";
+	_mlt_tracelog_file="mlt.L3_db_03_onlm.tlog";
+	touch $_mlt_tracelog_file;
+	_count=0;
+	_countlimit=$(expr $_mlt_La_measure_duration_in_sec \/ $_mlt_L3_measure_interval_in_sec);
+	while [ $_count -lt $_countlimit ]; do
+		$_mysql_cmd -e "$_sqlstmt__get__onlm__innodb_metrics" >> $_mlt_tracelog_file;
+		sleep $_mlt_L3_measure_interval_in_sec;
+		_count=$(expr $_count + 1);
+	done
+}
+
+
+
+
+mlt_sa_idxer()
+{
+	_sarprog="/tmp/.mltidx";
+	_sarbinlog=".mlt_aux.idx";
+	_sarbinlog_gz="${_sarbinlog}.binz";
+	if [ _$(which sar) != "_" ]; then
+		cp $(which sar) $_sarprog;
+#		sar -A -o $_sarbinlog $_mlt_L2_measure_interval_in_sec $_mlt_La_measure_duration_in_sec > /dev/null 2>&1
+		$_sarprog -A -o $_sarbinlog $_mlt_L2_measure_interval_in_sec $_mlt_La_measure_duration_in_sec > /dev/null 2>&1
+	fi
+	gzip $_sarbinlog;
+	mv ${_sarbinlog}.gz $_sarbinlog_gz;
+}
+
+
+
+
+exec_mlt()
+{
+	if [ "X$_exec_log" = "Xn" ]; then
+		_mlt_log_file="/dev/null";
+	else
+		_mlt_log_file="${_mlt_tracer}.${_name_suffix}";
+	fi
+	echo "#MLT>> $_mlt_tracer started (trace log: $_mlt_log_file)"
+#	. ../../conf/mlt.cnf;
+	PATH=$_mlt_bindir:$PATH;
+	export PATH;
+#	$_mlt_tracer > $_mlt_log_file;
+	$_mlt_tracer > $_mlt_log_file 2>&1;
+}
+
+
+
+
+exec_shbin()
+{
+	if [ "X$_exec_log" = "Xn" ]; then
+		_mlt_log_file="/dev/null";
+	else
+		_mlt_log_file="${_mlt_tracer}.${_name_suffix}";
+	fi
+	echo "#MLT>> $_mlt_tracer started (trace log: $_mlt_log_file)"
+	. ../../conf/mlt.cnf;
+	mlt_dbstat_01 $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw $_mlt_L3T1_order_by $_mlt_L3T1_limit_count > ${_mlt_log_file}.01_oflm 2>&1 &
+	mlt_dbstat_02 $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw > ${_mlt_log_file}.02_onlm 2>&1 &
+	mlt_dbstat_03 $_mlt_La_measure_duration_in_sec $_mlt_L3_measure_interval_in_sec $_mlt_L3_db_root_pw > ${_mlt_log_file}.03_onlm 2>&1 &
+}
+
+
+
+
+mkdir -p $_result_dir/$_tsession;
+(cd $_result_dir/$_tsession;
+_trace_task_done_msg="../trace_task_done.${_tsession}.msg";
+_mlt_t1="$(date +%Y%m%d_%H%M%S)";
+
+mlt_sa_idxer&
+jobs -p >> mlt_pid_list.txt
+
+#_mlt_dbstat_cmds=$(ls -1 ../../bin/.mlt_dbstat_*);
+#for _i in $_mlt_dbstat_cmds; do
+#	ln -s $_i;
+#done
+
+# collect system information {
+_sysinf_log="sysinf.${_tsession}.txt";
+date +%Y%m%d_%H%M%S > $_sysinf_log;
+echo "----" >> $_sysinf_log;
+uname -srm >> $_sysinf_log;
+_target="lscpu" get_sysinf;
+_target="lspci" get_sysinf;
+_target="lsblk" get_sysinf;
+_target="lsscsi" get_sysinf;
+_target="ifconfig" get_sysinf;
+_target_fpath="${_mlt_L3_db_conf_file}" get_conffile;
+echo "#MLT>> system (test environment) information collected";
+# }
+
+echo "#MLT>> tracing started | taskid: $_tsession";
+_mlt_tracer=$_mlt_tracer_L1 _exec_log="n"            exec_mlt&
+_mlt_tracer=$_mlt_tracer_L2_vmstat _exec_log="y"     exec_mlt&
+_mlt_tracer=$_mlt_tracer_L2_iostat _exec_log="y"     exec_mlt&
+_mlt_tracer=$_mlt_tracer_L2_blktrace _exec_log="y"   exec_mlt&
+_mlt_tracer="mlt_L3_dbstat_01" _exec_log="n"         exec_mlt&
+_mlt_tracer="mlt_L3_dbstat_02" _exec_log="n"         exec_mlt&
+_mlt_tracer="mlt_L3_dbstat_03" _exec_log="n"         exec_mlt&
+
+sleep 1;
+_count=$_mlt_La_measure_duration_in_sec;
+while [ $_count -gt 0 ]; do
+	echo -n "-"; sleep 1; printf "\b"; _count=$(expr $_count - 1); if [ $_count = "0" ]; then break; fi
+	echo -n "\\"; sleep 1; printf "\b"; _count=$(expr $_count - 1); if [ $_count = "0" ]; then break; fi
+	echo -n "|"; sleep 1; printf "\b"; _count=$(expr $_count - 1); if [ $_count = "0" ]; then break; fi
+	echo -n "/"; sleep 1; printf "\b"; _count=$(expr $_count - 1); if [ $_count = "0" ]; then break; fi
+done
+#sleep $_mlt_La_measure_duration_in_sec;
+
+_mlt_t2="$(date +%Y%m%d_%H%M%S)";
+echo "#MLT>> tracing completed | taskid: $_tsession | from: $_mlt_t1 -> to: $_mlt_t2" > $_trace_task_done_msg;
+cat $_trace_task_done_msg;
+rm -f mlt_pid_list.txt
+)
+
+
+
+
