@@ -1,0 +1,12 @@
+* To enable accecpt the X connection requests from other hosts
+: open the X window of some program being executed in other hosts
+: do the followings for /etc/X11/xinit/xserverrc file
+
+ <pre>
+$ cat > /etc/X11/xinit/xserverrc << EOF
+#!/bin/sh
+
+#exec /usr/bin/X -nolisten tcp "$@"
+exec /usr/bin/X 
+EOF
+</pre>

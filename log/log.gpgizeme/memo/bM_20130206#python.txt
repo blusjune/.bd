@@ -1,5 +1,40 @@
 
 
+
+
+
+== 20140502_202528 ==
+
+=== Regular expression in Python ===
+
+ <pre>
+>>> import re
+>>> p1 = re.compile('[a-c]+')
+>>> p2 = re.compile('[b-d]+')
+>>> p3 = re.compile('[h-j]+')
+>>> str = "abcdefghij"
+>>> m1 = p1.match(str)
+>>> m2 = p2.match(str)
+>>> m3 = p3.match(str)
+>>> m1
+<_sre.SRE_Match object at 0xc74f38>
+>>> m2
+>>> m3
+>>> m1.group()
+'abc'
+>>> m2.group()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'NoneType' object has no attribute 'group'
+>>> m3.group()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'NoneType' object has no attribute 'group'
+</pre>
+
+
+
+
 == 20130716_093042 ==
 
 === how to check whether a file exists or not ===
