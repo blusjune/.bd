@@ -5,7 +5,8 @@
 #_ver=20140407_143830
 #_ver=20140415_235925;
 #_ver=20140416_174158;
-_ver=20140423_151513;
+#_ver=20140423_151513;
+_ver=20140512_105340;
 _this_prog="mlt.run_trace";
 
 
@@ -31,8 +32,13 @@ _mlt_tracer_L1="mlt.L1_ssd";
 
 
 
+echo "#MLT>> Multi-layer Tracer $_ver - (C) 2014 Brian Myungjune JUNG"
+
+
+
+
 if [ "$(id -u)" != "0" ]; then
-	echo "#MLT>> ERROR: you need to be root to execute this program -- EXIT 1"
+	echo "#MLT:ERROR>> you need to be root to execute this program -- EXIT 1"
 	exit 1;
 fi
 
@@ -46,18 +52,13 @@ _when_where=${_tstamp}.${_host};
 
 
 
-echo "#MLT>> Multi-layer Tracer $_ver - (C) 2014 Brian Myungjune JUNG"
-
-
-
-
 # check pre-requisites: _target
 precheck_existence_of_prog()
 {
 	echo -n "#MLT>> checking the pre-requisite: '$_target' ... ";
 	if [ "_$(which $_target)" = "_" ]; then
 		echo "";
-		echo "#MLT>> ERROR: '$_target' does not exist, please make sure that '$_target' installed properly -- EXIT 1";
+		echo "#MLT:ERROR>> '$_target' does not exist, please make sure that '$_target' installed properly -- EXIT 1";
 		exit 1;
 	else
 		echo "exists (OK)";
@@ -135,7 +136,7 @@ if [ ! -f ${_conf_dir}/${_mltconf_file} ]; then
 
 ## ____ Parameters: end ____
 EOF_01
-	echo "#MLT>> ERROR: configuration file '${_conf_dir}/${_mltconf_file}' does not exist";
+	echo "#MLT:ERROR>> configuration file '${_conf_dir}/${_mltconf_file}' does not exist";
 	echo "      We created '${_conf_dir}/${_mltconf_file_example}' for your convenience";
 	echo "      Check the instructions in this file and retry please";
 	_ready_to_run_trace="n";
@@ -174,7 +175,7 @@ if [ ! -f ${_conf_dir}/${_tconf_file} ]; then
 
 ## ____ Parameters: end ____
 EOF_02
-	echo "#MLT>> ERROR: configuration file '${_conf_dir}/${_tconf_file}' does not exist";
+	echo "#MLT:ERROR>> configuration file '${_conf_dir}/${_tconf_file}' does not exist";
 	echo "      We created '${_conf_dir}/${_tconf_file_example}' for your convenience";
 	echo "      Check the instructions in this file and retry please";
 	_ready_to_run_trace="n";
@@ -188,7 +189,7 @@ fi
 
 
 if [ "X$_ready_to_run_trace" != "Xy" ]; then
-	echo "#MLT>> ERROR: still not ready to run the trace, please check your configuration files -- EXIT";
+	echo "#MLT:ERROR>> still not ready to run the trace, please check your configuration files -- EXIT";
 	exit 0;
 fi
 _tconf="${_test_param_id}.${_test_param_seq}.${_test_param_name}.${_test_param_val}";
@@ -204,7 +205,7 @@ if [ -f conf/mlt.cnf ]; then
 		# DB root password is not empty
 		mysql -p$_mlt_L3_db_root_pw -u root -e "show databases;" > /dev/null 2>&1;
 		if [ "X$?" != "X0" ]; then
-			echo "#MLT>> ERROR: could not access DBMS with the current password ($_mlt_L3_db_root_pw) -- EXIT 1";
+			echo "#MLT:ERROR>> could not access DBMS with the current password ($_mlt_L3_db_root_pw) -- EXIT 1";
 			exit 1;
 		fi
 		# OK to reach here
@@ -213,14 +214,14 @@ if [ -f conf/mlt.cnf ]; then
 		# DB root password is empty
 		mysql -u root -e "show databases;" > /dev/null;
 		if [ "X$?" != "X0" ]; then
-			echo "#MLT>> ERROR: could not access DBMS with an empty password -- EXIT 1";
+			echo "#MLT:ERROR>> could not access DBMS with an empty password -- EXIT 1";
 			exit 1;
 		fi
 		# OK to reach here
 		_mysql_cmd="mysql -u root"; # for empty password case
 	fi
 else
-	echo "#MLT>> ERROR: conf/mlt.cnf does not exist -- EXIT 1";
+	echo "#MLT:ERROR>> conf/mlt.cnf does not exist -- EXIT 1";
 	exit 1;
 fi
 
@@ -265,21 +266,38 @@ mlt_L3_dbstat_02()
 	_sqlstmt__get__onlm__innodb_buffer_pool_stats="
 	SELECT UNIX_TIMESTAMP() as 'Tstamp_a', DATE_FORMAT(CURTIME(), '%Y%m%d_%H%i%S') as 'Tstamp_b'\G;
 	USE information_schema;
-	SELECT pool_id as innodb_buffer_pool_stats_plid,
-		pool_size as plsz,
-		free_buffers as plsz_free,
-		database_pages as dbpg,
-		old_database_pages as dbpg_old,
-		modified_database_pages as dbpg_mod,
-		pages_made_young as pg_young,
-		pages_not_made_young as pg_no_young,
-		number_pages_read as r_pages,
-		number_pages_created as c_pages,
-		number_pages_written as w_pages,
-		pending_reads as r_pend,
-		lru_io_total as lru_io_tot,
-		lru_io_current as lru_io_cur,
-		hit_rate
+	SELECT POOL_ID as bpid,
+		POOL_SIZE as bpsz,
+		FREE_BUFFERS as bpsz_free,
+		DATABASE_PAGES as dbpg,
+		OLD_DATABASE_PAGES as dbpg_old,
+		MODIFIED_DATABASE_PAGES as dbpg_mod,
+		PENDING_DECOMPRESS as pend_decomp,
+		PENDING_READS as pend_read,
+		PENDING_FLUSH_LRU as pend_flush_lru,
+		PENDING_FLUSH_LIST as pend_flush_list,
+		PAGES_MADE_YOUNG as pg_young,
+		PAGES_NOT_MADE_YOUNG as pg_no_young,
+		PAGES_MADE_YOUNG_RATE as pg_young_rate,
+		PAGES_MADE_NOT_YOUNG_RATE as pg_no_young_rate,
+		NUMBER_PAGES_READ as npg_read,
+		NUMBER_PAGES_CREATED as npg_crea,
+		NUMBER_PAGES_WRITTEN as npg_writ,
+		PAGES_READ_RATE as pg_rate_read,
+		PAGES_CREATE_RATE as pg_rate_crea,
+		PAGES_WRITTEN_RATE as pg_rate_writ,
+		NUMBER_PAGES_GET as npg_get,
+		HIT_RATE as hit_rate,
+		YOUNG_MAKE_PER_THOUSAND_GETS as young_mk_per_1k_gets,
+		NOT_YOUNG_MAKE_PER_THOUSAND_GETS as young_mk_per_1k_gets,
+		NUMBER_PAGES_READ_AHEAD as npg_ra,
+		NUMBER_READ_AHEAD_EVICTED as npg_ra_evic,
+		READ_AHEAD_RATE as ra_rate,
+		READ_AHEAD_EVICTED_RATE as ra_evic_rate,
+		LRU_IO_TOTAL as lru_io_tot,
+		LRU_IO_CURRENT as lru_io_cur,
+		UNCOMPRESS_TOTAL as uncomp_tot,
+		UNCOMPRESS_CURRENT as uncomp_cur
 	FROM information_schema.innodb_buffer_pool_stats
 	;
 	";
@@ -293,6 +311,66 @@ mlt_L3_dbstat_02()
 		_count=$(expr $_count + 1);
 	done
 }
+
+#
+# SELECT pool_id as innodb_buffer_pool_stats_plid,
+#		pool_size as plsz,
+#		free_buffers as plsz_free,
+#		database_pages as dbpg,
+#		old_database_pages as dbpg_old,
+#		modified_database_pages as dbpg_mod,
+#		pages_made_young as pg_young,
+#		pages_not_made_young as pg_no_young,
+#		number_pages_read as r_pages,
+#		number_pages_created as c_pages,
+#		number_pages_written as w_pages,
+#		pending_reads as r_pend,
+#		lru_io_total as lru_io_tot,
+#		lru_io_current as lru_io_cur,
+#		hit_rate
+#	FROM information_schema.innodb_buffer_pool_stats
+#
+
+#
+# | POOL_ID | POOL_SIZE | FREE_BUFFERS | DATABASE_PAGES | OLD_DATABASE_PAGES | MODIFIED_DATABASE_PAGES | PENDING_DECOMPRESS | PENDING_READS | PENDING_FLUSH_LRU | PENDING_FLUSH_LIST | PAGES_MADE_YOUNG | PAGES_NOT_MADE_YOUNG | PAGES_MADE_YOUNG_RATE | PAGES_MADE_NOT_YOUNG_RATE | NUMBER_PAGES_READ | NUMBER_PAGES_CREATED | NUMBER_PAGES_WRITTEN | PAGES_READ_RATE | PAGES_CREATE_RATE | PAGES_WRITTEN_RATE | NUMBER_PAGES_GET | HIT_RATE | YOUNG_MAKE_PER_THOUSAND_GETS | NOT_YOUNG_MAKE_PER_THOUSAND_GETS | NUMBER_PAGES_READ_AHEAD | NUMBER_READ_AHEAD_EVICTED | READ_AHEAD_RATE | READ_AHEAD_EVICTED_RATE | LRU_IO_TOTAL | LRU_IO_CURRENT | UNCOMPRESS_TOTAL | UNCOMPRESS_CURRENT |
+#
+
+# mysql> select * from information_schema.innodb_buffer_pool_stats limit 1\G;
+# *************************** 1. row ***************************
+#                          POOL_ID: 0
+#                        POOL_SIZE: 262143
+#                     FREE_BUFFERS: 262112
+#                   DATABASE_PAGES: 31
+#               OLD_DATABASE_PAGES: 0
+#          MODIFIED_DATABASE_PAGES: 0
+#               PENDING_DECOMPRESS: 0
+#                    PENDING_READS: 0
+#                PENDING_FLUSH_LRU: 0
+#               PENDING_FLUSH_LIST: 0
+#                 PAGES_MADE_YOUNG: 0
+#             PAGES_NOT_MADE_YOUNG: 0
+#            PAGES_MADE_YOUNG_RATE: 0
+#        PAGES_MADE_NOT_YOUNG_RATE: 0
+#                NUMBER_PAGES_READ: 31
+#             NUMBER_PAGES_CREATED: 0
+#             NUMBER_PAGES_WRITTEN: 1
+#                  PAGES_READ_RATE: 0
+#                PAGES_CREATE_RATE: 0
+#               PAGES_WRITTEN_RATE: 0
+#                 NUMBER_PAGES_GET: 267
+#                         HIT_RATE: 0
+#     YOUNG_MAKE_PER_THOUSAND_GETS: 0
+# NOT_YOUNG_MAKE_PER_THOUSAND_GETS: 0
+#          NUMBER_PAGES_READ_AHEAD: 0
+#        NUMBER_READ_AHEAD_EVICTED: 0
+#                  READ_AHEAD_RATE: 0
+#          READ_AHEAD_EVICTED_RATE: 0
+#                     LRU_IO_TOTAL: 0
+#                   LRU_IO_CURRENT: 0
+#                 UNCOMPRESS_TOTAL: 0
+#               UNCOMPRESS_CURRENT: 0
+# 1 row in set (0.00 sec)
+#
 
 
 

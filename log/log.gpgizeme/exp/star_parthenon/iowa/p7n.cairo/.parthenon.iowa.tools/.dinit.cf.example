@@ -1,0 +1,13 @@
+# 20140427_173024
+
+#_tracelog_root="tracelog/_berlin";
+_tracelog_root="tracelog/_cairo";
+
+#_tgt_1="L3_C029";
+#_tgt_1="L3_C018";
+_tgt_1="L3_C019";
+
+_tgt_21="m01-xfs";
+_tgt_22="m02-ext4";
+_tgt_23="m03-f2fs";
+
