@@ -3,9 +3,11 @@
  <pre>
 git-center$ cd ~blusjune; mkdir .._; mv .b .bd .._;
 git-center$ cd /x; ln -s ~blusjune/.._;
-git-center$ cd .._; cd .bd; mv .git .git.foo; # to force .bd/ to be included in .._ git; otherwise, .bd/ will not be included in .._ by 'git add -A' due to existence of '.git/' directory in .bd/;
-git-center$ cd ..; git init;
+git-center$ cd .._;
+git-center$ cd .bd; mv .git .git.foo; # to force .bd/ to be included in .._ git; otherwise, .bd/ will not be included in .._ by 'git add -A' due to existence of '.git/' directory in .bd/;
+git-center$ cd /x/.._; rm -fr .git; git init;
 git-center$ git add -A; git commit -a;
+git-center$ git tag initial_version_$(..ts);
 git-center$ git branch; git log; git shortlog; git blame .b/..__Brian_M_JUNG__;
 
 git-london$ mkdir /x/gitwork; cd /x/gitwork;
