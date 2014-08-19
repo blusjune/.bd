@@ -8,10 +8,13 @@ echo "#>> update gighub source tree (add-commit-push)";
 rm -f .tstamp.*;
 touch .tstamp.$(tstamp);
 
-if [ -d '.git.foo' ]; then
-	mv .git.foo .git;
+_gitdir_foo=".git.foo";
+_gitdir=".git";
+
+if [ -d $_gitdir_foo ]; then
+	mv $_gitdir_foo $_gitdir;
 else
-	echo "ERROR: directory '.git.foo' is not found -- EXIT";
+	echo "ERROR: directory '$_gitdir_foo' is not found -- EXIT";
 	exit 1;
 fi
 
@@ -19,9 +22,9 @@ git add -A
 git commit -a
 git push --all -u
 
-if [ -d '.git' ]; then
-	mv .git .git.foo;
+if [ -d $_gitdir ]; then
+	mv $_gitdir $_gitdir_foo;
 else
-	echo "ERROR: directory '.git' is not found -- EXIT";
+	echo "ERROR: directory '$_gitdir' is not found -- EXIT";
 	exit 1;
 fi
