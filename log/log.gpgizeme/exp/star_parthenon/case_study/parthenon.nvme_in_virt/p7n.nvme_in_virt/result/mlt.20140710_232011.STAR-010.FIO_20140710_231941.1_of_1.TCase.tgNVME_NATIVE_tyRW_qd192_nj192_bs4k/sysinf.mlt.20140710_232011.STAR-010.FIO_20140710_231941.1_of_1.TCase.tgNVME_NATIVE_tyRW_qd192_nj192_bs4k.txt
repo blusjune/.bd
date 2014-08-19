@@ -1,0 +1,386 @@
+20140710_232011
+----
+Linux 3.11.0-15-generic x86_64
+
+
+
+		
+==== lscpu ====
+ <pre>
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                24
+On-line CPU(s) list:   0-23
+Thread(s) per core:    2
+Core(s) per socket:    6
+Socket(s):             2
+NUMA node(s):          2
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 62
+Stepping:              4
+CPU MHz:               2099.978
+BogoMIPS:              4201.13
+Virtualization:        VT-x
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              15360K
+NUMA node0 CPU(s):     0,2,4,6,8,10,12,14,16,18,20,22
+NUMA node1 CPU(s):     1,3,5,7,9,11,13,15,17,19,21,23
+</pre>
+
+
+
+		
+==== lspci ====
+ <pre>
+00:00.0 Host bridge: Intel Corporation Ivytown DMI2 (rev 04)
+00:01.0 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 1a (rev 04)
+00:02.0 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 2a (rev 04)
+00:02.2 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 2c (rev 04)
+00:03.0 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 3a (rev 04)
+00:05.0 System peripheral: Intel Corporation Ivytown VTd/Memory Map/Misc (rev 04)
+00:05.2 System peripheral: Intel Corporation Ivytown IIO RAS (rev 04)
+00:11.0 PCI bridge: Intel Corporation C600/X79 series chipset PCI Express Virtual Root Port (rev 05)
+00:16.0 Communication controller: Intel Corporation C600/X79 series chipset MEI Controller #1 (rev 05)
+00:16.1 Communication controller: Intel Corporation C600/X79 series chipset MEI Controller #2 (rev 05)
+00:1a.0 USB controller: Intel Corporation C600/X79 series chipset USB2 Enhanced Host Controller #2 (rev 05)
+00:1c.0 PCI bridge: Intel Corporation C600/X79 series chipset PCI Express Root Port 1 (rev b5)
+00:1c.7 PCI bridge: Intel Corporation C600/X79 series chipset PCI Express Root Port 8 (rev b5)
+00:1d.0 USB controller: Intel Corporation C600/X79 series chipset USB2 Enhanced Host Controller #1 (rev 05)
+00:1e.0 PCI bridge: Intel Corporation 82801 PCI Bridge (rev a5)
+00:1f.0 ISA bridge: Intel Corporation C600/X79 series chipset LPC Controller (rev 05)
+00:1f.2 SATA controller: Intel Corporation C600/X79 series chipset 6-Port SATA AHCI Controller (rev 05)
+01:00.0 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)
+01:00.1 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)
+01:00.2 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)
+01:00.3 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)
+02:00.0 RAID bus controller: LSI Logic / Symbios Logic MegaRAID SAS 2208 [Thunderbolt] (rev 05)
+03:00.0 Ethernet controller: Intel Corporation Ethernet 10G 2P X520 Adapter (rev 01)
+03:00.1 Ethernet controller: Intel Corporation Ethernet 10G 2P X520 Adapter (rev 01)
+07:00.0 PCI bridge: Renesas Technology Corp. SH7757 PCIe Switch [PS]
+08:00.0 PCI bridge: Renesas Technology Corp. SH7757 PCIe Switch [PS]
+08:01.0 PCI bridge: Renesas Technology Corp. SH7757 PCIe Switch [PS]
+09:00.0 PCI bridge: Renesas Technology Corp. SH7757 PCIe-PCI Bridge [PPB]
+0a:00.0 VGA compatible controller: Matrox Electronics Systems Ltd. G200eR2
+3f:08.0 System peripheral: Intel Corporation Ivytown QPI Link 0 (rev 04)
+3f:09.0 System peripheral: Intel Corporation Ivytown QPI Link 1 (rev 04)
+3f:0a.0 System peripheral: Intel Corporation Ivytown Power Control Unit 0 (rev 04)
+3f:0a.1 System peripheral: Intel Corporation Ivytown Power Control Unit 1 (rev 04)
+3f:0a.2 System peripheral: Intel Corporation Ivytown Power Control Unit 2 (rev 04)
+3f:0a.3 System peripheral: Intel Corporation Ivytown Power Control Unit 3 (rev 04)
+3f:0b.0 System peripheral: Intel Corporation Ivytown Semaphore and Scratchpad Configuration Registers (rev 04)
+3f:0b.3 System peripheral: Intel Corporation Ivytown Semaphore and Scratchpad Configuration Registers (rev 04)
+3f:0c.0 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+3f:0c.1 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+3f:0c.2 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+3f:0d.0 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+3f:0d.1 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+3f:0d.2 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+3f:0e.0 System peripheral: Intel Corporation Ivytown Home Agent 0 (rev 04)
+3f:0e.1 Performance counters: Intel Corporation Ivytown Home Agent 0 (rev 04)
+3f:0f.0 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Target Address/Thermal Registers (rev 04)
+3f:0f.1 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 RAS Registers (rev 04)
+3f:0f.2 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+3f:0f.3 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+3f:0f.4 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+3f:0f.5 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+3f:10.0 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 0 (rev 04)
+3f:10.1 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 1 (rev 04)
+3f:10.2 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 ERROR Registers 0 (rev 04)
+3f:10.3 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 ERROR Registers 1 (rev 04)
+3f:10.4 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 2 (rev 04)
+3f:10.5 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 3 (rev 04)
+3f:10.7 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 ERROR Registers 3 (rev 04)
+3f:13.0 System peripheral: Intel Corporation Ivytown R2PCIe (rev 04)
+3f:13.1 Performance counters: Intel Corporation Ivytown PCI Express Ring Performance Monitoring (rev 04)
+3f:13.4 System peripheral: Intel Corporation Ivytown QPI Ring Registers (rev 04)
+3f:13.5 Performance counters: Intel Corporation Ivytown QPI Ring Performance Ring Monitoring (rev 04)
+3f:16.0 System peripheral: Intel Corporation Ivytown System Address Decoder (rev 04)
+3f:16.1 System peripheral: Intel Corporation Ivytown Broadcast Registers (rev 04)
+3f:16.2 System peripheral: Intel Corporation Ivytown Broadcast Registers (rev 04)
+40:01.0 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 1a (rev 04)
+40:02.0 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 2a (rev 04)
+40:03.0 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 3a (rev 04)
+40:03.2 PCI bridge: Intel Corporation Ivytown PCI Express Root Port 3c (rev 04)
+40:05.0 System peripheral: Intel Corporation Ivytown VTd/Memory Map/Misc (rev 04)
+40:05.2 System peripheral: Intel Corporation Ivytown IIO RAS (rev 04)
+42:00.0 PCI bridge: PLX Technology, Inc. PEX 8632 32-lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch (rev bb)
+43:04.0 PCI bridge: PLX Technology, Inc. PEX 8632 32-lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch (rev bb)
+43:05.0 PCI bridge: PLX Technology, Inc. PEX 8632 32-lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch (rev bb)
+43:06.0 PCI bridge: PLX Technology, Inc. PEX 8632 32-lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch (rev bb)
+43:07.0 PCI bridge: PLX Technology, Inc. PEX 8632 32-lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch (rev bb)
+47:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd Device a820 (rev 03)
+7f:08.0 System peripheral: Intel Corporation Ivytown QPI Link 0 (rev 04)
+7f:09.0 System peripheral: Intel Corporation Ivytown QPI Link 1 (rev 04)
+7f:0a.0 System peripheral: Intel Corporation Ivytown Power Control Unit 0 (rev 04)
+7f:0a.1 System peripheral: Intel Corporation Ivytown Power Control Unit 1 (rev 04)
+7f:0a.2 System peripheral: Intel Corporation Ivytown Power Control Unit 2 (rev 04)
+7f:0a.3 System peripheral: Intel Corporation Ivytown Power Control Unit 3 (rev 04)
+7f:0b.0 System peripheral: Intel Corporation Ivytown Semaphore and Scratchpad Configuration Registers (rev 04)
+7f:0b.3 System peripheral: Intel Corporation Ivytown Semaphore and Scratchpad Configuration Registers (rev 04)
+7f:0c.0 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+7f:0c.1 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+7f:0c.2 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+7f:0d.0 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+7f:0d.1 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+7f:0d.2 System peripheral: Intel Corporation Ivytown Unicast Registers (rev 04)
+7f:0e.0 System peripheral: Intel Corporation Ivytown Home Agent 0 (rev 04)
+7f:0e.1 Performance counters: Intel Corporation Ivytown Home Agent 0 (rev 04)
+7f:0f.0 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Target Address/Thermal Registers (rev 04)
+7f:0f.1 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 RAS Registers (rev 04)
+7f:0f.2 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+7f:0f.3 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+7f:0f.4 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+7f:0f.5 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 0 Channel Target Address Decoder Registers (rev 04)
+7f:10.0 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 0 (rev 04)
+7f:10.1 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 1 (rev 04)
+7f:10.2 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 ERROR Registers 0 (rev 04)
+7f:10.3 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 ERROR Registers 1 (rev 04)
+7f:10.4 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 2 (rev 04)
+7f:10.5 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 Thermal Control 3 (rev 04)
+7f:10.7 System peripheral: Intel Corporation Ivytown Integrated Memory Controller 1 Channel 0-3 ERROR Registers 3 (rev 04)
+7f:13.0 System peripheral: Intel Corporation Ivytown R2PCIe (rev 04)
+7f:13.1 Performance counters: Intel Corporation Ivytown PCI Express Ring Performance Monitoring (rev 04)
+7f:13.4 System peripheral: Intel Corporation Ivytown QPI Ring Registers (rev 04)
+7f:13.5 Performance counters: Intel Corporation Ivytown QPI Ring Performance Ring Monitoring (rev 04)
+7f:16.0 System peripheral: Intel Corporation Ivytown System Address Decoder (rev 04)
+7f:16.1 System peripheral: Intel Corporation Ivytown Broadcast Registers (rev 04)
+7f:16.2 System peripheral: Intel Corporation Ivytown Broadcast Registers (rev 04)
+</pre>
+
+
+
+		
+==== lsblk ====
+ <pre>
+NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda           8:0    0 118.6G  0 disk 
+|-sda1        8:1    0 106.8G  0 part /
+`-sda2        8:2    0  11.9G  0 part [SWAP]
+sdb           8:16   0   931G  0 disk 
+sr0          11:0    1  1024M  0 rom  
+nvme0n1     251:0    0 372.6G  0 disk 
+|-nvme0n1p1 251:1    0   190G  0 part /mnt/nvme0n1p1
+`-nvme0n1p2 251:2    0 182.6G  0 part 
+</pre>
+
+
+
+		
+==== lsscsi ====
+ <pre>
+[0:2:0:0]    disk    DELL     PERC H710P       3.13  /dev/sda
+[0:2:1:0]    disk    DELL     PERC H710P       3.13  /dev/sdb
+[5:0:0:0]    cd/dvd  PLDS     DVD-ROM DS-8D9SH UD51  /dev/sr0
+</pre>
+
+
+
+		
+==== ifconfig ====
+ <pre>
+eth0      Link encap:Ethernet  HWaddr b8:ca:3a:6f:5b:88  
+          inet addr:10.10.0.1  Bcast:10.10.255.255  Mask:255.255.0.0
+          inet6 addr: fe80::baca:3aff:fe6f:5b88/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:132 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:30 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:34650 (34.6 KB)  TX bytes:6936 (6.9 KB)
+          Memory:d8b00000-d8c00000 
+
+eth1      Link encap:Ethernet  HWaddr a0:36:9f:37:58:f4  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+eth2      Link encap:Ethernet  HWaddr b8:ca:3a:6f:5b:89  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+          Memory:d8c00000-d8d00000 
+
+eth3      Link encap:Ethernet  HWaddr b8:ca:3a:6f:5b:8a  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+          Memory:d8d00000-d8e00000 
+
+eth4      Link encap:Ethernet  HWaddr a0:36:9f:37:58:f6  
+          inet addr:192.168.0.140  Bcast:192.168.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::a236:9fff:fe37:58f6/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1521854 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2907085 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:242878555 (242.8 MB)  TX bytes:4051521453 (4.0 GB)
+
+eth5      Link encap:Ethernet  HWaddr b8:ca:3a:6f:5b:8b  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+          Memory:d8e00000-d8f00000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:37713 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:37713 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:124682010 (124.6 MB)  TX bytes:124682010 (124.6 MB)
+
+virbr0    Link encap:Ethernet  HWaddr f6:ee:b7:6c:a3:0c  
+          inet addr:192.168.122.1  Bcast:192.168.122.255  Mask:255.255.255.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+</pre>
+
+
+
+		
+==== /etc/mysql/my.cnf ====
+ <pre>
+#
+# The MySQL database server configuration file.
+#
+# You can copy this to one of:
+# - "/etc/mysql/my.cnf" to set global options,
+# - "~/.my.cnf" to set user-specific options.
+# 
+# One can use all long options that the program supports.
+# Run program with --help to get a list of available options and with
+# --print-defaults to see which it would actually understand and use.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+# This will be passed to all mysql clients
+# It has been reported that passwords should be enclosed with ticks/quotes
+# escpecially if they contain "#" chars...
+# Remember to edit /etc/mysql/debian.cnf when changing the socket location.
+[client]
+port		= 3306
+socket		= /var/run/mysqld/mysqld.sock
+
+# Here is entries for some specific programs
+# The following values assume you have at least 32M ram
+
+# This was formally known as [safe_mysqld]. Both versions are currently parsed.
+[mysqld_safe]
+socket		= /var/run/mysqld/mysqld.sock
+nice		= 0
+
+[mysqld]
+#
+# * Basic Settings
+#
+user		= mysql
+pid-file	= /var/run/mysqld/mysqld.pid
+socket		= /var/run/mysqld/mysqld.sock
+port		= 3306
+basedir		= /usr
+datadir		= /var/lib/mysql
+tmpdir		= /tmp
+lc-messages-dir	= /usr/share/mysql
+skip-external-locking
+#
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+bind-address		= 127.0.0.1
+#
+# * Fine Tuning
+#
+key_buffer		= 16M
+max_allowed_packet	= 16M
+thread_stack		= 192K
+thread_cache_size       = 8
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched
+myisam-recover         = BACKUP
+#max_connections        = 100
+#table_cache            = 64
+#thread_concurrency     = 10
+#
+# * Query Cache Configuration
+#
+query_cache_limit	= 1M
+query_cache_size        = 16M
+#
+# * Logging and Replication
+#
+# Both location gets rotated by the cronjob.
+# Be aware that this log type is a performance killer.
+# As of 5.1 you can enable the log at runtime!
+#general_log_file        = /var/log/mysql/mysql.log
+#general_log             = 1
+#
+# Error log - should be very few entries.
+#
+log_error = /var/log/mysql/error.log
+#
+# Here you can see queries with especially long duration
+#log_slow_queries	= /var/log/mysql/mysql-slow.log
+#long_query_time = 2
+#log-queries-not-using-indexes
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+#server-id		= 1
+#log_bin			= /var/log/mysql/mysql-bin.log
+expire_logs_days	= 10
+max_binlog_size         = 100M
+#binlog_do_db		= include_database_name
+#binlog_ignore_db	= include_database_name
+#
+# * InnoDB
+#
+# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
+# Read the manual for more InnoDB related options. There are many!
+#
+# * Security Features
+#
+# Read the manual, too, if you want chroot!
+# chroot = /var/lib/mysql/
+#
+# For generating SSL certificates I recommend the OpenSSL GUI "tinyca".
+#
+# ssl-ca=/etc/mysql/cacert.pem
+# ssl-cert=/etc/mysql/server-cert.pem
+# ssl-key=/etc/mysql/server-key.pem
+
+
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet	= 16M
+
+[mysql]
+#no-auto-rehash	# faster start of mysql but no tab completition
+
+[isamchk]
+key_buffer		= 16M
+
+#
+# * IMPORTANT: Additional settings that can override those from this file!
+#   The files must end with '.cnf', otherwise they'll be ignored.
+#
+!includedir /etc/mysql/conf.d/
+</pre>

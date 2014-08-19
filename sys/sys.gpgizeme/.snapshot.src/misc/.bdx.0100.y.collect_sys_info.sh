@@ -16,7 +16,7 @@ sudo iptables -S > iptables.log
 sudo lsb_release -a > lsb_release.log 2>&1
 sudo lsblk > lsblk.log 
 sudo lscpu > lscpu.log
-sudo lshw > lshw.log 
+#sudo lshw > lshw.log 
 sudo lspci > lspci.log
 sudo lsscsi > lsscsi.log
 sudo lsusb > lsusb.log 

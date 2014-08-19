@@ -1,0 +1,23 @@
+# .dinit.cf
+#_author="Brian M. JUNG <brian.m.jung@gmail.com>";
+#_ver=20140427_173024
+
+
+
+
+#_tracelog_root="tracelog/_almaden";
+#_tracelog_root="tracelog/_berlin";
+#_tracelog_root="tracelog/_cairo";
+#_tracelog_root="tracelog/_dublin";
+#_tracelog_root="tracelog/_dresden";
+_tracelog_root="tracelog/_elcamino";
+
+#_tgt_1="L3_C029";
+#_tgt_1="L3_C018";
+_tgt_1="L3_C019";
+#_tgt_2s="m01-xfs m02-ext4 m03-f2fs";
+_tgt_2s="m01-dcs3500 m02-pm853t";
+
+
+
+

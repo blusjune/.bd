@@ -1,0 +1,66 @@
+#!/bin/sh
+
+
+
+
+. ../../conf/mlt.cnf;
+
+_trace_time=$_mlt_La_measure_duration_in_sec;
+_tlog="mlt.L2_sys_krnl.tlog";
+_kdbg_root="/debug";
+_ktrd="${_kdbg_root}/tracing";
+_ktr_flt_conf="../../conf/mlt.ktarget.cnf";
+
+if [ "X$(id -u)" != "X0" ]; then
+	echo "#MLT:ERROR>> you SHOULD have root privilege -- EXIT";
+	exit 1;
+fi
+
+
+if [ "X$MLT_KVER_MAJOR" = "X" ]; then
+	MLT_KVER_MAJOR = 3;
+fi
+if [ "X$MLT_KVER_MINOR" = "X" ]; then
+	MLT_KVER_MINOR = 2;
+fi
+_krnl_maj_ver=$(uname -r | awk -F'.' '{print $1}')
+_krnl_min_ver=$(uname -r | awk -F'.' '{print $2}')
+if [ $_krnl_maj_ver -lt $MLT_KVER_MAJOR -o $_krnl_min_ver -lt $MLT_KVER_MINOR ]; then
+	echo "#MLT:ERROR>> kernel version SHOULD NOT be less than ${MLT_KVER_MAJOR}.${MLT_KVER_MINOR} -- EXIT";
+	exit 1;
+fi
+
+
+if [ ! -d $_kdbg_root ]; then
+	mkdir $_kdbg_root;
+fi
+mount -t debugfs debugfs $_kdbg_root;
+if [ ! -d $_ktrd ]; then
+	echo "#MLT:ERROR>> CANNOT access $_ktrd -- EXIT";
+	exit 1
+fi
+
+_ktr_tracing_on="${_ktrd}/tracing_on";
+_ktr_bufsz="${_ktrd}/buffer_size_kb";
+_ktr_curtracer="${_ktrd}/current_tracer";
+_ktr_ft_filter="${_ktrd}/set_ftrace_filter";
+_ktr_trace_pipe="${_ktrd}/trace_pipe";
+
+
+
+echo 0 > $_ktr_tracing_on;
+echo 10240 > $_ktr_bufsz;
+echo function_graph > $_ktr_curtracer;
+if [ ! -f $_ktr_flt_conf ]; then
+	echo "#MLT:ERROR>> CANNOT find $_ktr_flt_conf -- EXIT";
+	exit 1
+fi
+
+echo "#MLT>> kernel tracing started";
+cat $_ktr_flt_conf > $_ktr_ft_filter;
+cat $_ktr_trace_pipe > $_tlog &
+echo 1 > $_ktr_tracing_on;
+sleep $_trace_time;
+echo 0 > $_ktr_tracing_on;
+
+echo "#MLT>> kernel tracing finished";

@@ -10,6 +10,12 @@
 ##
 ## ____ Parameters: begin ____
 
+_mlt_enable_L1_smart="y";             # put "n" to disable
+_mlt_enable_L2_ktrace="n";      # put "n" to disable
+_mlt_enable_L2_vmstat="y";      # put "n" to disable
+_mlt_enable_L2_iostat="y";      # put "n" to disable
+_mlt_enable_L2_blktrace="y";    # put "n" to disable
+_mlt_enable_L3_db_mysql="y";    # put "n" to disable
 _mlt_La_trace_target_disk_list="/dev/sda /dev/sdb";    # when you want to specify multiple instances of devices, just separate them with a space
 _mlt_La_measure_duration_in_sec="60";                  # SHOULD set this value with enough margin (4200 = 300 + 3600 + 300) ('60' for initial quick test)
 _mlt_L1_measure_interval_in_sec="10";                  # L1 measurement count will be 360 with this value, when you set measure duration as 3600

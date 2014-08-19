@@ -1,0 +1,1 @@
+fio --output=fio.out --runtime=60 --latency-log --bandwith-log --eta=always --eta-newline=1 --alloc-size=4k --name="test4skpark" --filename="skpark.ssd" --ioengine=posixaio --direct=1 --norandommap --randrepeat=1 --refill_buffers --time_based --ramp_time=30s --runtime=40s --blocksize="4k" --rw="write" --iodepth="12" --overwrite=0 --numjobs=1 --group_reporting --filesize=10g

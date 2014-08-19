@@ -15,6 +15,7 @@
 # Set (or uncomment) SKIP if you wish to avoid something.
 # For example, you may prefer the /bin/kill from util-linux or bsdutils.
 
+SHARED       := 0 # blusjune
 
 VERSION      := 3
 SUBVERSION   := 2
@@ -74,12 +75,12 @@ CURSESW := -lncursesw
 # Something like this is probably needed to make the SE Linux
 # library loading not conflict with embedded systems stuff.
 #
-#ifeq ($(SHARED),1)
-#ldl := -ldl
-#LIBTYPE := -DSHAREDLIB
-#else
-#LIBTYPE := -DSTATICLIB
-#endif
+ifeq ($(SHARED),1)
+ldl := -ldl
+LIBTYPE := -DSHAREDLIB
+else
+LIBTYPE := -DSTATICLIB
+endif
 
 # Preprocessor flags.
 PKG_CPPFLAGS := -D_GNU_SOURCE -I proc

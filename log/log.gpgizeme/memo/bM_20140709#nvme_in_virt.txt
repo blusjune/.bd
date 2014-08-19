@@ -1,0 +1,1031 @@
+
+
+
+
+
+
+
+
+
+
+== 20140715_102409 ==
+
+drivers/block/nvme-core.c:
+
+nvme_init() -->> pci_register_driver();
+pci_register_driver() --<< nvme_driver{};
+
+nvme_probe() -->> nvme_dev_add();
+	nvme_dev_add() -->> nvme_setup_io_queues();
+		nvme_setup_io_queues() -->> set_queue_count();
+		nvme_create_queue();
+
+=== Build Linux kernel (bkrnl-v3.11) modified to create only one NVMe IO queue pair ===
+
+==== .config file ('.config--bkrnl-v3.11') ====
+
+* CONFIG_IRQ_DOMAIN_DEBUG
+ <pre>
+-
+  | CONFIG_IRQ_DOMAIN_DEBUG:                                                                      |  
+  |                                                                                               |  
+  | This option will show the mapping relationship between hardware irq                           |  
+  | numbers and Linux irq numbers. The mapping is exposed via debugfs                             |  
+  | in the file "irq_domain_mapping".                                                             |  
+  |                                                                                               |  
+  | If you don't know what this means you don't need it.                                          |  
+  |                                                                                               |  
+  | Symbol: IRQ_DOMAIN_DEBUG [=y]                                                                 |  
+  | Type  : boolean                                                                               |  
+  | Prompt: Expose hardware/virtual IRQ mapping via debugfs                                       |  
+  |   Location:                                                                                   |  
+  |     -> General setup                                                                          |  
+  |       -> IRQ subsystem                                                                        |  
+  |   Defined at kernel/irq/Kconfig:59                                                            |  
+  |   Depends on: HAVE_GENERIC_HARDIRQS [=y] && IRQ_DOMAIN [=y] && DEBUG_FS [=y]
+</pre>
+
+* CONFIG_IKCONFIG_PROC
+ <pre>
+  | CONFIG_IKCONFIG_PROC:                                                                         |  
+  |                                                                                               |  
+  | This option enables access to the kernel configuration file                                   |  
+  | through /proc/config.gz.                                                                      |  
+  |                                                                                               |  
+  | Symbol: IKCONFIG_PROC [=y]                                                                    |  
+  | Type  : boolean                                                                               |  
+  | Prompt: Enable access to .config through /proc/config.gz                                      |  
+  |   Location:                                                                                   |  
+  |     -> General setup                                                                          |  
+  |       -> Kernel .config support (IKCONFIG [=y])                                               |  
+  |   Defined at init/Kconfig:771                                                                 |  
+  |   Depends on: IKCONFIG [=y] && PROC_FS [=y]  
+</pre>
+
+* Disable heap randomization
+ <pre>
+  | CONFIG_COMPAT_BRK:                                                                            |  
+  |                                                                                               |  
+  | Randomizing heap placement makes heap exploits harder, but it                                 |  
+  | also breaks ancient binaries (including anything libc5 based).                                |  
+  | This option changes the bootup default to heap randomization                                  |  
+  | disabled, and can be overridden at runtime by setting                                         |  
+  | /proc/sys/kernel/randomize_va_space to 2.                                                     |  
+  |                                                                                               |  
+  | On non-ancient distros (post-2000 ones) N is usually a safe choice.                           |  
+  |                                                                                               |  
+  | Symbol: COMPAT_BRK [=y]                                                                       |  
+  | Type  : boolean                                                                               |  
+  | Prompt: Disable heap randomization                                                            |  
+  |   Location:                                                                                   |  
+  |     -> General setup                                                                          |  
+  |   Defined at init/Kconfig:1554    
+</pre>
+
+* Enable Intel DMA Remapping Devices by default
+ <pre>
+  | CONFIG_INTEL_IOMMU_DEFAULT_ON:                                                                |  
+  |                                                                                               |  
+  | Selecting this option will enable a DMAR device at boot time if                               |  
+  | one is found. If this option is not selected, DMAR support can                                |  
+  | be enabled by passing intel_iommu=on to the kernel.                                           |  
+  |                                                                                               |  
+  | Symbol: INTEL_IOMMU_DEFAULT_ON [=y]                                                           |  
+  | Type  : boolean                                                                               |  
+  | Prompt: Enable Intel DMA Remapping Devices by default                                         |  
+  |   Location:                                                                                   |  
+  |     -> Device Drivers                                                                         |  
+  |       -> IOMMU Hardware Support (IOMMU_SUPPORT [=y])                                          |  
+  |         -> Support for Intel IOMMU using DMA Remapping Devices (INTEL_IOMMU [=y])             |  
+  |   Defined at drivers/iommu/Kconfig:92                                                         |  
+  |   Depends on: IOMMU_SUPPORT [=y] && INTEL_IOMMU [=y]   
+</pre>
+
+==== source code modified ====
+
+
+== 20140711_000000 ==
+
+
+* 512 Bytes Write in VM
+ <pre>
+root@vm-01-verve:~/mlt/fio-script# dd bs=512 count=1 if=/dev/zero of=/mnt/nvme/512b_1
+1+0 records in
+1+0 records out
+512 bytes (512 B) copied, 0.000140692 s, 3.6 MB/s
+</pre>
+
+
+
+* KVM/QEMU
+:* First Action (Promptly)
+ <pre>
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:98304]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:24]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:9326946]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+</pre>
+
+
+
+
+:* 2nd Action (a moment later)
+ <pre>
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:102400]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:25]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:9485410]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:106496]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:26]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:9750376]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:110592]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:27]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:10143012]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:114688]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:28]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:10576706]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:118784]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:29]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:11105582]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:122880]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:30]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:11244230]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:126976]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:31]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:11480353]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:131072]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:32]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:11764533]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:135168]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:33]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:12027285]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:139264]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:34]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:12225518]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:143360]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:35]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:12405714]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:147456]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:36]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:12514058]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:151552]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:37]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:12610951]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:772:[DoorBell_Proc_SQ]
+nvme_check_sqid:43
+nvme_process_sq:582
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:276
+nvme_io_cmd:290:[NVME_CMD_WRITE]
+nvme_io_cmd:292:[NVME_CMD_READ]
+nvme_rw:244
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:218
+nvme_rw_cb:225:[BDS__nr_bytes_WR:155648]
+nvme_rw_cb:226:[BDS__nr_bytes_WR:38]
+nvme_rw_cb:227:[BDS__nr_bytes_WR:12708810]
+nvme_rw_cb:230:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:208
+nvme_post_cqes:179
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:794:[size:4]
+nvme_process_db:735
+nvme_process_db:743:[DoorBell_Proc_CQ]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+</pre>
+
+
+
+
+
+
+
+
+
+* 1-byte write ( dd bs=1 count=1 if=p7n_test.fio of=/mnt/nvme/1b_1 )
+ <pre>
+1+0 records in
+1+0 records out
+1 byte (1 B) copied, 0.000927966 s, 1.1 kB/s
+</pre>
+
+ <pre>
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:296:[NVME_CMD_READ]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_RD:1750016]
+nvme_rw_cb:229:[BDS__nr_ops_RD:428]
+nvme_rw_cb:230:[BDS__total_time_ns_RD:9368042]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:810:[addr:4108]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:764:[DoorBell_Proc_CQ_id:1]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+</pre>
+
+
+* subsequent action
+ <pre>
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:24576]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:6]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:1147536]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:28672]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:7]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:1668835]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:32768]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:8]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:2101075]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:36864]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:9]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:2465965]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:40960]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:10]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:2817287]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:45056]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:11]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:3355984]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:810:[addr:4108]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:764:[DoorBell_Proc_CQ_id:1]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:49152]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:12]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:3497108]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:810:[addr:4108]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:764:[DoorBell_Proc_CQ_id:1]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+</pre>
+
+
+
+
+
+* 1-byte read ( dd bs=1 count=1 if=/mnt/nvme/512b of=/tmp/foo )
+ <pre>
+1+0 records in
+1+0 records out
+1 byte (1 B) copied, 0.000843125 s, 1.2 kB/s
+</pre>
+
+ <pre>
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:296:[NVME_CMD_READ]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_RD:1758208]
+nvme_rw_cb:229:[BDS__nr_ops_RD:430]
+nvme_rw_cb:230:[BDS__total_time_ns_RD:9609340]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:810:[addr:4108]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:764:[DoorBell_Proc_CQ_id:1]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+</pre>
+
+
+* subsequent action
+ <pre>
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:110592]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:27]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:8735162]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:114688]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:28]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:8976322]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:810:[addr:4108]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:764:[DoorBell_Proc_CQ_id:1]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:810:[addr:4108]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:764:[DoorBell_Proc_CQ_id:1]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+nvme_mmio_write:810:[addr:4104]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:792:[DoorBell_Proc_SQ_id:1]
+nvme_check_sqid:43
+nvme_process_sq:604:[sq_sqid:1]
+nvme_process_sq:605:[sq_cqid:1]
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_inc_sq_head:65
+nvme_io_cmd:279
+nvme_io_cmd:293:[NVME_CMD_WRITE]
+nvme_rw:247
+nvme_map_prp:98
+nvme_sq_empty:77:[is_SQ_empty?]
+nvme_rw_cb:221
+nvme_rw_cb:228:[BDS__nr_bytes_WR:118784]
+nvme_rw_cb:229:[BDS__nr_bytes_WR:29]
+nvme_rw_cb:230:[BDS__nr_bytes_WR:9078018]
+nvme_rw_cb:233:[dma_bdrv_io__SUCCESS]
+nvme_enqueue_req_completion:211
+nvme_post_cqes:182
+nvme_cq_full:71:[is_CQ_full?]
+nvme_inc_cq_tail:55
+nvme_isr_notify:83
+nvme_isr_notify:86:[MSIX_notify]
+nvme_mmio_write:810:[addr:4108]
+nvme_mmio_write:811:[size:4]
+nvme_process_db:751
+nvme_process_db:764:[DoorBell_Proc_CQ_id:1]
+nvme_check_cqid:49
+nvme_cq_full:71:[is_CQ_full?]
+</pre>
+
+
+
+
+
+root@STAR-010:test %1# _BDX
+BDX[ /home/b/bx_data/tsk/2014/06/23/t01.nvme_in_virt/test ]# 0100 : run_vm
+NVMe_dev_ID (47:00.0)
+NVMe_dev_ID_with_domain (0000:47:00.0)
+NVMe_device_and_vendor_ID (144d a820)
+#>> start PCIe passthrough for NVMe device (0000:47:00.0 144d a820) ...
+#>> ... finished PCIe passthrough for NVMe device (0000:47:00.0 144d a820)
+qemu-system-x86_64: -device pci-assign,host=47:00.0: No IOMMU found.  Unable to assign device "(null)"
+qemu-system-x86_64: -device pci-assign,host=47:00.0: Device initialization failed.
+qemu-system-x86_64: -device pci-assign,host=47:00.0: Device 'kvm-pci-assign' could not be initialized
+
+
+
+
+
+
+
+b@STAR-010:src %2$ dmesg | grep -i DMAR
+[    0.000000] ACPI: DMAR 00000000bd3346f4 00150 (v01 DELL   PE_SC3   00000001 DELL 00000001)
+[    0.075640] dmar: Host address width 46
+[    0.075644] dmar: DRHD base: 0x000000d0a00000 flags: 0x0
+[    0.075651] dmar: IOMMU 0: reg_base_addr d0a00000 ver 1:0 cap d2078c106f0466 ecap f020de
+[    0.075655] dmar: DRHD base: 0x000000dc900000 flags: 0x1
+[    0.075660] dmar: IOMMU 1: reg_base_addr dc900000 ver 1:0 cap d2078c106f0466 ecap f020de
+[    0.075663] dmar: RMRR base: 0x000000bf458000 end: 0x000000bf46ffff
+[    0.075666] dmar: RMRR base: 0x000000bf450000 end: 0x000000bf450fff
+[    0.075668] dmar: RMRR base: 0x000000bf452000 end: 0x000000bf452fff
+[    0.075670] dmar: ATSR flags: 0x0
+b@STAR-010:src %2$ dmesg | grep -i iommu
+[    0.075651] dmar: IOMMU 0: reg_base_addr d0a00000 ver 1:0 cap d2078c106f0466 ecap f020de
+[    0.075660] dmar: IOMMU 1: reg_base_addr dc900000 ver 1:0 cap d2078c106f0466 ecap f020de
+[    0.075793] IOAPIC id 2 under DRHD base  0xd0a00000 IOMMU 0
+[    0.075795] IOAPIC id 0 under DRHD base  0xdc900000 IOMMU 1
+[    0.075797] IOAPIC id 1 under DRHD base  0xdc900000 IOMMU 1
+b@STAR-010:src %2$ dmesg | grep -i -e DMAR -e IOMMU
+[    0.000000] ACPI: DMAR 00000000bd3346f4 00150 (v01 DELL   PE_SC3   00000001 DELL 00000001)
+[    0.075640] dmar: Host address width 46
+[    0.075644] dmar: DRHD base: 0x000000d0a00000 flags: 0x0
+[    0.075651] dmar: IOMMU 0: reg_base_addr d0a00000 ver 1:0 cap d2078c106f0466 ecap f020de
+[    0.075655] dmar: DRHD base: 0x000000dc900000 flags: 0x1
+[    0.075660] dmar: IOMMU 1: reg_base_addr dc900000 ver 1:0 cap d2078c106f0466 ecap f020de
+[    0.075663] dmar: RMRR base: 0x000000bf458000 end: 0x000000bf46ffff
+[    0.075666] dmar: RMRR base: 0x000000bf450000 end: 0x000000bf450fff
+[    0.075668] dmar: RMRR base: 0x000000bf452000 end: 0x000000bf452fff
+[    0.075670] dmar: ATSR flags: 0x0
+[    0.075793] IOAPIC id 2 under DRHD base  0xd0a00000 IOMMU 0
+[    0.075795] IOAPIC id 0 under DRHD base  0xdc900000 IOMMU 1
+[    0.075797] IOAPIC id 1 under DRHD base  0xdc900000 IOMMU 1
+
+
+
+
+
+
+
+b@STAR-010:src %2$ cat /etc/default/grub 
+# If you change this file, run 'update-grub' afterwards to update
+# /boot/grub/grub.cfg.
+# For full documentation of the options in this file, see:
+#   info -f grub -n 'Simple configuration'
+
+GRUB_DEFAULT=0
+#GRUB_HIDDEN_TIMEOUT=0
+GRUB_HIDDEN_TIMEOUT_QUIET=true
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
+GRUB_CMDLINE_LINUX_DEFAULT="intel_iommu=on"
+GRUB_CMDLINE_LINUX=""
+
+# Uncomment to enable BadRAM filtering, modify to suit your needs
+# This works with Linux (no patch required) and with any kernel that obtains
+# the memory map information from GRUB (GNU Mach, kernel of FreeBSD ...)
+#GRUB_BADRAM="0x01234567,0xfefefefe,0x89abcdef,0xefefefef"
+
+# Uncomment to disable graphical terminal (grub-pc only)
+#GRUB_TERMINAL=console
+
+# The resolution used on graphical terminal
+# note that you can use only modes which your graphic card supports via VBE
+# you can see them in real GRUB with the command `vbeinfo'
+#GRUB_GFXMODE=640x480
+
+# Uncomment if you don't want GRUB to pass "root=UUID=xxx" parameter to Linux
+#GRUB_DISABLE_LINUX_UUID=true
+
+# Uncomment to disable generation of recovery mode menu entries
+#GRUB_DISABLE_RECOVERY="true"
+
+# Uncomment to get a beep at grub start
+#GRUB_INIT_TUNE="480 440 1"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

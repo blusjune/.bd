@@ -1,0 +1,11 @@
+fio.20140620_064546.p7n.tySW_qd1_nj1_bs128k.out
+fio.20140620_065708.p7n.tySW_qd2_nj1_bs128k.out
+fio.20140620_070118.p7n.tySW_qd3_nj1_bs128k.out
+fio.20140620_070348.p7n.tySW_qd4_nj1_bs128k.out
+fio.20140620_070640.p7n.tySW_qd5_nj1_bs128k.out
+fio.20140620_071023.p7n.tySW_qd6_nj1_bs128k.out
+fio.20140620_071252.p7n.tySW_qd12_nj1_bs128k.out
+fio.20140620_081342.p7n.tySW_qd24_nj1_bs128k.out
+fio.20140620_082436.p7n.tySW_qd48_nj1_bs128k.out
+fio.20140620_082631.p7n.tySW_qd96_nj1_bs128k.out
+fio.20140620_083026.p7n.tySW_qd192_nj1_bs128k.out
