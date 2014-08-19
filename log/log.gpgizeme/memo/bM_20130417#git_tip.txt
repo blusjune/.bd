@@ -1,3 +1,30 @@
+== 20140820_000757
+
+ <pre>
+git-center$ cd ~blusjune; mkdir .._; mv .b .bd .._;
+git-center$ cd /x; ln -s ~blusjune/.._;
+git-center$ cd .._; cd .bd; mv .git .git.foo; # to force .bd/ to be included in .._ git; otherwise, .bd/ will not be included in .._ by 'git add -A' due to existence of '.git/' directory in .bd/;
+git-center$ cd ..; git init;
+git-center$ git add -A; git commit -a;
+git-center$ git branch; git log; git shortlog; git blame .b/..__Brian_M_JUNG__;
+
+git-london$ mkdir /x/gitwork; cd /x/gitwork;
+git-london$ git clone blusjune@git-center:/x/.._;
+git-london$ cd .._; git branch -m master current; git branch;
+git-london$ vi .b/..__Brian_M_JUNG__; git add -A; git commit -a;
+git-london$ git push --all -u;
+
+git-center$ git branch; git merge current; # merge the current commit from london into the master
+
+git-paris$ mkdir /x/gitwork; cd /x/gitwork;
+git-paris$ git clone blusjune@git-center:/x/.._;
+git-paris$ cd .._; git branch -m master current; git branch;
+git-paris$ vi .b/..__Brian_M_JUNG__; git add -A; git commit -a;
+git-paris$ git push --all -u;
+
+git-center$ git branch; git merge current; # merge the current commit from paris into the master
+</pre>
+
 
 == 20130716_003459 ==
 
